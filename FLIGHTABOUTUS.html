@@ -1,0 +1,559 @@
+FLIGHTABOUTS.html
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FLIGHTABOUTS</title>
+
+ <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+ <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+
+
+<style>
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: linear-gradient(135deg, #ff7e5f, #feb47b, #86a8e7, #91eae4);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    color: #333;
+}
+@keyframes gradientBG{
+    0%{background-position:0% 50%;}
+    50%{background-position:100% 50%;}
+    100%{background-position:0% 50%;}
+}
+
+.navbar {
+    background: linear-gradient(to right, #0052cc, #007bff);
+}
+.navbar .nav-link {
+    color: white !important;
+    font-weight: 500;
+}
+
+
+.header {
+    background: linear-gradient(to right, rgba(0,82,204,0.85), rgba(0,123,255,0.85));
+    color: white;
+    padding: 60px 20px;
+    text-align: center;
+}
+.header h1 { font-size: 42px; margin-bottom: 10px; }
+.header p { font-size: 18px; }
+
+
+.about-container {
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 20px;
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+.about-text { flex: 1; }
+.about-text h2 { color: #0052cc; margin-bottom: 15px; }
+.about-text p { line-height: 1.7; font-size: 16px; }
+.about-image { flex: 1; text-align: center; }
+.about-image img {
+    width: 100%;
+    max-width: 450px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+
+.features {
+    background-color: rgba(255,255,255,0.8);
+    padding: 50px 20px;
+    border-radius: 15px;
+    margin: 40px auto;
+    max-width: 1100px;
+}
+.features h2 {
+    text-align: center;
+    color: #0052cc;
+    margin-bottom: 30px;
+}
+.feature-box {
+    max-width: 1000px;
+    margin: auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+}
+.feature {
+    background: #f4f8fb;
+    padding: 25px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+.feature h3 { margin-bottom: 10px; color: #007bff; }
+
+
+.feedback-card{
+    width: 100%; /* Changed from fixed 400px to 100% for responsiveness */
+    max-width:450px; /* Added max-width */
+    padding:30px;
+    margin:50px auto;
+    border-radius:25px;
+    background: linear-gradient(145deg,#ffffff,#e6f7ff);
+    box-shadow:0 30px 60px rgba(0,0,0,0.3), inset 0 0 20px rgba(255,255,255,0.8);
+    transform-style:preserve-3d;
+    transition: transform 0.8s;
+    animation: float 3s ease-in-out infinite;
+}
+.feedback-card:hover{
+    transform: rotateX(8deg) rotateY(-8deg) scale(1.03);
+}
+@keyframes float{
+    0%,100%{transform:translateY(0)}
+    50%{transform:translateY(-10px)}
+} 
+.feedback-card h2{
+    text-align:center;
+    background: linear-gradient(to right,#ff512f,#dd2476);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color:transparent;
+    margin-bottom:5px;
+}
+.feedback-card p{
+    text-align:center;
+    color:#555;
+    margin-bottom:20px;
+}
+.feedback-card input, .feedback-card textarea{
+    width:100%;
+    padding:14px;
+    margin-bottom:15px;
+    border-radius:12px;
+    border:none;
+    outline:none;
+    background:#f1f9ff;
+    box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+.feedback-card input:focus, .feedback-card textarea:focus{
+    transform: scale(1.03);
+    box-shadow: 0 0 10px rgba(0,140,255,0.6);
+}
+.stars{display:flex; justify-content:center; margin-bottom:20px;}
+.stars span{font-size:38px; cursor:pointer; color:#ccc; transition: transform 0.4s, color 0.4s;}
+.stars span:hover{transform: rotate(15deg) scale(1.4);}
+.feedback-card button{
+    width:100%;
+    padding:14px;
+    font-size:17px;
+    border:none;
+    border-radius:15px;
+    cursor:pointer;
+    color:#fff;
+    background: linear-gradient(45deg,#36d1dc,#5b86e5);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+    position:relative;
+    overflow:hidden;
+    transition: transform 0.3s;
+}
+.feedback-card button:hover{
+    transform: translateY(-4px) scale(1.02);
+}
+.feedback-card button::after{
+    content:"";
+    position:absolute;
+    width:100%;
+    height:100%;
+    top:0;
+    left:-100%;
+    background:rgba(255,255,255,0.3);
+    transition:left 0.5s;
+}
+.feedback-card button:hover::after{
+    left:100%;
+}
+#msg{margin-top:15px; text-align:center; font-weight:bold; color:#0b7d32; animation: pop 0.5s ease-in-out;}
+@keyframes pop{0%{transform:scale(0)}100%{transform:scale(1)}}
+
+
+.booking-container{
+    width:90%;
+    max-width:1200px;
+    margin:60px auto;
+    text-align:center;
+}
+.booking-container h1{font-size:42px; margin-bottom:10px; letter-spacing:2px;}
+.booking-container .desc{font-size:16px; color:#333; margin-bottom:50px;}
+.cards{
+    display:grid; 
+    justify-content:center;
+    grid-template-columns:repeat(auto-fit,minmax(350px,1fr));
+    gap:30px;
+}
+.card-booking{
+    background:linear-gradient(135deg,#1e3c72,#2a5298);
+    padding:35px 25px;
+    border-radius:18px;
+    box-shadow:0 15px 35px rgba(0,0,0,0.4);
+    transition:0.5s;
+    position:relative;
+    overflow:hidden;
+    transform:translateY(30px);
+    animation: slideUp 1s ease forwards;
+}
+.card-booking::before{
+    content:"";
+    position:absolute;
+    top:-50%;
+    left:-50%;
+    width:200%;
+    height:200%;
+    background:radial-gradient(circle, rgba(255,255,255,0.15), transparent);
+    transform:rotate(25deg);
+}
+.card-booking:hover{
+    transform:scale(1.08) rotate(1deg);
+    background:linear-gradient(135deg,#00c6ff,#0072ff);
+}
+.icon-booking{font-size:50px; margin-bottom:15px; animation: float 3s ease-in-out infinite;}
+.card-booking h3{margin-bottom:12px; font-size:22px;}
+.card-booking p{font-size:14px; line-height:1.6; color:#f0f0f0;}
+@keyframes slideUp{to{transform:translateY(0);}}
+
+
+.amenities-grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px;
+    margin:50px auto;
+    max-width:1100px;
+}
+.amenities-grid .card{
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    display:flex;
+    flex-direction:column;
+    justify-content: space-between;
+    transition: all 0.3s ease;
+}
+.amenities-grid .card:hover{ transform: translateY(-8px); }
+.amenities-grid .icon{ font-size: 3rem; margin-bottom: 15px; }
+.amenities-grid h3{ margin:0 0 10px 0; font-size:1.3rem; }
+.amenities-grid p{ font-size:0.95rem; color:#5f6368; margin-bottom:20px; height:50px; }
+.price{ font-weight: 800; font-size: 1.2rem; color:#111; margin-bottom:20px; }
+.btn-select{ background-color: #003087; color:white; border:none; padding:12px; border-radius:8px; cursor:pointer; font-weight:700; width:100%; transition: all 0.2s; }
+.btn-select.active{ background-color:#34a853; }
+
+
+.contact-box{
+    background: white;
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+.helpline{
+    background: #e8f1ff;
+    border-radius: 10px;
+    padding: 20px;
+    margin-top:20px;
+}
+.btn-send{
+    background: #0059b3;
+    color: white;
+}
+.btn-send:hover{background:#003366;}
+
+
+.cancel-box{
+    background:#ffffff;
+    color:#333;
+    width:350px;
+    padding:25px;
+    border-radius:10px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.3);
+    margin:50px auto;
+}
+.cancel-box h2{text-align:center; color:#0a58ca;}
+label{display:block; margin-top:12px; font-weight:bold;}
+input,select,button{
+    width:100%;
+    padding:10px;
+    margin-top:6px;
+    border-radius:5px;
+    border:1px solid #ccc;
+}
+button.cancel-btn{
+    background:#dc3545;
+    color:white;
+    font-size:16px;
+    cursor:pointer;
+    margin-top:18px;
+    border:none;
+}
+button.cancel-btn:hover{
+    background:#bb2d3b;
+}
+.result{
+    margin-top:15px;
+    background:#f8f9fa;
+    padding:12px;
+    border-radius:6px;
+    display:none;
+}
+.success{ color:green; font-weight:bold; text-align:center; }
+</style>
+</head>
+<body>
+
+
+<nav class="navbar navbar-expand-lg sticky-top">
+  <div class="container-fluid">
+    <a class="navbar-brand text-white fw-bold" href="#">SkyWay</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+         <li class="nav-item"><a class="nav-link" href="FLIGHTINDEX.html">home</a></li>
+        <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+        <li class="nav-item"><a class="nav-link" href="#feedback">Feedback</a></li>
+        <li class="nav-item"><a class="nav-link" href="#booking-methods">Booking opts</a></li>
+        <li class="nav-item"><a class="nav-link" href="#amenities">Amenities</a></li>
+        <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+        <li class="nav-item"><a class="nav-link" href="#cancel">Cancel Ticket</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+
+<section id="about">
+<div class="header">
+    <h1>About SkyWay Flights</h1>
+    <p>Your trusted partner for safe, fast & affordable air travel</p>
+</div>
+<div class="about-container">
+    <div class="about-text">
+        <h2>Who We Are</h2>
+        <p>
+            SkyWay Flights is a leading online flight booking platform designed
+            to make air travel easy, affordable, and reliable. We connect travelers
+            with top airlines across domestic and international routes, offering
+            seamless booking experiences at the best prices.
+        </p>
+        <h2>Our Mission</h2>
+        <p>
+            Our mission is to simplify flight booking with transparent pricing,
+            secure payments, and 24/7 customer support—so you can focus on enjoying
+            your journey.
+        </p>
+        <h2>Why Choose Us?</h2>
+        <p>
+            With advanced search technology, instant ticket confirmation,
+            and flexible cancellation options, SkyWay Flights ensures comfort
+            and confidence at every step of your travel.
+        </p>
+    </div>
+    <div class="about-image">
+        <img src="https://images.unsplash.com/photo-1529070538774-1843cb3265df" alt="Flight Travel">
+    </div>
+</div>
+
+<div class="features">
+    <h2>What We Offer</h2>
+    <div class="container">
+        <div class="row feature-box">
+            <div class="feature col-12 col-xs-6 col-sm-6 col-lg-3"><h3>✈️ Easy Booking</h3><p>Book flights in just a few clicks with instant confirmation.</p></div>
+            <div class="feature col-12 col-xs-6 col-sm-6 col-lg-3"><h3>💳 Secure Payments</h3><p>UPI, cards, wallets & net banking with full security.</p></div>
+            <div class="feature col-12 col-xs-6 col-sm-6 col-lg-3"><h3>📞 24/7 Support</h3><p>Our team is always ready to assist you anytime.</p></div>
+            <div class="feature col-12 col-xs-6 col-sm-6 col-lg-3"><h3>💰 Best Prices</h3><p>Exclusive deals, discounts, and lowest fare guarantees.</p></div>
+        </div>
+    </div>
+</div>
+</section>
+
+
+<section id="feedback" class="py-5">
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="feedback-card">
+                <h2>✈️ Flight Feedback</h2>
+                <p>Your journey matters to us</p>
+                <input type="text" id="name" placeholder="Passenger Name">
+                <input type="text" id="flight" placeholder="Flight Number">
+                <div class="stars" id="starContainer">
+                    <span onclick="rate(1)">★</span>
+                    <span onclick="rate(2)">★</span>
+                    <span onclick="rate(3)">★</span>
+                    <span onclick="rate(4)">★</span>
+                    <span onclick="rate(5)">★</span>
+                </div>
+                <textarea rows="4" id="feedback-text" placeholder="Write your experience..."></textarea>
+                <button onclick="submitFeedback()">Submit Feedback</button>
+                <div id="msg"></div>
+            </div>
+        </div>
+    </div>
+</div>
+</section>
+
+
+<section id="booking-methods">
+<div class="booking-container">
+    <h1>Ways to Book a Flight ✈️</h1>
+    <p class="desc">Our flight booking system offers multiple convenient ways for passengers to reserve tickets easily and securely.</p>
+    <div class="row cards">
+        <div class="card-booking col-12 col-xs-12 col-sm-6 col-lg-3"><div class="icon-booking">💻</div><h3>Online Website Booking</h3><p>Book flights via website with route, date, seat selection & secure payments.</p></div>
+        <div class="card-booking col-12 col-xs-12 col-sm-6 col-lg-3"><div class="icon-booking">📱</div><h3>Mobile App Booking</h3><p>Book tickets instantly using our mobile app with digital boarding passes.</p></div>
+        <div class="card-booking col-12 col-xs-12 col-sm-6 col-lg-3"><div class="icon-booking">🏢</div><h3>Airport Counter Booking</h3><p>Visit airline counters at airports to book tickets with assistance.</p></div>
+        <div class="card-booking col-12 col-xs-12 col-sm-6 col-lg-3"><div class="icon-booking">📞</div><h3>Agent / Call Booking</h3><p>Book tickets through authorized agents or airline support calls.</p></div>
+    </div>
+</div>
+</section>
+
+ 
+<section id="amenities">
+<div class="container">
+    <header class="text-center mt-5"><h1>Customise Your Experience</h1><p>Make your flight more comfortable with our premium add-ons.</p></header>
+    <div class="amenities-grid">
+        <div class="card"><span class="icon">🍱</span><h3>Premium Dining</h3><p>Chef-curated hot meals and specialty beverages.</p><div class="price">₹1,200</div></div>
+        <div class="card"><span class="icon">📶</span><h3>High-Speed Wi-Fi</h3><p>Stay connected with unlimited browsing & streaming.</p><div class="price">₹850</div></div>
+        <div class="card"><span class="icon">🛋️</span><h3>Lounge Access</h3><p>Relax in the premium lounge before your flight.</p><div class="price">₹2,500</div></div>
+        <div class="card"><span class="icon">🧳</span><h3>Excess Baggage</h3><p>Carry an additional 10kg of check-in luggage.</p><div class="price">₹3,500</div></div>
+        <div class="card"><span class="icon">💺</span><h3>Extra Legroom</h3><p>Priority seats with 6 inches of extra space.</p><div class="price">₹1,500</div></div>
+        <div class="card"><span class="icon">🎧</span><h3>Entertainment Pro</h3><p>Noise-cancelling headphones & early movie access.</p><div class="price">₹450</div></div>
+    </div>
+</div>
+</section>
+
+ 
+<section id="contact">
+<div class="container my-5">
+<div class="row g-4">
+    <div class="col-md-7">
+        <div class="contact-box">
+            <h3>📩 Get in Touch</h3>
+            <form onsubmit="event.preventDefault(); alert('Message Sent!');">
+                <div class="mb-3"><label>Full Name</label><input type="text" class="form-control" placeholder="Enter your name" required></div>
+                <div class="mb-3"><label>Email</label><input type="email" class="form-control" placeholder="Enter your email" required></div>
+                <div class="mb-3"><label>Phone Number</label><input type="tel" class="form-control" placeholder="Enter your phone number"></div>
+                <div class="mb-3"><label>Message</label><textarea class="form-control" rows="4" placeholder="Type your message"></textarea></div>
+                <button type="submit" class="btn btn-send w-100">Send Message</button>
+            </form>
+        </div>
+    </div>
+    <div class="col-md-5">
+        <div class="helpline">
+            <h3>📞 Flight Helpline</h3>
+             <p><strong>Customer Support:</strong> +91 98765 43210</p>
+            <p><strong>Booking Support:</strong> +91 91234 56789</p>
+            <p><strong>Email:</strong> support@flightbooking.com</p>
+            <p><strong>WhatsApp:</strong> +91 90000 11111</p>
+
+            <hr>
+
+            <h5>⏰ Support Hours</h5>
+            <p>24 Hours | 7 Days a Week</p>
+
+            <hr>
+
+            <h5>🏢 Office Address</h5>
+            <p>
+                Flight Booking Pvt Ltd<br>
+                Airport Road, New Delhi<br>
+                India - 110001
+            </p>
+        </div>
+    </div>
+</div>
+</div>
+</section>
+ 
+<section id="cancel">
+<div class="cancel-box">
+    <h2>✈️ Cancel Flight Ticket</h2>
+    <label>Booking ID</label>
+    <input type="text" id="bookingId" placeholder="FL123456">
+    <label>Ticket Price (₹)</label>
+    <input type="number" id="price" placeholder="5000">
+    <label>Days Before Departure</label>
+    <select id="days">
+        <option value="0">Select Days</option>
+        <option value="1">0 – 1 Day</option>
+        <option value="2">2 – 3 Days</option>
+        <option value="4">4 – 7 Days</option>
+        <option value="8">8+ Days</option>
+    </select>
+    <button class="cancel-btn" onclick="cancelTicket()">Cancel Ticket</button>
+    <div class="result" id="resultBox">
+        <p class="success">✔ Ticket Cancelled Successfully</p>
+        <p id="refund"></p>
+    </div>
+</div>
+</section>
+
+<script>
+ 
+let rating = 0;
+function rate(val){ 
+    rating = val; 
+    const stars = document.querySelectorAll('.stars span');
+    stars.forEach((star, index) => {
+        if(index < val) {
+            star.style.color = "#f1c40f";
+        } else {
+            star.style.color = "#ccc";
+        }
+    });
+}
+
+ 
+function submitFeedback(){
+    const name = document.getElementById("name").value;
+    const flight = document.getElementById("flight").value;
+    const msgInput = document.getElementById("feedback-text").value;
+    if(!name || !flight || !msgInput){ alert("Fill all details"); return;}
+    document.getElementById("msg").innerText = "✔ Thank you for your feedback!";
+}
+
+ 
+function cancelTicket(){
+    let price = document.getElementById("price").value;
+    let days = document.getElementById("days").value;
+    let refundAmount = 0;
+
+    if(price === "" || days == 0){
+        alert("Please fill all details");
+        return;
+    }
+
+    price = parseFloat(price);
+
+    if(days == 1){
+        refundAmount = price * 0.25;
+    }
+    else if(days == 2){
+        refundAmount = price * 0.50;
+    }
+    else if(days == 4){
+        refundAmount = price * 0.75;
+    }
+    else if(days == 8){
+        refundAmount = price * 0.90;
+    }
+
+    document.getElementById("refund").innerHTML =
+        "💰 Refund Amount: ₹" + refundAmount.toFixed(2);
+    document.getElementById("resultBox").style.display = "block";
+}
+</script>
+
+</body>
+</html>

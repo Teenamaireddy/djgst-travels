@@ -1,0 +1,203 @@
+busroutes.html
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>busroutes</title>
+
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+<style>
+.T_B_RTS_body {
+  background:#f4f6f9;
+}
+
+
+.T_B_RTS_section-title{
+  text-align:center;
+  font-weight:bold;
+  margin-bottom:30px;
+}
+
+
+.route-card{
+  background:#fff;
+  border-radius:14px;
+  padding:20px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.08);
+  transition:0.3s;
+}
+
+.route-card:hover{
+  transform:translateY(-6px);
+}
+
+
+.route-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+
+.T_B_RTS_city{
+  font-weight:bold;
+  font-size:16px;
+}
+
+.T_B_RTS_bus-icon{
+  font-size:26px;
+  color:#0d6efd;
+}
+
+
+.T_B_RTS_arrow{
+  font-size:22px;
+  animation:moveArrow 1.5s infinite;
+  color:#555;
+}
+
+@keyframes moveArrow{
+  0%{transform:translateX(0); opacity:0.4;}
+  50%{transform:translateX(6px); opacity:1;}
+  100%{transform:translateX(0); opacity:0.4;}
+}
+
+
+.price{
+  font-weight:bold;
+  color:#198754;
+}
+
+.carousel-item{
+  padding:15px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <h2 class="section-title">🚍 Top Bus Routes</h2>
+
+  <div id="routeCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="2500">
+    <div class="carousel-inner">
+
+      
+      <div class="carousel-item p-5 active">
+        <div class="row g-4">
+
+          <div class="col-md-4">
+            <div class="route-card">
+              <div class="route-row">
+                <div class="city">Hyderabad</div>
+                <div class="arrow"><i class="bi bi-arrow-right"></i></div>
+                <div class="city">Bangalore</div>
+              </div>
+              <div class="mt-2">
+                <i class="bi bi-bus-front bus-icon"></i>
+                <span class="ms-2">9 hrs • From ₹850</span>
+              </div>
+              <a href="busapplication.html"><button class="btn btn-primary w-100 mt-3">Book Now</button></a>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="route-card">
+              <div class="route-row">
+                <div class="city">Mumbai</div>
+                <div class="arrow"><i class="bi bi-arrow-right"></i></div>
+                <div class="city">Pune</div>
+              </div>
+              <div class="mt-2">
+                <i class="bi bi-bus-front bus-icon"></i>
+                <span class="ms-2">4 hrs • From ₹450</span>
+              </div>
+              <a href="busapplication.html"><button class="btn btn-primary w-100 mt-3">Book Now</button></a>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="route-card">
+              <div class="route-row">
+                <div class="city">Chennai</div>
+                <div class="arrow"><i class="bi bi-arrow-right"></i></div>
+                <div class="city">Coimbatore</div>
+              </div>
+              <div class="mt-2">
+                <i class="bi bi-bus-front bus-icon"></i>
+                <span class="ms-2">8 hrs • From ₹750</span>
+              </div>
+              <a href="busapplication.html"><button class="btn btn-primary w-100 mt-3">Book Now</button></a>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      
+      <div class="carousel-item">
+        <div class="row g-4">
+
+          <div class="col-md-4">
+            <div class="route-card">
+              <div class="route-row">
+                <div class="city">Delhi</div>
+                <div class="arrow"><i class="bi bi-arrow-right"></i></div>
+                <div class="city">Jaipur</div>
+              </div>
+              <div class="mt-2">
+                <i class="bi bi-bus-front bus-icon"></i>
+                <span class="ms-2">6 hrs • From ₹650</span>
+              </div>
+              <a href="busapplication.html"><button class="btn btn-primary w-100 mt-3">Book Now</button></a>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="route-card">
+              <div class="route-row">
+                <div class="city">Bangalore</div>
+                <div class="arrow"><i class="bi bi-arrow-right"></i></div>
+                <div class="city">Mysore</div>
+              </div>
+              <div class="mt-2">
+                <i class="bi bi-bus-front bus-icon"></i>
+                <span class="ms-2">3 hrs • From ₹300</span>
+              </div>
+              <a href="busapplication.html"><button class="btn btn-primary w-100 mt-3">Book Now</button></a>
+           </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="route-card">
+              <div class="route-row">
+                <div class="city">Kolkata</div>
+                <div class="arrow"><i class="bi bi-arrow-right"></i></div>
+                <div class="city">Durgapur</div>
+              </div>
+              <div class="mt-2">
+                <i class="bi bi-bus-front bus-icon"></i>
+                <span class="ms-2">5 hrs • From ₹550</span>
+              </div>
+              <a href="busapplication.html"><button class="btn btn-primary w-100 mt-3">Book Now</button></a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

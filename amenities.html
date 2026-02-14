@@ -1,0 +1,225 @@
+amenities.html
+
+
+<html>
+<head>
+  <title>Amenities</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+  <style>
+    .Asub{
+    border:2px solid whitesmoke;
+    height:250px;
+    background-color: white;
+    margin:20px;
+    margin-left:10px;
+    padding:15px;
+    justify-content:center;
+    border-radius:10px;
+     
+    
+  }
+  .Ahead{
+    color: white;
+  }
+  .Amdiv{
+    margin:40px;
+    padding:5px;
+    background: linear-gradient(45deg, navy, aqua);
+    border-radius:5px;
+    justify-content:center;
+    border:2px solid darkslateblue;
+  }
+  
+  .letter {
+    text-align:center;
+    display: inline-block;
+    color:whitesmoke;
+  
+  opacity: 0;
+  transform: translateY(10px);
+  animation: reveal 0.3s forwards;
+}
+
+@keyframes reveal {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+  .Ash{
+    color:darkslateblue;
+    margin:3px;
+  }
+  .Amains{
+    margin:40px;
+    padding:5px;
+    background: linear-gradient(135deg, navy, aqua);
+    justify-content:center;
+    box-shadow:0 0 10px gainsboro, 0 0 20px gainsboro;
+    border-radius:5px;
+  }
+  .Asubs{
+    height:80px;
+    padding:20px;
+    background-color: white;
+    margin:10px;
+    border-radius:5px;
+    box-shadow:0 0 5px grey;
+    cursor:pointer;
+    transition:transform 0.2s ease ;
+  }
+  .Asubs:hover {
+    transform: scale(1.10);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    box-shadow:0 0 10px gainsboro, 0 0 20px gainsboro;
+}
+  .Asub:hover {
+    transform: scale(1.10);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    box-shadow:0 0 10px gainsboro, 0 0 20px gainsboro;    
+}
+.Abody{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial, sans-serif;
+}
+  </style>
+</head>
+<body id="BODY">
+ <div class="tee">
+   <div class="Amdiv row">
+    
+    <h2 class="animate-heading">Available amenities</h2>
+    <div class="Asub col-12 col-lg-6 col-md-4 col-sm-4 d-flex flex-column">
+      <div class="Aimg">
+        <img src="https://uxwing.com/wp-content/themes/uxwing/download/peoples-avatars/comfortable-comfort-icon.png"
+          alt="seat" height="100" width="100">
+      </div>
+      <div class="Aimg-caption">
+        <h3 class="Ash">comfortable seats</h3>
+        <h6 class="Ash">comfortabke seats for relaxed journey</h6>
+      </div>
+    </div>
+    <div class="Asub col-12 col-lg-6 col-md-4 col-sm-4 d-flex flex-column">
+      <div class="Aimg">
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAACUCAMAAAANv/M2AAAAq1BMVEX///8AAACNpLDJ6vu+3eaQp7NoeYK8vLy5ubnN7/8fJSioxM682+uIiIiZsr+Tq7hebXb71pnV1dV/lJ7m5uapqak6Ojo7RUrIyMj/3p8TExO10+KjjmVHPCvs7OxCQkJ8fHyXl5dLV10cHBza///T9f/29vZVYmonLC2vmG2GnKfW+v8xOT2Gm55KTEyUnJxdXV1scnMADQ9XYWJwYkYzKx8qJCCrtLcTIiT0elVXAAAE0UlEQVR4nO2c6WKaMACAFYcVO4UpWGY3FB1onaOo3db3f7JJOCSXgRaS2OX71XAkn2nuAJ2OQqFQKBQKhUKhUCgUKN5kIDUTD3d29l3J2Tuosy9aqQo+ks+ifaoB5bUdi9apRmyXpN302FBiUkO3JH0HjkzvJWYKFO8w6cfAkJbgkSbdk5iPJS26DFyDJn3/WWLuKdI3gJLmhZLmBS69sfiyAam+fKPzcvHaUKR3Jl/AcGL+9JXO08VrR5GeanzJpb9QyaSLi0nSOldnvY60rqT/S+nu7+90fssqzUZJv5eK0nOppM1qi1orTSZpzbQe2PQ1uaS1Sr29bNLVUdK8kEhaz2GH5JHerFL6mq7pOysLWaDu5aGDpsskPV4UbXHSrm2K0MnUzFMRsjSZpEs94vZstS5Cw3MfWOpdpOoR6dJnE1ml9T+XAnEu0g9FKNI1c3YJaVJJ7/JCfUoycxoVzkm1LEI7qSqipo8z0q7azINQSHXjfPlo0hJDk7b6EmNRpG8AJc0LJc0Lwj7iJ4mh7SM+GqL3kulQd2xvc29ctNg1PrK00RNZ8XrGG6SN3thqse1iYo1h7SrSRq8/F+nc7c77kHUV6Z8rkcIpq5/1pIOqWwutMg3q5bQUT57ua+W0MQYrJ3Nh0wILVKj12KghnZWOvilqcmWmLVepfNCfFkOkRc5kEWnq2GMcyCsdjDFpFxThfWDIKm0EoGUYlh+QzR5Ftj7/yPgFwsU6FX9MIPAr0wke0zIeQ4/Y+29ulrgCP2DvRew7xBMh7zJMRAtVYdJBcEUbscGczyVkOWPfJ47ZkvCeS9KGOCNpcWyiskISvIFDqAjNMXEG5EL7DrykG3XZ172VpPHaN239nNTgKGw41oIQdG7PDce6TCJd4NJ/4xGaP+Eo/ls6jd7jlU5f7gE7isv3e0JQpJPDW7g1spNMW4Irw+R0hJzekux4Sk9AWgPoWDo2B6Y2+PMOOj0AEaF1mqs06EThsRdDGrxEOFPSVJS0kr6CklbSV7hJabAwskCHGQ1Lx40qh89HYqTNSYNR3vH5fcNI2y+TvQuPDR0bk06HvudsgZKtOS/0iK/sY/nQnHRISi+uNysgfhsB++pDg9JVU7yGT4jBxy9rULpqkleYrNH7F6Rf3aR0x1mgaa5rTqXdaFbmQK4UjUqfK/8JSjSqPZH2IChNUbPS5+oIp1rXuRpNS3PhJqXd49ukjy0u+zA5EKwY0unpAzdFz4UZpHvRR7jCMKQ98M/p7gdIZC3VOpuyL4OsITGkwxE5lqidBWhKaujCC0M6q7yE396Gc3ggJzZArmNJp2tMOIdWVjeJOb3FGi+mdGey5ZbTHXt5nMNsYx+vP2zpjufHWySq47KlTZUQqfAu6cNqVaSTT8ahcbW29F0JB5WuNygWAliThqSXYjOxCt5rInoCoh541e21pX6jQXyQuz4hIC/pgwH5gCgdUJE2tWUim6blHUXWIdWdNnHFdtJuY160cnfps59b6ba28690OqN8RFXq3PJuNBo5+VczxZlecIbrlKJD3pdPvxaHs8uGErTbNjaIWEHtcnjCLhBfVLDniNAdXA8baIkvIEhOr/BBROgiswfxOQ0twp3I457QLZcRCcp0MmLLuJqDdn6V/J264rb5B02xIgbvO+34AAAAAElFTkSuQmCC" alt="AirConditioning" height="100" width="100">
+      </div>
+      <div class="Aimg-caption">
+        <h3 class="Ash">Air Conditioning</h3>
+        <h6 class="Ash">fully air conditioned coaches</h6>
+      </div>
+    </div>
+    <div class="Asub col-12 col-lg-6 col-md-4 col-sm-4 d-flex flex-column">
+      <div class="Aimg">
+        <img src="https://toppng.com/uploads/preview/wifi-icon-blue-11530973970lg4mqjkp8q.png" alt="wifi" height="100" width="100">
+      </div>
+      <div class="Aimg-caption">
+        <h3 class="Ash">Free Wi-Fi</h3>
+        <h6 class="Ash">stay connected throughoutnthe journey</h6>
+      </div>
+    </div>
+    <div class="Asub col-12 col-lg-6 col-md-4 col-sm-4 d-flex flex-column">
+      <div class="Aimg">
+        <img src="https://icons.veryicon.com/png/o/commerce-shopping/hotel-light-line/phone-charging.png" alt="" height="100" width="100">
+      </div>
+      <div class="Aimg-caption">
+        <h3 class="Ash">Charging point</h3>
+        <h6 class="Ash">charging point for every seat</h6>
+      </div>
+    </div>
+    <div class="Asub col-12 col-lg-6 col-md-4 col-sm-4 d-flex flex-column">
+      <div class="Aimg">
+        <img src="data:image/png;base64,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" alt="drinking water" height="100" width="100">
+      </div>
+      <div class="Aimg-caption">
+        <h3 class="Ash">Drinking water</h3>
+        <h6 class="Ash">clean and hygienic drinking water</h6>
+      </div>
+    </div>
+    <div class="Asub col-12 col-lg-6 col-md-4 col-sm-4 d-flex flex-column">
+      <div class="Aimg">
+        <img src="https://uxwing.com/wp-content/themes/uxwing/download/crime-security-military-law/security-icon.png" alt="safety" height="50" width="50">
+      </div>
+      <div class="Aimg-caption">
+        <h3 class="Ash">Safety & CC-TV</h3>
+        <h6 class="Ash">24/7 monitoring security systems</h6>
+      </div>
+    </div>
+  </div>
+  
+  
+  
+  
+  
+  <div class="Amains journey-amenities row">
+    <h3 class="Ahead">journey amenities</h3>
+    <div class="Asubs col-12 col-lg-6 col-md-5 col-sm-5 d-flex flex-row">
+      <div class="Aimgs">
+        <img src="https://uxwing.com/wp-content/themes/uxwing/download/peoples-avatars/comfortable-comfort-icon.png"
+          alt="seat" height="50" width="50">
+      </div>
+      <div class="Aimg-caption">
+        <h5 class="Ash">comfortable seats</h5>
+      </div>
+    </div>
+    <div class="Asubs col-12 col-lg-6 col-md-5 col-sm-5 d-flex flex-row">
+      <div class="Aimgs">
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAACUCAMAAAANv/M2AAAAq1BMVEX///8AAACNpLDJ6vu+3eaQp7NoeYK8vLy5ubnN7/8fJSioxM682+uIiIiZsr+Tq7hebXb71pnV1dV/lJ7m5uapqak6Ojo7RUrIyMj/3p8TExO10+KjjmVHPCvs7OxCQkJ8fHyXl5dLV10cHBza///T9f/29vZVYmonLC2vmG2GnKfW+v8xOT2Gm55KTEyUnJxdXV1scnMADQ9XYWJwYkYzKx8qJCCrtLcTIiT0elVXAAAE0UlEQVR4nO2c6WKaMACAFYcVO4UpWGY3FB1onaOo3db3f7JJOCSXgRaS2OX71XAkn2nuAJ2OQqFQKBQKhUKhUCgUKN5kIDUTD3d29l3J2Tuosy9aqQo+ks+ifaoB5bUdi9apRmyXpN302FBiUkO3JH0HjkzvJWYKFO8w6cfAkJbgkSbdk5iPJS26DFyDJn3/WWLuKdI3gJLmhZLmBS69sfiyAam+fKPzcvHaUKR3Jl/AcGL+9JXO08VrR5GeanzJpb9QyaSLi0nSOldnvY60rqT/S+nu7+90fssqzUZJv5eK0nOppM1qi1orTSZpzbQe2PQ1uaS1Sr29bNLVUdK8kEhaz2GH5JHerFL6mq7pOysLWaDu5aGDpsskPV4UbXHSrm2K0MnUzFMRsjSZpEs94vZstS5Cw3MfWOpdpOoR6dJnE1ml9T+XAnEu0g9FKNI1c3YJaVJJ7/JCfUoycxoVzkm1LEI7qSqipo8z0q7azINQSHXjfPlo0hJDk7b6EmNRpG8AJc0LJc0Lwj7iJ4mh7SM+GqL3kulQd2xvc29ctNg1PrK00RNZ8XrGG6SN3thqse1iYo1h7SrSRq8/F+nc7c77kHUV6Z8rkcIpq5/1pIOqWwutMg3q5bQUT57ua+W0MQYrJ3Nh0wILVKj12KghnZWOvilqcmWmLVepfNCfFkOkRc5kEWnq2GMcyCsdjDFpFxThfWDIKm0EoGUYlh+QzR5Ftj7/yPgFwsU6FX9MIPAr0wke0zIeQ4/Y+29ulrgCP2DvRew7xBMh7zJMRAtVYdJBcEUbscGczyVkOWPfJ47ZkvCeS9KGOCNpcWyiskISvIFDqAjNMXEG5EL7DrykG3XZ172VpPHaN239nNTgKGw41oIQdG7PDce6TCJd4NJ/4xGaP+Eo/ls6jd7jlU5f7gE7isv3e0JQpJPDW7g1spNMW4Irw+R0hJzekux4Sk9AWgPoWDo2B6Y2+PMOOj0AEaF1mqs06EThsRdDGrxEOFPSVJS0kr6CklbSV7hJabAwskCHGQ1Lx40qh89HYqTNSYNR3vH5fcNI2y+TvQuPDR0bk06HvudsgZKtOS/0iK/sY/nQnHRISi+uNysgfhsB++pDg9JVU7yGT4jBxy9rULpqkleYrNH7F6Rf3aR0x1mgaa5rTqXdaFbmQK4UjUqfK/8JSjSqPZH2IChNUbPS5+oIp1rXuRpNS3PhJqXd49ukjy0u+zA5EKwY0unpAzdFz4UZpHvRR7jCMKQ98M/p7gdIZC3VOpuyL4OsITGkwxE5lqidBWhKaujCC0M6q7yE396Gc3ggJzZArmNJp2tMOIdWVjeJOb3FGi+mdGey5ZbTHXt5nMNsYx+vP2zpjufHWySq47KlTZUQqfAu6cNqVaSTT8ahcbW29F0JB5WuNygWAliThqSXYjOxCt5rInoCoh541e21pX6jQXyQuz4hIC/pgwH5gCgdUJE2tWUim6blHUXWIdWdNnHFdtJuY160cnfps59b6ba28690OqN8RFXq3PJuNBo5+VczxZlecIbrlKJD3pdPvxaHs8uGErTbNjaIWEHtcnjCLhBfVLDniNAdXA8baIkvIEhOr/BBROgiswfxOQ0twp3I457QLZcRCcp0MmLLuJqDdn6V/J264rb5B02xIgbvO+34AAAAAElFTkSuQmCC" alt="AirConditioning" height="50" width="50">
+      </div>
+      <div class="Aimg-caption">
+        <h5 class="Ash">Air Conditioning</h5>
+      </div>
+    </div>
+    <div class="Asubs col-12 col-lg-6 col-md-5 col-sm-5 d-flex flex-row">
+      <div class="Aimgs">
+        <img src="https://toppng.com/uploads/preview/wifi-icon-blue-11530973970lg4mqjkp8q.png" alt="wifi" height="50" width="50">
+      </div>
+      <div class="Aimg-caption">
+        <h5 class="Ash">Free Wi-Fi</h5>
+      </div>
+    </div>
+    <div class="Asubs col-12 col-lg-6 col-md-5 col-sm-5 d-flex flex-row">
+      <div class="Aimgs">
+        <img src="https://icons.veryicon.com/png/o/commerce-shopping/hotel-light-line/phone-charging.png" alt="" height="50" width="50">
+      </div>
+      <div class="Aimg-caption">
+        <h5 class="Ash">Charging point</h5>
+      </div>
+    </div>
+    <div class="Asubs col-12 col-lg-6 col-md-5 col-sm-5 d-flex flex-row">
+      <div class="Aimgs">
+        <img src="data:image/png;base64,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" alt="drinking water" height="50" width="50">
+      </div>
+      <div class="Aimg-caption">
+        <h5 class="Ash">Drinking water</h5>
+      </div>
+    </div>
+    <div class="Asubs col-12 col-lg-6 col-md-5 col-sm-5 d-flex flex-row">
+      <div class="Aimgs">
+        <img src="https://uxwing.com/wp-content/themes/uxwing/download/crime-security-military-law/security-icon.png" alt="safety" height="50" width="50">
+      </div>
+      <div class="Aimg-caption">
+        <h5 class="Ash">Safety & CC-TV</h5>
+      </div>
+    </div>
+  </div>
+  </div>
+ </div>
+ <script>
+  document.querySelectorAll('.animate-heading').forEach(heading => {
+  const text = heading.innerText;
+  heading.innerText = ''; // Clear original text
+  
+  text.split('').forEach((char, index) => {
+    const span = document.createElement('span');
+    span.innerText = char === ' ' ? '\u00A0' : char; // Handle spaces
+    span.classList.add('letter');
+    span.style.animationDelay = `${index * 0.1}s`; // Stagger the letters
+    heading.appendChild(span);
+  });
+});
+ </script>
+</body>
+</html>

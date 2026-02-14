@@ -1,0 +1,192 @@
+login.html
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Flip Login</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            background-color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+        }
+
+        .flip-card {
+            background-color: transparent;
+            width: 350px;
+            height: 450px;
+            perspective: 1000px;
+        }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+        }
+
+        .flipped {
+            transform: rotateY(180deg);
+        }
+
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 30px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+       
+        .flip-card-front video,
+        .flip-card-back video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+            filter: brightness(0.6);
+        }
+
+        .flip-card-front {
+            color: white;
+        }
+
+        .flip-card-back {
+            color: white;
+            transform: rotateY(180deg);
+        }
+
+        .form-box h2 {
+            margin-bottom: 20px;
+            color: #fff;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.4);
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            outline: none;
+            background: rgba(255,255,255,0.8);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #e74c3c;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 15px;
+        }
+
+        span {
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<style>
+    body {
+        background: linear-gradient(135deg, #1e3c72, #2a5298);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        overflow: hidden;
+    }
+</style>
+
+<body class="tee">
+
+    <div class="flip-card">
+        <div class="flip-card-inner" id="cardInner">
+            
+            <div class="flip-card-front">
+                
+                <video autoplay muted loop>
+                    <source src="https://media.istockphoto.com/id/1390880690/cs/video/fantasy-asijsk%C3%BD-chr%C3%A1m-s-tajemn%C3%BDmi-sv%C4%9Btly.mp4?s=mp4-480x480-is&k=20&c=o-BrwdsydCjG9dv1HMZgM3k3V-AU0Yr8sKfnofeFOs0=" type="video/mp4">
+                </video>
+
+                <form class="form-box">
+                    <h2>Login</h2>
+                    <input id="email" type="email" placeholder="Email" required>
+                    <input id="password" type="password" placeholder="Password" required>
+                    <a href="bookingtype.html"><button type="button" onclick="gg()" class="btn">Login</button></a>
+                    <p>Don't have an account? <span onclick="toggleCard()">Sign Up</span></p>
+                </form>
+            </div>
+
+            <div class="flip-card-back">
+                
+                <video autoplay muted loop>
+                    <source src="https://media.istockphoto.com/id/2191135085/cs/video/4k-leteck%C3%BD-pohled-v-re%C3%A1ln%C3%A9m-%C4%8Dase-z%C3%A1b%C4%9Bry-slo%C5%BEit%C3%A9-d%C3%A1lni%C4%8Dn%C3%AD-silni%C4%8Dn%C3%AD-k%C5%99i%C5%BEovatky-s-dopravou.mp4?s=mp4-480x480-is&k=20&c=ebAaK2HUsx09aifha1Oq3LqNWpV46UKwYAICwAIkrY4=" type="video/mp4">
+                </video>
+
+                <form class="form-box">
+                    <h2>Sign Up</h2>
+                    <input type="text" placeholder="Full Name" required>
+                    <input type="email" placeholder="Email" required>
+                    <input type="password" placeholder="Password" required>
+                    <button type="submit" onclick="signup()" class="btn">Create Account</button>
+                    <p>Already have an account? <span onclick="toggleCard()">Login</span></p>
+                </form>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        function gg() {
+            const email = document.getElementById("email");
+            const password = document.getElementById("password");
+
+            if (email.value !== "" && password.value !== "") {
+                alert("Your login is successful!");
+            } else {
+                alert("Fill the details properly!!");
+            }
+        }
+         
+        
+
+        function toggleCard() {
+           
+            const card = document.getElementById('cardInner');
+            card.classList.toggle('flipped');
+        }
+
+       
+        
+    </script>
+
+</body>
+</html>

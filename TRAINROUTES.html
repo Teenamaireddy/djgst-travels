@@ -1,0 +1,165 @@
+TRAINROUTES.html
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Train Booking</title>
+
+<style>
+body{
+  margin:0;
+  padding:30px;
+  font-family:Arial, sans-serif;
+  background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+  color:white;
+}
+
+h1{
+  text-align:center;
+  margin-bottom:30px;
+  animation: slide 1.2s ease;
+}
+
+@keyframes slide{
+  from{transform:translateX(-200px); opacity:0;}
+  to{transform:translateX(0); opacity:1;}
+}
+
+.routes{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:20px;
+}
+
+.route-card{
+  background:linear-gradient(135deg,#ff512f,#dd2476);
+  padding:20px;
+  border-radius:15px;
+  box-shadow:0 10px 20px rgba(0,0,0,0.3);
+  transform:translateX(0);
+  transition:transform 0.4s, box-shadow 0.4s;
+}
+
+.route-card:hover{
+  transform:translateX(15px) scale(1.05); /* 1D Transform */
+  box-shadow:0 15px 30px rgba(0,0,0,0.5);
+}
+
+.route-card h3{
+  margin:0;
+  font-size:18px;
+}
+
+.route-card p{
+  margin:8px 0;
+}
+
+button{
+  margin-top:10px;
+  width:100%;
+  padding:10px;
+  border:none;
+  border-radius:20px;
+  font-size:15px;
+  cursor:pointer;
+  background:linear-gradient(135deg,#00f260,#0575e6);
+  color:white;
+  transition:transform 0.3s, background 0.3s;
+}
+
+button:hover{
+  transform:translateX(10px);
+  background:linear-gradient(135deg,#ff9a9e,#fad0c4);
+}
+
+.success{
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  background:#00e676;
+  color:black;
+  padding:15px 25px;
+  border-radius:30px;
+  display:none;
+  animation: pop 0.6s ease;
+}
+
+@keyframes pop{
+  from{transform:scale(0); opacity:0;}
+  to{transform:scale(1); opacity:1;}
+}
+</style>
+</head>
+
+<body>
+
+<h1>🚆 Train Booking – Available Routes</h1>
+
+<div class="routes" id="routes"></div>
+
+
+<script>
+const routes = [
+ "Delhi → Mumbai",
+ "Mumbai → Chennai",
+ "Chennai → Bangalore",
+ "Bangalore → Hyderabad",
+ "Hyderabad → Pune",
+ "Pune → Nagpur",
+ "Nagpur → Bhopal",
+ "Bhopal → Jaipur",
+ "Jaipur → Delhi",
+ "Delhi → Kolkata",
+ "Kolkata → Guwahati",
+ "Guwahati → Siliguri",
+ "Siliguri → Patna",
+ "Patna → Ranchi",
+ "Ranchi → Bhubaneswar",
+ "Bhubaneswar → Vizag",
+ "Vizag → Vijayawada",
+ "Vijayawada → Tirupati",
+ "Tirupati → Chennai",
+ "Chennai → Coimbatore"
+];
+
+const routesDiv = document.getElementById("routes");
+
+routes.forEach((route, index) => {
+  const card = document.createElement("div");
+  card.className = "route-card";
+
+  card.innerHTML = `
+    <h3>${route}</h3>
+    <p>Train No: ${12000 + index}</p>
+    <p>Price: ₹${500 + index * 20}</p>
+    <!-- HERE -->
+  <a href="trainapplication.html" style="text-decoration:none;">
+   <button onclick="bookNow('${route}', ${12000 + index})">
+      book now
+    </button>
+    
+  `;
+  routesDiv.appendChild(card);
+});
+
+function bookNow(route, trainNo){
+  console.clear();
+  console.log("🚆 Train Booking Started");
+  console.log("Route:", route);
+  console.log("Train Number:", trainNo);
+  console.log("Status: BOOKED ✅");
+
+  const msg = document.getElementById("successMsg");
+  msg.style.display = "block";
+
+  setTimeout(() => {
+    msg.style.display = "none";
+  }, 3000);
+}
+</script>
+<footer><h1> <a href="Tindex.html"><button class="m-5">back</button></a> </h1></footer>
+</body>
+</html>

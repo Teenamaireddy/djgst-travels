@@ -1,0 +1,475 @@
+flight_ticket_booking.html
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>flight_ticket_booking</title>
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    <style>
+        :root {
+            --primary: #003087; --accent: #ff6f00; --success: #28a745;
+            --bg: #f0f2f5; --white: #ffffff; --text: #333; --glass: rgba(255, 255, 255, 0.2);
+        }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding: 0; color: var(--text); overflow-x: hidden; }
+        .container { width: 100%; max-width: 800px; margin: 20px auto; padding-bottom: 120px; }
+
+        .section { background: var(--white); padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); display: none; animation: slideUp 0.4s ease-out; }
+        .active-section { display: block; }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        h2 { color: var(--primary); margin: 0 0 10px 0; text-align: center; }
+        p.subtitle { text-align: center; color: #666; margin-bottom: 25px; }
+
+   
+        .form-group { margin:15px; }
+        select, input[type="date"], input[type="number"], input[type="text"], input[type="email"] { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; box-sizing: border-box; }
+        .flight-card { border: 2px solid #eee; padding: 20px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; cursor: pointer; transition: 0.3s; }
+        .flight-card:hover { border-color: var(--primary); background: #f0f7ff; }
+        .flight-card.selected-flight { border-color: var(--primary); background: #eef4ff; box-shadow: 0 0 10px rgba(0,48,135,0.2); }
+        .flight-price { font-size: 1.3rem; font-weight: bold; color: var(--accent); }
+
+        
+        .seat-map-container { display: flex; flex-direction: column; align-items: center; margin-top: 20px; }
+        .plane-front { width: 200px; height: 40px; background: #e0e0e0; border-radius: 40px 40px 0 0; margin-bottom: 20px; text-align: center; line-height: 40px; font-weight: bold; color: #666; font-size: 0.8rem; }
+        .seat-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; background: #f9f9f9; padding: 15px; border-radius: 15px; }
+        .seat { width: 30px; height: 30px; background: #fff; border: 2px solid #ddd; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; transition: 0.2s; }
+        .seat.occupied { background: #e0e0e0; cursor: not-allowed; border-color: #ccc; color: transparent; }
+        .seat.selected-seat { background: var(--primary); color: white; border-color: var(--primary); }
+        .seat.extra-legroom { border-color: #ffd700; }
+        .aisle { width: 15px; grid-column: 4; }
+        .legend { display: flex; justify-content: center; gap: 10px; margin-top: 20px; font-size: 0.7rem; flex-wrap: wrap; }
+        .legend-item { display: flex; align-items: center; gap: 5px; }
+
+      
+        .amenity-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .card { border: 2px solid #eee; padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; position: relative; transition: 0.3s; }
+        .card.selected { border-color: var(--primary); background: #f0f7ff; }
+        .card.selected::before { content: '✓'; position: absolute; top: 10px; right: 10px; color: var(--primary); font-weight: bold; }
+        .icon { font-size: 2rem; display: block; }
+
+        
+        .method-box { border: 1px solid #ddd; padding: 18px; border-radius: 12px; margin-bottom: 12px; cursor: pointer; font-weight: 700; transition: 0.2s; display: flex; align-items: center; gap: 10px; }
+        .method-box:hover { background: #f8f9fa; }
+        .sub-menu { background: #fafafa; padding: 15px; border: 1px solid #ddd; border-top: none; border-radius: 0 0 12px 12px; margin-top: -12px; margin-bottom: 15px; display: none; text-align: center; }
+        .mode-btn { width: 45%; padding: 10px; border: 1px solid var(--primary); background: white; border-radius: 8px; cursor: pointer; margin: 2px; }
+        .mode-btn.active { background: var(--primary); color: white; }
+
+         
+        .timer-box { color: #d93025; background: #fce8e6; padding: 10px 20px; border-radius: 25px; font-weight: bold; display: inline-block; margin-bottom: 20px; }
+        .qr-container img { width: 200px; border: 1px solid #eee; padding: 10px; background: white; border-radius: 15px; }
+        .pay-app-btn { background: #5f259f; color: white; padding: 12px; border-radius: 8px; width: 80%; border: none; font-weight: bold; margin-bottom: 15px; cursor: pointer; display: none; }
+
+         
+        .boarding-pass {
+            max-width: 380px; margin: 0 auto;
+            background: rgba(0, 48, 135, 0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: white; border-radius: 20px; padding: 25px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.2);
+            position: relative; overflow: hidden;
+        }
+        .bp-row { display: flex; justify-content: space-between; margin: 15px 0; font-size: 0.9rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; }
+        .bp-title { text-align: center; font-size: 1.6rem; font-weight: 800; margin-bottom: 20px; letter-spacing: 1px; }
+        .bp-chip { background: var(--accent); padding: 4px 10px; border-radius: 8px; font-weight: bold; }
+        .bp-plane-anim { font-size: 2.5rem; text-align: center; margin: 15px 0; animation: flyPlane 3s infinite linear; }
+        @keyframes flyPlane {
+            0% { transform: translateX(-100px); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateX(100px); opacity: 0; }
+        }
+
+       
+        .tracker-container { background: #1a1a1a; color: white; border-radius: 15px; padding: 20px; margin-top: 20px; position: relative; }
+        .track-line { height: 4px; background: #444; width: 100%; position: relative; margin: 40px 0; border-radius: 2px; }
+        .track-plane { position: absolute; top: -15px; left: 0%; transition: left 3s ease-in-out; font-size: 1.5rem; }
+        .track-point { position: absolute; top: -8px; width: 20px; height: 20px; background: var(--accent); border-radius: 50%; }
+
+         
+        .timeline { margin: 20px 0; padding-left: 20px; border-left: 3px solid var(--primary); text-align: left; }
+        .timeline-item { position: relative; margin-bottom: 20px; padding-left: 20px; }
+        .timeline-item::before { content: ''; position: absolute; left: -28px; top: 5px; width: 12px; height: 12px; border-radius: 50%; background: var(--primary); }
+
+        
+        .sms-mock { background: #e9e9eb; border-radius: 15px; padding: 15px; max-width: 250px; margin: 20px auto; color: black; font-size: 0.85rem; border-left: 5px solid #007aff; text-align: left; }
+
+         
+        .receipt-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px dashed #ddd; }
+        
+        /* Progress Bar Styles */
+        .progress-container { width: 80%; background: #e0e0e0; height: 10px; border-radius: 10px; margin: 20px auto; overflow: hidden; }
+        .progress-bar { width: 0%; height: 100%; background: var(--primary); transition: width 0.15s linear; }
+
+        @media print {
+            body { background: white; }
+            .footer-bar, button, .timer-box, .section:not(.active-section) { display: none !important; }
+            .section { box-shadow: none; border: 1px solid #000; display: block !important; }
+            .container { margin: 0; max-width: 100%; }
+        }
+
+        .footer-bar { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); z-index: 1000; }
+        .btn-next { background: var(--accent); color: white; border: none; padding: 14px 30px; border-radius: 30px; font-weight: bold; cursor: pointer; font-size: 1rem; }
+        .btn-back { background: #e0e0e0; color: #333; border: none; padding: 14px 30px; border-radius: 30px; font-weight: bold; cursor: pointer; font-size: 1rem; }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div id="step1" class="section active-section">
+        <h2>Book Your Flight</h2>
+        
+        <div style="background: #f8f9fa; padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #eee;">
+            <div class="form-group"><label>Passenger Name</label><input type="text" id="userNameInput" placeholder="Enter full name"></div>
+            <div class="form-group"><label>Email ID</label><input type="email" id="userEmailInput" placeholder="Enter email address"></div>
+        </div>
+
+        <div class="form-group"><label>From</label><select id="fromLoc"><option>New Delhi (DEL)</option><option>Bengaluru (BLR)</option></select></div>
+        <div class="form-group"><label>To</label><select id="toLoc"><option>Mumbai (BOM)</option><option>Hyderabad (HYD)</option></select></div>
+        <div class="form-group"><label>Date of Journey</label><input type="date" id="travelDate"></div>
+        <div class="form-group"><label>Number of Seats</label><input type="number" id="seatInput" value="1" min="1"></div>
+        
+        <div class="flight-results">
+            <div class="flight-card" onclick="selectFlight(this, 5400, 'SkyBound 402')">
+                <div><h4>SkyBound 402 • 06:30 AM</h4><small>Non-stop • 2h 15m</small></div>
+                <div class="flight-price">₹5,400</div>
+            </div>
+            <div class="flight-card" onclick="selectFlight(this, 7200, 'SkyBound 881')">
+                <div><h4>SkyBound 881 • 12:45 PM</h4><small>Non-stop • 2h 00m</small></div>
+                <div class="flight-price">₹7,200</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="step1_5" class="section">
+        <h2>Select Your Seats</h2>
+        <p class="subtitle">Please select <span id="reqSeats">0</span> seats for your journey</p>
+        <div class="seat-map-container">
+            <div class="plane-front">Front of Aircraft</div>
+            <div class="seat-grid" id="seatMap"></div>
+            <div class="legend">
+                <div class="legend-item"><div class="seat"></div> Standard</div>
+                <div class="legend-item"><div class="seat extra-legroom"></div> XL (₹900)</div>
+                <div class="legend-item"><div class="seat selected-seat"></div> Selected</div>
+                <div class="legend-item"><div class="seat occupied"></div> Taken</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="step2" class="section">
+        <h2>Customise Your Journey</h2>
+        <div class="amenity-grid">
+            <div class="card" onclick="toggleAmenity(this, 1200)"><span class="icon">🍱</span>Meal<div style="font-weight:bold">₹1,200</div></div>
+            <div class="card" onclick="toggleAmenity(this, 2500)"><span class="icon">🛋️</span>Lounge<div style="font-weight:bold">₹2,500</div></div>
+            <div class="card" onclick="toggleAmenity(this, 850)"><span class="icon">📶</span>WiFi<div style="font-weight:bold">₹850</div></div>
+            <div class="card" onclick="toggleAmenity(this, 999)"><span class="icon">⚡</span>Priority<div style="font-weight:bold">₹999</div></div>
+            <div class="card" onclick="toggleAmenity(this, 1500)"><span class="icon">🛂</span>Fast Track<div style="font-weight:bold">₹1,500</div></div>
+            <div class="card" onclick="toggleAmenity(this, 300)"><span class="icon">🌱</span>Eco Offset<div style="font-weight:bold">₹300</div></div>
+            <div class="card" onclick="toggleAmenity(this, 500)"><span class="icon">🛡️</span>Insurance<div style="font-weight:bold">₹500</div></div>
+            <div class="card" onclick="toggleAmenity(this, 2000)"><span class="icon">💺</span>Extra Legroom<div style="font-weight:bold">₹2,000</div></div>
+        </div>
+    </div>
+
+    <div id="step3" class="section">
+        <h2>Payment Method</h2>
+        <div class="method-box" onclick="toggleUPI('p-sub', 'PhonePe')"><span>📱</span> PhonePe</div>
+        <div id="p-sub" class="sub-menu">
+            <button class="mode-btn active" onclick="setPayMode('QR', this)">QR Code</button>
+            <button class="mode-btn" onclick="setPayMode('Mob', this)">Mobile No</button>
+        </div>
+        <div class="method-box" onclick="toggleUPI('g-sub', 'GooglePay')"><span>💳</span> Google Pay</div>
+        <div id="g-sub" class="sub-menu">
+            <button class="mode-btn active" onclick="setPayMode('QR', this)">QR Code</button>
+            <button class="mode-btn" onclick="setPayMode('Mob', this)">Mobile No</button>
+        </div>
+        <div class="method-box" onclick="toggleUPI('paytm-sub', 'Paytm')"><span>💰</span> Paytm</div>
+        <div id="paytm-sub" class="sub-menu">
+            <button class="mode-btn active" onclick="setPayMode('QR', this)">QR Code</button>
+            <button class="mode-btn" onclick="setPayMode('Mob', this)">Mobile No</button>
+        </div>
+        <button class="btn-next" style="width:100%; margin-top:20px;" onclick="goToPaymentStage()">Proceed to Pay</button>
+    </div>
+
+    <div id="step4" class="section" style="text-align:center">
+        <div class="timer-box">⏳ Time Left: <span id="timer">01:00</span></div>
+        <div id="qrV">
+            <p>Scan to Pay <strong>₹<span class="finalAmt"></span></strong></p>
+            <div class="qr-container"><img id="qrImg" src=""></div>
+        </div>
+        <div id="mobV" class="hidden">
+            <p>Pay via <strong><span id="selectedAppName"></span></strong></p>
+            <button class="pay-app-btn" id="deepLinkBtn" style="display:inline-block;" onclick="openUPIApp()">Open Payment App</button>
+            <input type="tel" placeholder="9876543210" style="padding:15px; width:70%; border-radius:10px; border:1px solid #ccc; text-align: center;">
+        </div>
+        <button class="btn-next" style="width:100%; margin-top:30px; background:var(--success)" onclick="verifyAndLoad()">I've paid</button>
+    </div>
+
+    <div id="stepLoading" class="section" style="text-align:center">
+        <lottie-player src="https://assets10.lottiefiles.com/packages/lf20_1pxqjqps.json" background="transparent" speed="1" style="width: 250px; height: 250px; margin: 0 auto;" loop autoplay></lottie-player>
+        <h3>Authenticating...</h3>
+        <div class="progress-container">
+            <div class="progress-bar" id="pBar"></div>
+        </div>
+        <div style="font-weight:700; color:var(--primary)">Processing <span id="loadPercent">0%</span></div>
+    </div>
+
+    <div id="step5" class="section" style="text-align:center">
+        <h2>Your Digital Ticket</h2>
+        <div class="boarding-pass">
+            <div class="bp-title">SkyBound Airlines</div>
+            <div class="bp-plane-anim">✈️</div>
+            <div class="bp-row"><span>Passenger</span><strong id="bpName">Guest User</strong></div>
+            <div class="bp-row"><span>Flight</span><strong id="bpFlight"></strong></div>
+            <div class="bp-row"><span>Seats</span><span class="bp-chip" id="bpSeats"></span></div>
+            <div class="bp-row"><span>Gate</span><span class="bp-chip" id="bpGate">G-24</span></div>
+            <div class="bp-row"><span>Boarding</span><span class="bp-chip" id="bpTime">20 Mins Before</span></div>
+        </div>
+        
+        <div class="sms-mock">
+            <strong>SMS Today 10:45</strong><br>
+            Booking Confirmed! ID: <span id="smsId"></span>. Your flight <span id="smsFlight"></span> is on time. See you at the airport!
+        </div>
+
+        <button class="btn-next" style="width:100%; margin-top:25px" onclick="changeView(6)">Swipe to Confirm & Track</button>
+    </div>
+
+    <div id="step6" class="section">
+        <div style="text-align:center">
+            <div style="font-size:3rem; color:var(--success)">✓</div>
+            <h2>Journey Confirmed</h2>
+        </div>
+
+        <div class="tracker-container">
+            <div style="display:flex; justify-content:space-between">
+                <span id="trackFrom">DEL</span>
+                <span id="trackTo">BOM</span>
+            </div>
+            <div class="track-line">
+                <div class="track-point" style="left:0"></div>
+                <div class="track-plane" id="livePlane">✈️</div>
+                <div class="track-point" style="right:0"></div>
+            </div>
+            <p style="text-align:center; font-size:0.8rem">Status: <span id="flightStatus" style="color:var(--accent)">Taxiing...</span></p>
+        </div>
+
+        <div class="timeline">
+            <div class="timeline-item"><strong>Ticket Issued</strong><br><small>Instant confirmation</small></div>
+            <div class="timeline-item"><strong>Web Check-in</strong><br><small>Opens 48h before</small></div>
+            <div class="timeline-item"><strong>Departure</strong><br><small id="tlDate"></small></div>
+        </div>
+
+        <div class="receipt-row"><span>Passenger Name:</span><strong id="rName"></strong></div>
+        <div class="receipt-row"><span>Email ID:</span><span id="rEmail"></span></div>
+        <div class="receipt-row"><span>Transaction ID:</span><span id="rT" style="font-family:monospace;"></span></div>
+        <div class="receipt-row"><span>Amount Paid:</span><strong id="rA"></strong></div>
+        
+        <div style="display: flex; gap: 10px; margin-top: 25px;">
+            <button class="btn-next" style="flex:1; background:var(--primary)" onclick="window.print()">Print PDF</button>
+            <button class="btn-next" style="flex:1; background:var(--bg); color: #333;" onclick="location.reload()">Home</button>
+        </div>
+    </div>
+
+    <div class="footer-bar" id="globalFooter">
+        <button class="btn-back hidden" id="backBtn" onclick="goBack()">Back</button>
+        <div id="priceDisplay">
+            <small>Total Payable</small>
+            <div id="mainP" style="font-size:1.4rem; font-weight:800; color:var(--primary)">₹0</div>
+        </div>
+        <button class="btn-next" onclick="navigateStep()">Next Step</button>
+    </div>
+</div>
+
+<script>
+    // CALENDAR RESTRICTION LOGIC
+    window.onload = function() {
+        const dateInput = document.getElementById('travelDate');
+        const today = new Date().toISOString().split('T')[0];
+        dateInput.setAttribute('min', today);
+    };
+
+    let currentStep = 1, fBasePrice = 0, aPrice = 0, sPrice = 0, fName = "", pMode = 'QR', selectedApp = '', timer;
+    let selectedSeats = [];
+
+    function selectFlight(card, price, name) {
+        let seatCount = parseInt(document.getElementById("seatInput").value);
+        if (isNaN(seatCount) || seatCount <= 0) return alert("Enter valid seat count.");
+        document.querySelectorAll('.flight-card').forEach(el => el.classList.remove('selected-flight'));
+        card.classList.add('selected-flight');
+        fBasePrice = price * seatCount;
+        fName = name;
+        updatePrice();
+        initSeatMap();
+    }
+
+    function initSeatMap() {
+        const map = document.getElementById('seatMap');
+        const req = parseInt(document.getElementById("seatInput").value);
+        document.getElementById('reqSeats').innerText = req;
+        map.innerHTML = '';
+        selectedSeats = [];
+        sPrice = 0; updatePrice();
+        for (let i = 1; i <= 48; i++) {
+            const seat = document.createElement('div');
+            seat.className = 'seat' + (i < 13 ? ' extra-legroom' : '');
+            if (Math.random() < 0.2) seat.classList.add('occupied');
+            seat.innerText = i;
+            seat.onclick = () => toggleSeat(seat, i, i < 13 ? 900 : 0);
+            map.appendChild(seat);
+        }
+    }
+
+    function toggleSeat(el, id, price) {
+        if (el.classList.contains('occupied')) return;
+        const req = parseInt(document.getElementById("seatInput").value);
+        if (el.classList.contains('selected-seat')) {
+            el.classList.remove('selected-seat');
+            selectedSeats = selectedSeats.filter(s => s !== id);
+            sPrice -= price;
+        } else {
+            if (selectedSeats.length >= req) return alert(`Limit: ${req} seats`);
+            el.classList.add('selected-seat');
+            selectedSeats.push(id);
+            sPrice += price;
+        }
+        updatePrice();
+    }
+
+    function toggleAmenity(card, price) {
+        card.classList.toggle('selected');
+        aPrice += card.classList.contains('selected') ? price : -price;
+        updatePrice();
+    }
+
+    function updatePrice() {
+        let total = fBasePrice + aPrice + sPrice;
+        document.getElementById('mainP').innerText = "₹" + total.toLocaleString('en-IN');
+    }
+
+    function toggleUPI(id, appName) {
+        selectedApp = appName;
+        document.getElementById('selectedAppName').innerText = appName;
+        document.querySelectorAll('.sub-menu').forEach(m => m.style.display = 'none');
+        document.getElementById(id).style.display = 'block';
+    }
+
+    function setPayMode(mode, btn) {
+        pMode = mode;
+        btn.parentElement.querySelectorAll('.mode-btn').forEach(x => x.classList.remove('active'));
+        btn.classList.add('active');
+    }
+
+    function navigateStep() {
+        if (currentStep === 1) {
+            if (!document.getElementById('userNameInput').value) return alert("Please enter Passenger Name.");
+            if (!document.getElementById('userEmailInput').value) return alert("Please enter Email ID.");
+            if (!document.getElementById('travelDate').value) return alert("Please select a date.");
+            if (fBasePrice === 0) return alert("Select a flight!");
+            currentStep = 1.5; changeView('1_5');
+        } else if (currentStep === 1.5) {
+            if(selectedSeats.length < parseInt(document.getElementById("seatInput").value)) return alert("Select all seats.");
+            currentStep = 2; changeView(2);
+        } else if (currentStep === 2) {
+            currentStep = 3; changeView(3);
+        }
+        updateFooterButtons();
+    }
+
+    function goBack() {
+        if (currentStep === 1.5) { currentStep = 1; changeView(1); }
+        else if (currentStep === 2) { currentStep = 1.5; changeView('1_5'); }
+        else if (currentStep === 3) { currentStep = 2; changeView(2); }
+        updateFooterButtons();
+    }
+
+    function updateFooterButtons() {
+        document.getElementById('backBtn').classList.toggle('hidden', currentStep === 1);
+    }
+
+    function goToPaymentStage() {
+        if(!selectedApp) return alert("Select payment method");
+        currentStep = 4; changeView(4);
+        document.getElementById('globalFooter').classList.add('hidden');
+        const total = fBasePrice + aPrice + sPrice;
+        document.querySelectorAll('.finalAmt').forEach(e => e.innerText = total.toLocaleString('en-IN'));
+        if(pMode === 'QR') {
+            document.getElementById('qrV').classList.remove('hidden'); document.getElementById('mobV').classList.add('hidden');
+            document.getElementById('qrImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=skybound@upi&pn=SkyBound&am=${total}&cu=INR`;
+        } else {
+            document.getElementById('qrV').classList.add('hidden'); document.getElementById('mobV').classList.remove('hidden');
+        }
+        startCountdown();
+    }
+
+    function startCountdown() {
+        let sec = 60;
+        timer = setInterval(() => {
+            sec--;
+            document.getElementById('timer').innerText = `00:${sec < 10 ? '0'+sec : sec}`;
+            if(sec <= 0) { clearInterval(timer); location.reload(); }
+        }, 1000);
+    }
+
+    function verifyAndLoad() {
+        clearInterval(timer);
+        changeView('Loading');
+        let p = 0;
+        const progressBar = document.getElementById('pBar');
+        let iv = setInterval(() => {
+            p += 5; 
+            document.getElementById('loadPercent').innerText = p + "%";
+            progressBar.style.width = p + "%";
+            if(p >= 100) { 
+                clearInterval(iv); 
+                prepareData(); 
+                changeView(5); 
+                startFlightTracker();
+            }
+        }, 150);
+    }
+
+    function prepareData() {
+        const uName = document.getElementById('userNameInput').value;
+        const uEmail = document.getElementById('userEmailInput').value;
+        const total = (fBasePrice + aPrice + sPrice).toLocaleString('en-IN');
+        const txn = "SB" + Math.random().toString(36).substr(2, 9).toUpperCase();
+        const date = document.getElementById('travelDate').value || new Date().toLocaleDateString();
+
+        document.getElementById('bpName').innerText = uName;
+        document.getElementById('bpFlight').innerText = fName;
+        document.getElementById('bpSeats').innerText = selectedSeats.join(', ');
+        
+        document.getElementById('smsFlight').innerText = fName;
+        document.getElementById('smsId').innerText = txn;
+        
+         
+        document.getElementById('rName').innerText = uName;
+        document.getElementById('rEmail').innerText = uEmail;
+        document.getElementById('rT').innerText = txn;
+        document.getElementById('rA').innerText = "₹" + total;
+        document.getElementById('tlDate').innerText = date;
+        
+        document.getElementById('trackFrom').innerText = document.getElementById('fromLoc').value.split(' ')[0];
+        document.getElementById('trackTo').innerText = document.getElementById('toLoc').value.split(' ')[0];
+    }
+
+    function startFlightTracker() {
+        setTimeout(() => {
+            const plane = document.getElementById('livePlane');
+            plane.style.left = "45%";
+            document.getElementById('flightStatus').innerText = "In Air...";
+        }, 2000);
+    }
+
+    function changeView(id) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active-section'));
+        const target = id === 'Loading' ? 'stepLoading' : (id === '1_5' ? 'step1_5' : `step${id}`);
+        document.getElementById(target).classList.add('active-section');
+    }
+</script>
+</body>
+</html>
