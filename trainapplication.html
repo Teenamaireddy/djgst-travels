@@ -14,85 +14,108 @@
             --success: #10b981;
             --danger: #ef4444;
             --bg: #f8fafc;
-            --sidebar-width: 280px;
+            --sidebar-width: 260px;
         }
 
         /* DARK MODE SUPPORT */
         body.dark-theme { --bg: #0f172a; color: #f8fafc; }
         body.dark-theme .glass-card, body.dark-theme header { background: #1e293b; border-color: #334155; color: white; }
-        body.dark-theme input { background: #334155; border-color: #475569; color: white; }
+        body.dark-theme input, body.dark-theme select { background: #334155; border-color: #475569; color: white; }
+        body.dark-theme .nav-item.active { background: rgba(255,255,255,0.1); }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
         body { background: var(--bg); display: flex; height: 100vh; overflow: hidden; color: #1e293b; transition: 0.3s; }
 
-        aside { width: var(--sidebar-width); background: var(--primary); color: white; padding: 30px; display: flex; flex-direction: column; z-index: 1000; }
+        /* PERMANENT SIDEBAR CSS */
+        aside { 
+            width: var(--sidebar-width); 
+            background: var(--primary); 
+            color: white; 
+            padding: 30px; 
+            display: flex; 
+            flex-direction: column; 
+            z-index: 1000; 
+            left: 0;
+            position: relative;
+            flex-shrink: 0;
+        }
+
         .brand { font-size: 24px; font-weight: 800; color: var(--accent); margin-bottom: 50px; display: flex; align-items: center; gap: 12px; }
         .nav-group { flex: 1; }
         .nav-item { padding: 16px; border-radius: 12px; display: flex; align-items: center; gap: 15px; cursor: pointer; transition: 0.3s; color: #94a3b8; font-weight: 600; margin-bottom: 8px; }
         .nav-item:hover, .nav-item.active { background: rgba(255,255,255,0.1); color: white; }
 
-        main { flex: 1; overflow-y: auto; position: relative; display: flex; flex-direction: column; }
-        header { background: white; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; position: sticky; top: 0; z-index: 100; }
-        .container { padding: 40px; max-width: 1200px; margin: 0 auto; width: 100%; }
+        main { flex: 1; overflow-y: auto; position: relative; display: flex; flex-direction: column; width: 100%; min-width: 0; }
+        
+        header { 
+            background: white; 
+            padding: 20px 30px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border-bottom: 1px solid #e2e8f0; 
+            position: sticky; 
+            top: 0; 
+            z-index: 100; 
+        }
 
-        .glass-card { background: white; border-radius: 24px; padding: 30px; border: 1px solid #e2e8f0; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.04); margin-bottom: 30px; }
-        .btn-prime { background: var(--accent); color: white; border: none; padding: 14px 28px; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.3s; display: inline-flex; align-items: center; gap: 8px; justify-content: center; }
+        .container { padding: 20px; max-width: 1200px; margin: 0 auto; width: 100%; }
+        .glass-card { background: white; border-radius: 24px; padding: 20px; border: 1px solid #e2e8f0; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.04); margin-bottom: 25px; overflow: hidden; }
+        
+        .train-card { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #f1f5f9; gap: 15px; }
+        .passenger-form { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+        @media (max-width: 600px) { .passenger-form { grid-template-columns: 1fr; } }
+
+        .checkout-bar { display: flex; justify-content: space-between; align-items: center; margin-top: 25px; gap: 15px; flex-wrap: wrap; }
+        @media (max-width: 500px) { .checkout-bar { flex-direction: column; align-items: flex-start; } .checkout-bar button { width: 100%; } }
+
+        .btn-prime { background: var(--accent); color: white; border: none; padding: 12px 20px; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.3s; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; white-space: nowrap; }
         .btn-prime:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.4); }
-        .btn-prime:disabled { background: #cbd5e1; cursor: not-allowed; transform: none; box-shadow: none; }
 
-        .stepper { display: flex; justify-content: space-between; margin-bottom: 40px; position: relative; }
+        .stepper { display: flex; justify-content: space-between; margin-bottom: 30px; position: relative; }
         .stepper::before { content: ''; position: absolute; top: 15px; left: 0; width: 100%; height: 2px; background: #e2e8f0; z-index: 1; }
-        .step { position: relative; z-index: 2; background: var(--bg); padding: 0 15px; display: flex; flex-direction: column; align-items: center; gap: 8px; font-size: 12px; font-weight: 800; color: #94a3b8; }
+        .step { position: relative; z-index: 2; background: var(--bg); padding: 0 5px; display: flex; flex-direction: column; align-items: center; gap: 8px; font-size: 10px; font-weight: 800; color: #94a3b8; }
         .step.active { color: var(--accent); }
         .step.active span { background: var(--accent); border-color: var(--accent); color: white; }
-        .step span { width: 32px; height: 32px; border-radius: 50%; border: 2px solid #cbd5e1; background: white; display: grid; place-items: center; transition: 0.3s; }
+        .step span { width: 28px; height: 28px; border-radius: 50%; border: 2px solid #cbd5e1; background: white; display: grid; place-items: center; }
 
-        .view { display: none; animation: fadeIn 0.5s ease forwards; }
+        .view { display: none; animation: fadeIn 0.4s ease forwards; }
         .view.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .train-card { display: grid; grid-template-columns: 1fr 1fr 1.5fr; align-items: center; padding: 25px; border-bottom: 1px solid #f1f5f9; transition: 0.2s; }
-        .train-card:hover { background: #f8fafc; }
-
-        .coach-container { background: #1e293b; padding: 40px; border-radius: 20px; overflow-x: auto; display: flex; gap: 15px; border: 8px solid #334155; }
+        .coach-container { background: #1e293b; padding: 25px; border-radius: 20px; overflow-x: auto; display: flex; gap: 15px; border: 6px solid #334155; }
         .berth-group { display: flex; flex-direction: column; gap: 10px; }
-        .berth { width: 60px; height: 45px; background: white; border-radius: 6px; display: grid; place-items: center; font-size: 11px; font-weight: 800; cursor: pointer; border: 2px solid transparent; }
-        .berth.selected { background: var(--gold); border-color: white; transform: scale(1.1); }
+        .berth { width: 50px; height: 40px; background: white; border-radius: 6px; display: grid; place-items: center; font-size: 10px; font-weight: 800; cursor: pointer; }
+        .berth.selected { background: var(--gold); }
         .berth.booked { background: #475569; color: #94a3b8; cursor: not-allowed; }
 
-        .pay-method { border: 2px solid #f1f5f9; padding: 20px; border-radius: 16px; margin-bottom: 15px; display: flex; align-items: center; gap: 20px; cursor: pointer; transition: 0.3s; }
-        .pay-method.active { border-color: var(--accent); background: #eff6ff; }
+        .meal-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-top: 20px; }
+        .meal-card { background: white; border: 1px solid #e2e8f0; border-radius: 15px; padding: 15px; text-align: center; transition: 0.3s; cursor: pointer; }
+        .meal-card img { width: 100%; height: 100px; object-fit: cover; border-radius: 10px; margin-bottom: 10px; }
 
-        .overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.9); z-index: 5000; display: none; flex-direction: column; align-items: center; justify-content: center; color: white; text-align: center; }
-        .spinner { width: 60px; height: 60px; border: 6px solid #ffffff22; border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
+        .track-path { border-left: 4px solid #e2e8f0; margin-left: 20px; padding: 20px 0; }
+        .track-point { position: relative; padding-left: 30px; margin-bottom: 40px; }
+        .track-point::before { content: ''; position: absolute; left: -10px; top: 0; width: 16px; height: 16px; background: white; border: 3px solid var(--accent); border-radius: 50%; }
+        .track-point.active::before { background: var(--gold); border-color: var(--gold); animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+
+        .overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.9); z-index: 5000; display: none; flex-direction: column; align-items: center; justify-content: center; color: white; }
+        .spinner { width: 50px; height: 50px; border: 5px solid #ffffff22; border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        .timeline { border-left: 3px dashed #e2e8f0; margin-left: 20px; padding-left: 30px; }
-        .timeline-item { position: relative; margin-bottom: 40px; }
-        .timeline-item::before { content: ''; position: absolute; left: -39px; top: 5px; width: 14px; height: 14px; background: white; border: 3px solid var(--accent); border-radius: 50%; }
-        .timeline-item.past::before { background: var(--success); border-color: var(--success); }
-        .timeline-item.active::before { background: var(--gold); border-color: var(--gold); box-shadow: 0 0 15px var(--gold); }
-
-        .food-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 25px; }
-        .food-card { background: white; padding: 20px; border-radius: 20px; text-align: center; border: 1px solid #f1f5f9; }
-        .food-card img { width: 100%; border-radius: 12px; margin-bottom: 15px; }
-
-        .final-ticket { max-width: 600px; margin: 0 auto; background: white; border-radius: 24px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; }
-        .ticket-header { background: var(--primary); color: white; padding: 30px; text-align: center; position: relative; }
-        .ticket-header::after { content: ''; position: absolute; bottom: -10px; left: 0; width: 100%; height: 20px; background: radial-gradient(circle, white 5px, transparent 5px); background-size: 20px 20px; }
+        .final-ticket { max-width: 500px; margin: 0 auto; background: white; border-radius: 24px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; }
+        .ticket-header { background: var(--primary); color: white; padding: 20px; text-align: center; }
         
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 14px; }
-        .form-group input { width: 100%; padding: 14px; border-radius: 10px; border: 1px solid #ddd; outline: none; transition: 0.3s; }
-        .form-group input:focus { border-color: var(--accent); }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 12px; }
+        .form-group input, select { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd; outline: none; }
 
-        /* SETTINGS TOGGLE */
-        .switch { position: relative; display: inline-block; width: 50px; height: 24px; }
+        .setting-row { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #f1f5f9; }
+        .switch { position: relative; display: inline-block; width: 45px; height: 22px; }
         .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e1; transition: .4s; border-radius: 24px; }
-        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        .slider { position: absolute; cursor: pointer; inset: 0; background-color: #cbd5e1; transition: .4s; border-radius: 24px; }
+        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
         input:checked + .slider { background-color: var(--accent); }
-        input:checked + .slider:before { transform: translateX(26px); }
+        input:checked + .slider:before { transform: translateX(23px); }
     </style>
 </head>
 <body onload="setupMinDate()">
@@ -102,10 +125,388 @@
         <h2 id="loaderText" style="margin-top:20px;">Securing Connection...</h2>
     </div>
 
-    <aside>
-        <div class="brand"><a class="navbar-brand" href="#">
-                <img height="80" width="120" src="djgst_logo.png" alt="SkyBound Logo">
-        </a>
+    <aside id="sidebar">
+        <div class="brand">
+            <img height="80" width="120" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTci_VJooXJd2ks_OugD76A50Q4LRTjqbyhO-qovmIxO675-_xDt4exlAUs&s=10"></a>
+       </div>
+        <div class="nav-group">
+            <div class="nav-item active" onclick="navigate('booking-module')"><i class="fa fa-ticket"></i> Book Reservation</div>
+            <div class="nav-item" onclick="navigate('status-module')"><i class="fa fa-map-location-dot"></i> Live Tracking</div>
+            <div class="nav-item" onclick="navigate('food-module')"><i class="fa fa-utensils"></i> Order Meals</div>
+            <div class="nav-item" onclick="navigate('history-module')"><i class="fa fa-history"></i> My Bookings</div>
+        </div>
+        <div class="nav-item" onclick="navigate('settings-module')"><i class="fa fa-gear"></i> System Settings</div>
+    </aside>
+
+    <main>
+        <header>
+            <div><h3 id="headerTitle" style="font-size: 18px; font-weight: 800; color: var(--primary);">Booking Module</h3></div>
+            <div style="display:flex; align-items:center; gap:12px;">
+                <span style="font-size:12px; font-weight:700;" id="userDisplay">Aman Sharma</span>
+                <div id="userInitial" style="width:32px; height:32px; background:var(--accent); color:white; border-radius:50%; display:grid; place-items:center; font-size:12px; font-weight:bold;">AS</div>
+            </div>
+        </header>
+
+        <div class="container">
+            <section id="booking-module" class="view active">
+                <div class="stepper">
+                    <div class="step active" id="step1"><span>1</span> Search</div>
+                    <div class="step" id="step2"><span>2</span> Trains</div>
+                    <div class="step" id="step3"><span>3</span> Berths</div>
+                    <div class="step" id="step4"><span>4</span> Payment</div>
+                    <div class="step" id="step5"><span>5</span> Ticket</div>
+                </div>
+
+                <div id="bk-search" class="view active">
+                    <div class="glass-card">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                            <div class="form-group"><label>From</label><input type="text" id="src" value="Delhi"></div>
+                            <div class="form-group"><label>To</label><input type="text" id="dest" value="Mumbai"></div>
+                            <div class="form-group"><label>Date</label><input type="date" id="jDate"></div>
+                            <button class="btn-prime" style="height:45px; margin-top:22px;" onclick="searchTrains()">Search Trains</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="bk-results" class="view">
+                    <div class="glass-card" style="padding:0;"><div class="train-card"><div class="train-info"><b>12952 - RAJDHANI EXP</b><br><small>Daily | 16:30 - 08:35</small></div><div class="train-actions"><button class="btn-prime" style="background:#f1f5f9; color:black;" onclick="selectTrain('3rd AC', 2480)">3A - ₹2480</button><button class="btn-prime" onclick="selectTrain('2nd AC', 4100)">2A - ₹4100</button></div></div></div>
+                </div>
+
+                <div id="bk-berths" class="view">
+                    <div class="glass-card">
+                        <h3>Coach B4 - Layout</h3>
+                        <div class="coach-container" id="coachMap"></div>
+                        <div class="passenger-form">
+                            <div class="form-group"><label>Passenger Name</label><input type="text" id="passName" placeholder="Enter Name" oninput="updateUserProfile(this.value)"></div>
+                            <div class="form-group"><label>Email Address</label><input type="email" id="passEmail" placeholder="Enter Email"></div>
+                        </div>
+                        <div class="checkout-bar">
+                            <div><p style="font-size:12px;">Selected: <b id="selBerths">None</b></p><h2 id="totalFare">₹0</h2></div>
+                            <button class="btn-prime" id="berthContinue" disabled onclick="toCheckout()">Confirm & Checkout</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="bk-pay" class="view">
+                    <div class="glass-card"><h3>Payment Summary</h3><div id="invoiceContent" style="margin:20px 0;"></div><button class="btn-prime" style="width:100%; justify-content:center;" onclick="runPayment()">PROCESS PAYMENT</button></div>
+                </div>
+
+                <div id="bk-ticket" class="view">
+                    <div class="glass-card" style="text-align:center;"><i class="fa fa-check-circle" style="font-size:60px; color:var(--success);"></i><h2 style="margin:15px 0;">Booking Confirmed!</h2><button class="btn-prime" onclick="showTicketUI()">View E-Ticket</button></div>
+                    <div class="final-ticket" id="ticketVisual" style="display:none; margin-top:20px;"><div class="ticket-header"><h3 id="t_train">--</h3></div><div style="padding:20px;"><div style="display:flex; justify-content:space-between; margin-bottom:15px;"><div><small>PNR</small><br><b id="t_pnr">--</b></div><div><small>DATE</small><br><b id="t_date">--</b></div></div><p>Passenger: <b id="t_passName">--</b></p><p>Email: <b id="t_passEmail">--</b></p><p>Seats: <b id="t_seats">--</b></p></div></div>
+                </div>
+            </section>
+
+            <section id="status-module" class="view">
+                <div class="glass-card">
+                    <h3>Live Train Status</h3>
+                    <div class="track-path">
+                        <div class="track-point"><b id="trackSrc">Delhi</b><br><small>Departed at 16:30</small></div>
+                        <div class="track-point active"><b>Midway Station</b><br><small>Approaching - On Time</small></div>
+                        <div class="track-point"><b id="trackDest">Mumbai</b><br><small>Expected 08:35</small></div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="food-module" class="view">
+                <div class="glass-card"><h3>E-Catering Menu</h3>
+                    <div class="meal-grid">
+                        <div class="meal-card" onclick="addFood('Executive Thali')">
+                            <img src="https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=400" alt="Thali">
+                            <b>Executive Thali</b><br>
+                            <small>₹240</small>
+                            
+                        </div>
+                        <div class="meal-card" onclick="addFood('Veg Biryani')">
+                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTupm1r7DOk3bHIGlaeKsxuOEIdjRXiF6_rkHiLQo0iDw&s=10" alt="Biryani">
+                            <b>Veg Biryani</b><br><small>₹180</small>
+                        </div>
+                        <div class="meal-card" onclick="addFood('Standard Breakfast')">
+                            <img src="https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?auto=format&fit=crop&w=400" alt="Breakfast">
+                            <b>Breakfast</b><br><small>₹120</small>
+                        </div>
+                </div></div>
+            </section>
+
+            <section id="history-module" class="view"><div class="glass-card"><h3>Recent Bookings</h3><div id="histBody" style="margin-top:15px;"><p style="color:#94a3b8; text-align:center;">No previous bookings found.</p></div></div></section>
+
+            <section id="settings-module" class="view">
+                <div class="glass-card">
+                    <h3>Display & Personalization</h3>
+                    <div class="setting-row">
+                        <div><b>Dark Mode</b><br><small>High contrast dark background</small></div>
+                        <label class="switch"><input type="checkbox" onchange="document.body.classList.toggle('dark-theme')"><span class="slider"></span></label>
+                    </div>
+                    <div class="setting-row">
+                        <div><b>Accessibility Font</b><br><small>Increase system text size</small></div>
+                        <label class="switch"><input type="checkbox" onchange="alert('Font size adjusted')"><span class="slider"></span></label>
+                    </div>
+                    <div class="setting-row">
+                        <div><b>System Language</b><br><small>Preferred interface language</small></div>
+                        <select style="width:140px; font-size:12px;"><option>English (US)</option><option>Hindi</option><option>Spanish</option></select>
+                    </div>
+                </div>
+
+                <div class="glass-card">
+                    <h3>Account & Security</h3>
+                    <div class="setting-row">
+                        <div><b>Incognito Booking</b><br><small>Don't save history for this session</small></div>
+                        <label class="switch"><input type="checkbox" onchange="alert('Privacy Mode Activated')"><span class="slider"></span></label>
+                    </div>
+                    <div class="setting-row">
+                        <div><b>Currency</b><br><small>Select payment display</small></div>
+                        <select style="width:140px; font-size:12px;"><option>INR (₹)</option><option>USD ($)</option><option>EUR (€)</option></select>
+                    </div>
+                    <div class="setting-row">
+                        <div><b>Email Notifications</b><br><small>Send ticket copy to email</small></div>
+                        <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script>
+        function setupMinDate() { document.getElementById('jDate').setAttribute('min', new Date().toISOString().split('T')[0]); }
+        let state = { train: '', seats: [], passengerName: 'Aman Sharma', passengerEmail: '', price: 0, date: '', src: 'Delhi', dest: 'Mumbai' };
+
+        function updateUserProfile(name) {
+            const displayName = name.trim() || "Aman Sharma";
+            document.getElementById('userDisplay').innerText = displayName;
+            const initials = displayName.split(" ").map(n => n[0]).join("").toUpperCase().substring(0, 2);
+            document.getElementById('userInitial').innerText = initials || "AS";
+            state.passengerName = displayName;
+        }
+
+        function navigate(moduleID) {
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            document.querySelectorAll('section.view').forEach(s => s.classList.remove('active'));
+            document.getElementById(moduleID).classList.add('active');
+            document.getElementById('headerTitle').innerText = moduleID.replace('-module', '').toUpperCase().replace('-', ' ');
+            
+            if(moduleID === 'status-module') {
+                document.getElementById('trackSrc').innerText = document.getElementById('src').value || "Delhi";
+                document.getElementById('trackDest').innerText = document.getElementById('dest').value || "Mumbai";
+            }
+
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => { if(item.innerText.toLowerCase().includes(moduleID.split('-')[0])) item.classList.add('active'); });
+        }
+
+        function searchTrains() {
+            state.date = document.getElementById('jDate').value;
+            state.src = document.getElementById('src').value;
+            state.dest = document.getElementById('dest').value;
+            if(!state.date) return alert("Select Date");
+            document.getElementById('globalLoader').style.display = 'flex';
+            setTimeout(() => {
+                document.getElementById('globalLoader').style.display = 'none';
+                document.querySelectorAll('#booking-module .view').forEach(v => v.classList.remove('active'));
+                document.getElementById('bk-results').classList.add('active');
+                document.getElementById('step2').classList.add('active');
+            }, 800);
+        }
+
+        function selectTrain(cls, price) {
+            state.price = price; state.train = "Rajdhani Exp (12952)";
+            document.querySelectorAll('#booking-module .view').forEach(v => v.classList.remove('active'));
+            document.getElementById('bk-berths').classList.add('active');
+            document.getElementById('step3').classList.add('active');
+            initCoachMap();
+        }
+
+        function initCoachMap() {
+            const container = document.getElementById('coachMap'); container.innerHTML = '';
+            for(let i=1; i<=6; i++) {
+                const group = document.createElement('div');
+                group.className = 'berth-group';
+                group.innerHTML = `<div class="berth" onclick="toggleBerth(this, '${i}L')">${i}L</div><div class="berth booked">${i}M</div><div class="berth" onclick="toggleBerth(this, '${i}U')">${i}U</div>`;
+                container.appendChild(group);
+            }
+        }
+
+        function toggleBerth(el, id) {
+            el.classList.toggle('selected');
+            if(el.classList.contains('selected')) state.seats.push(id);
+            else state.seats = state.seats.filter(s => s !== id);
+            document.getElementById('selBerths').innerText = state.seats.join(', ') || 'None';
+            document.getElementById('totalFare').innerText = '₹' + (state.seats.length * state.price);
+            document.getElementById('berthContinue').disabled = state.seats.length === 0;
+        }
+
+        function toCheckout() {
+            state.passengerEmail = document.getElementById('passEmail').value;
+            if(!state.passengerName || !state.passengerEmail) return alert("Enter Passenger Details");
+            document.querySelectorAll('#booking-module .view').forEach(v => v.classList.remove('active'));
+            document.getElementById('bk-pay').classList.add('active');
+            document.getElementById('step4').classList.add('active');
+            document.getElementById('invoiceContent').innerHTML = `<h4>Summary for ${state.passengerName}</h4><p>Base Fare: ₹${state.seats.length * state.price}</p>`;
+        }
+
+        function runPayment() {
+            document.getElementById('globalLoader').style.display = 'flex';
+            setTimeout(() => {
+                document.getElementById('globalLoader').style.display = 'none';
+                document.querySelectorAll('#booking-module .view').forEach(v => v.classList.remove('active'));
+                document.getElementById('bk-ticket').classList.add('active');
+                document.getElementById('step5').classList.add('active');
+                saveToHistory();
+            }, 1500);
+        }
+
+        function saveToHistory() {
+            const pnr = "PNR-" + Math.floor(Math.random()*900000 + 100000);
+            state.pnr = pnr;
+            const historyItem = `<div class="glass-card" style="margin-bottom:10px;"><div style="display:flex; justify-content:space-between; align-items:center;"><div><b>${state.train}</b><br><small>${state.date} | PNR: ${pnr}</small></div><div style="text-align:right;"><small>${state.passengerName}</small><br><b>${state.seats.join(', ')}</b></div></div></div>`;
+            const histBody = document.getElementById('histBody');
+            if(histBody.innerText.includes("No previous bookings")) histBody.innerHTML = '';
+            histBody.innerHTML = historyItem + histBody.innerHTML;
+        }
+
+        function showTicketUI() {
+            document.getElementById('ticketVisual').style.display = 'block';
+            document.getElementById('t_pnr').innerText = state.pnr;
+            document.getElementById('t_date').innerText = state.date;
+            document.getElementById('t_train').innerText = state.train;
+            document.getElementById('t_passName').innerText = state.passengerName;
+            document.getElementById('t_passEmail').innerText = state.passengerEmail;
+            document.getElementById('t_seats').innerText = state.seats.join(', ');
+        }
+
+        function addFood(itemName) { alert(itemName + " was added to your seat for " + state.passengerName + "!"); }
+    </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RailNexus | Enterprise Railway Management System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #0f172a;
+            --accent: #2563eb;
+            --gold: #f59e0b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --bg: #f8fafc;
+            --sidebar-width: 260px;
+        }
+
+        /* DARK MODE SUPPORT */
+        body.dark-theme { --bg: #0f172a; color: #f8fafc; }
+        body.dark-theme .glass-card, body.dark-theme header { background: #1e293b; border-color: #334155; color: white; }
+        body.dark-theme input, body.dark-theme select { background: #334155; border-color: #475569; color: white; }
+        body.dark-theme .nav-item.active { background: rgba(255,255,255,0.1); }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background: var(--bg); display: flex; height: 100vh; overflow: hidden; color: #1e293b; transition: 0.3s; }
+
+        /* PERMANENT SIDEBAR CSS */
+        aside { 
+            width: var(--sidebar-width); 
+            background: var(--primary); 
+            color: white; 
+            padding: 30px; 
+            display: flex; 
+            flex-direction: column; 
+            z-index: 1000; 
+            left: 0;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .brand { font-size: 24px; font-weight: 800; color: var(--accent); margin-bottom: 50px; display: flex; align-items: center; gap: 12px; }
+        .nav-group { flex: 1; }
+        .nav-item { padding: 16px; border-radius: 12px; display: flex; align-items: center; gap: 15px; cursor: pointer; transition: 0.3s; color: #94a3b8; font-weight: 600; margin-bottom: 8px; }
+        .nav-item:hover, .nav-item.active { background: rgba(255,255,255,0.1); color: white; }
+
+        main { flex: 1; overflow-y: auto; position: relative; display: flex; flex-direction: column; width: 100%; min-width: 0; }
+        
+        header { 
+            background: white; 
+            padding: 20px 30px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border-bottom: 1px solid #e2e8f0; 
+            position: sticky; 
+            top: 0; 
+            z-index: 100; 
+        }
+
+        .container { padding: 20px; max-width: 1200px; margin: 0 auto; width: 100%; }
+        .glass-card { background: white; border-radius: 24px; padding: 20px; border: 1px solid #e2e8f0; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.04); margin-bottom: 25px; overflow: hidden; }
+        
+        .train-card { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #f1f5f9; gap: 15px; }
+        .passenger-form { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+        @media (max-width: 600px) { .passenger-form { grid-template-columns: 1fr; } }
+
+        .checkout-bar { display: flex; justify-content: space-between; align-items: center; margin-top: 25px; gap: 15px; flex-wrap: wrap; }
+        @media (max-width: 500px) { .checkout-bar { flex-direction: column; align-items: flex-start; } .checkout-bar button { width: 100%; } }
+
+        .btn-prime { background: var(--accent); color: white; border: none; padding: 12px 20px; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.3s; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; white-space: nowrap; }
+        .btn-prime:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.4); }
+
+        .stepper { display: flex; justify-content: space-between; margin-bottom: 30px; position: relative; }
+        .stepper::before { content: ''; position: absolute; top: 15px; left: 0; width: 100%; height: 2px; background: #e2e8f0; z-index: 1; }
+        .step { position: relative; z-index: 2; background: var(--bg); padding: 0 5px; display: flex; flex-direction: column; align-items: center; gap: 8px; font-size: 10px; font-weight: 800; color: #94a3b8; }
+        .step.active { color: var(--accent); }
+        .step.active span { background: var(--accent); border-color: var(--accent); color: white; }
+        .step span { width: 28px; height: 28px; border-radius: 50%; border: 2px solid #cbd5e1; background: white; display: grid; place-items: center; }
+
+        .view { display: none; animation: fadeIn 0.4s ease forwards; }
+        .view.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .coach-container { background: #1e293b; padding: 25px; border-radius: 20px; overflow-x: auto; display: flex; gap: 15px; border: 6px solid #334155; }
+        .berth-group { display: flex; flex-direction: column; gap: 10px; }
+        .berth { width: 50px; height: 40px; background: white; border-radius: 6px; display: grid; place-items: center; font-size: 10px; font-weight: 800; cursor: pointer; }
+        .berth.selected { background: var(--gold); }
+        .berth.booked { background: #475569; color: #94a3b8; cursor: not-allowed; }
+
+        .meal-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-top: 20px; }
+        .meal-card { background: white; border: 1px solid #e2e8f0; border-radius: 15px; padding: 15px; text-align: center; transition: 0.3s; cursor: pointer; }
+        .meal-card img { width: 100%; height: 100px; object-fit: cover; border-radius: 10px; margin-bottom: 10px; }
+
+        .track-path { border-left: 4px solid #e2e8f0; margin-left: 20px; padding: 20px 0; }
+        .track-point { position: relative; padding-left: 30px; margin-bottom: 40px; }
+        .track-point::before { content: ''; position: absolute; left: -10px; top: 0; width: 16px; height: 16px; background: white; border: 3px solid var(--accent); border-radius: 50%; }
+        .track-point.active::before { background: var(--gold); border-color: var(--gold); animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+
+        .overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.9); z-index: 5000; display: none; flex-direction: column; align-items: center; justify-content: center; color: white; }
+        .spinner { width: 50px; height: 50px; border: 5px solid #ffffff22; border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .final-ticket { max-width: 500px; margin: 0 auto; background: white; border-radius: 24px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; }
+        .ticket-header { background: var(--primary); color: white; padding: 20px; text-align: center; }
+        
+        .form-group label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 12px; }
+        .form-group input, select { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd; outline: none; }
+
+        .setting-row { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #f1f5f9; }
+        .switch { position: relative; display: inline-block; width: 45px; height: 22px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; inset: 0; background-color: #cbd5e1; transition: .4s; border-radius: 24px; }
+        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--accent); }
+        input:checked + .slider:before { transform: translateX(23px); }
+    </style>
+</head>
+<body onload="setupMinDate()">
+
+    <div id="globalLoader" class="overlay">
+        <div class="spinner"></div>
+        <h2 id="loaderText" style="margin-top:20px;">Securing Connection...</h2>
+    </div>
+
+    <aside id="sidebar">
+        <div class="brand">
+            <img height="80" width="120" src="djgst_logo.png" alt="SkyBound Logo">
         </div>
         <div class="nav-group">
             <div class="nav-item active" onclick="navigate('booking-module')"><i class="fa fa-ticket"></i> Book Reservation</div>
@@ -118,15 +519,14 @@
 
     <main>
         <header>
-            <h3 id="headerTitle">Dashboard</h3>
-            <div style="display:flex; align-items:center; gap:15px;">
-                <span style="font-size:14px; font-weight:700;" id="userDisplay">Aman Sharma</span>
-                <div id="userInitial" style="width:40px; height:40px; background:#e2e8f0; border-radius:50%; display:grid; place-items:center;">AS</div>
+            <div><h3 id="headerTitle" style="font-size: 18px; font-weight: 800; color: var(--primary);">Booking Module</h3></div>
+            <div style="display:flex; align-items:center; gap:12px;">
+                <span style="font-size:12px; font-weight:700;" id="userDisplay">Aman Sharma</span>
+                <div id="userInitial" style="width:32px; height:32px; background:var(--accent); color:white; border-radius:50%; display:grid; place-items:center; font-size:12px; font-weight:bold;">AS</div>
             </div>
         </header>
 
         <div class="container">
-            
             <section id="booking-module" class="view active">
                 <div class="stepper">
                     <div class="step active" id="step1"><span>1</span> Search</div>
@@ -138,302 +538,168 @@
 
                 <div id="bk-search" class="view active">
                     <div class="glass-card">
-                        <div style="display:grid; grid-template-columns: 1.5fr 1.5fr 1fr 0.8fr; gap:25px;">
-                            <div><label>From</label><input type="text" id="src" value="New Delhi (NDLS)" style="width:100%; padding:14px; border-radius:10px; border:1px solid #ddd; margin-top:8px;"></div>
-                            <div><label>To</label><input type="text" id="dest" value="Mumbai Central (BCT)" style="width:100%; padding:14px; border-radius:10px; border:1px solid #ddd; margin-top:8px;"></div>
-                            <div><label>Date</label><input type="date" id="jDate" style="width:100%; padding:14px; border-radius:10px; border:1px solid #ddd; margin-top:8px;"></div>
-                            <div><label>&nbsp;</label><button class="btn-prime" style="width:100%;" onclick="searchTrains()">Search</button></div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                            <div class="form-group"><label>From</label><input type="text" id="src" value="Delhi"></div>
+                            <div class="form-group"><label>To</label><input type="text" id="dest" value="Mumbai"></div>
+                            <div class="form-group"><label>Date</label><input type="date" id="jDate"></div>
+                            <button class="btn-prime" style="height:45px; margin-top:22px;" onclick="searchTrains()">Search Trains</button>
                         </div>
                     </div>
                 </div>
 
                 <div id="bk-results" class="view">
-                    <div class="glass-card" style="padding:0;">
-                        <div class="train-card">
-                            <div><b>12952 - RAJDHANI EXP</b><br><small>Daily | 16:30 - 08:35</small></div>
-                            <div><span style="color:var(--success)">Available</span><br><small>All Classes</small></div>
-                            <div style="display:flex; gap:10px; justify-content:flex-end;">
-                                <button class="btn-prime" style="background:#f1f5f9; color:black;" onclick="selectTrain('3rd AC', 2480)">3A - ₹2480</button>
-                                <button class="btn-prime" onclick="selectTrain('2nd AC', 4100)">2A - ₹4100</button>
-                            </div>
-                        </div>
-                        <div class="train-card">
-                            <div><b>12260 - DURONTO EXP</b><br><small>Tue, Fri | 21:00 - 10:45</small></div>
-                            <div><span style="color:var(--gold)">RAC 5</span><br><small>3rd AC</small></div>
-                            <div style="display:flex; gap:10px; justify-content:flex-end;">
-                                <button class="btn-prime" onclick="selectTrain('3rd AC', 1850)">3A - ₹1850</button>
-                            </div>
-                        </div>
-                    </div>
+                    <div class="glass-card" style="padding:0;"><div class="train-card"><div class="train-info"><b>12952 - RAJDHANI EXP</b><br><small>Daily | 16:30 - 08:35</small></div><div class="train-actions"><button class="btn-prime" style="background:#f1f5f9; color:black;" onclick="selectTrain('3rd AC', 2480)">3A - ₹2480</button><button class="btn-prime" onclick="selectTrain('2nd AC', 4100)">2A - ₹4100</button></div></div></div>
                 </div>
 
                 <div id="bk-berths" class="view">
                     <div class="glass-card">
-                        <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
-                            <h3>Coach B4 - Layout</h3>
-                            <div style="display:flex; gap:15px; font-size:12px;">
-                                <span><i class="fa fa-square" style="color:#475569"></i> Booked</span>
-                                <span><i class="fa fa-square" style="color:var(--gold)"></i> Selected</span>
-                            </div>
-                        </div>
-                        
+                        <h3>Coach B4 - Layout</h3>
                         <div class="coach-container" id="coachMap"></div>
-
-                        <div style="margin-top:30px; padding-top:20px; border-top:1px solid #eee; display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
-                            <div class="form-group">
-                                <label>Passenger Name</label>
-                                <input type="text" id="passName" placeholder="e.g. Aman Sharma">
-                            </div>
-                            <div class="form-group">
-                                <label>Email Address</label>
-                                <input type="email" id="passEmail" placeholder="aman@example.com">
-                            </div>
+                        <div class="passenger-form">
+                            <div class="form-group"><label>Passenger Name</label><input type="text" id="passName" placeholder="Enter Name" oninput="updateUserProfile(this.value)"></div>
+                            <div class="form-group"><label>Email Address</label><input type="email" id="passEmail" placeholder="Enter Email"></div>
                         </div>
-
-                        <div style="margin-top:10px; display:flex; justify-content:space-between; align-items:center;">
-                            <div>
-                                <p style="color:#64748b;">Selected: <b id="selBerths" style="color:var(--primary)">None</b></p>
-                                <h2 id="totalFare">₹0</h2>
-                            </div>
+                        <div class="checkout-bar">
+                            <div><p style="font-size:12px;">Selected: <b id="selBerths">None</b></p><h2 id="totalFare">₹0</h2></div>
                             <button class="btn-prime" id="berthContinue" disabled onclick="toCheckout()">Confirm & Checkout</button>
                         </div>
                     </div>
                 </div>
 
                 <div id="bk-pay" class="view">
-                    <div style="display:grid; grid-template-columns: 1.5fr 1fr; gap:30px;">
-                        <div class="glass-card">
-                            <h3 style="margin-bottom:20px;">Payment Method</h3>
-                            <div class="pay-method active" onclick="selPay(this)"><i class="fa-brands fa-google-pay" style="font-size:30px;"></i> <div><b>UPI (GPay / PhonePe)</b><br><small>Instant & Secure</small></div></div>
-                            <div class="pay-method" onclick="selPay(this)"><i class="fa fa-credit-card" style="font-size:24px;"></i> <div><b>Credit / Debit Card</b><br><small>All major banks</small></div></div>
-                            <button class="btn-prime" style="width:100%; padding:20px; margin-top:10px;" onclick="runPayment()">PROCESS SECURE PAYMENT</button>
-                        </div>
-                        <div class="glass-card" style="background:var(--primary); color:white;">
-                            <h3 style="margin-bottom:10px; color:var(--gold)">Fare Summary</h3>
-                            <p id="invoiceUser" style="margin-bottom:20px; font-size:13px; opacity:0.8;"></p>
-                            <div id="invoiceContent"></div>
-                        </div>
-                    </div>
+                    <div class="glass-card"><h3>Payment Summary</h3><div id="invoiceContent" style="margin:20px 0;"></div><button class="btn-prime" style="width:100%; justify-content:center;" onclick="runPayment()">PROCESS PAYMENT</button></div>
                 </div>
 
                 <div id="bk-ticket" class="view">
-                    <div style="text-align:center; margin-bottom:30px;">
-                        <i class="fa fa-check-circle" style="font-size:70px; color:var(--success);"></i>
-                        <h2 style="margin-top:15px;">Reservation Successful!</h2>
-                        <button class="btn-prime" style="margin-top:15px;" onclick="showTicketUI()">VIEW ELECTRONIC TICKET</button>
-                    </div>
-                    
-                    <div class="final-ticket" id="ticketVisual" style="display:none;">
-                        <div class="ticket-header">
-                            <p style="font-size:11px; opacity:0.8; letter-spacing:2px;">MINISTRY OF RAILWAYS</p>
-                            <h2 id="t_train">RAJDHANI EXPRESS</h2>
-                        </div>
-                        <div style="padding:40px;">
-                            <div style="display:flex; justify-content:space-between; margin-bottom:30px;">
-                                <div><small style="color:#94a3b8">PNR</small><br><b id="t_pnr">4255-890112</b></div>
-                                <div><small style="color:#94a3b8">DATE</small><br><b id="t_date">28 JAN 2026</b></div>
-                            </div>
-                            <h3 id="t_route" style="border-left:4px solid var(--accent); padding-left:15px; margin-bottom:30px;">NDLS → BCT</h3>
-                            <div style="background:#f8fafc; padding:20px; border-radius:15px; display:flex; justify-content:space-between;">
-                                <div><small>PASSENGER</small><br><b id="t_passName">Aman Sharma</b><br><small id="t_passEmail" style="font-weight:400;"></small></div>
-                                <div><small>BERTHS</small><br><b id="t_seats">L24, L25</b></div>
-                            </div>
-                            <div style="text-align:center; margin-top:40px;">
-                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=VERIFIED" alt="QR">
-                            </div>
-                        </div>
-                    </div>
+                    <div class="glass-card" style="text-align:center;"><i class="fa fa-check-circle" style="font-size:60px; color:var(--success);"></i><h2 style="margin:15px 0;">Booking Confirmed!</h2><button class="btn-prime" onclick="showTicketUI()">View E-Ticket</button></div>
+                    <div class="final-ticket" id="ticketVisual" style="display:none; margin-top:20px;"><div class="ticket-header"><h3 id="t_train">--</h3></div><div style="padding:20px;"><div style="display:flex; justify-content:space-between; margin-bottom:15px;"><div><small>PNR</small><br><b id="t_pnr">--</b></div><div><small>DATE</small><br><b id="t_date">--</b></div></div><p>Passenger: <b id="t_passName">--</b></p><p>Email: <b id="t_passEmail">--</b></p><p>Seats: <b id="t_seats">--</b></p></div></div>
                 </div>
             </section>
 
             <section id="status-module" class="view">
                 <div class="glass-card">
-                    <h3>Real-time GPS Tracking</h3>
-                    <div style="display:flex; gap:15px; margin:20px 0;">
-                        <input type="text" id="trackInput" placeholder="Enter Train No (12952)" style="flex:1; padding:15px; border-radius:10px; border:1px solid #ddd;">
-                        <button class="btn-prime" onclick="startTracking()">Locate Train</button>
-                    </div>
-                    
-                    <div id="trackResult" style="display:none; margin-top:40px;">
-                        <div style="margin-bottom: 30px; padding: 20px; background: #f1f5f9; border-radius: 15px;">
-                            <h4 id="trackingTitle" style="color: var(--primary);">Train: 12952</h4>
-                            <p id="trackingRoute" style="font-size: 14px; font-weight: 600; color: var(--accent);"></p>
-                        </div>
-                        <div class="timeline">
-                            <div class="timeline-item past"><b id="trackSrc">Source</b><br><small>Departed: 16:30 (On Time)</small></div>
-                            <div class="timeline-item active"><b>Current Location</b><br><small>Currently Arriving | Platform 2</small></div>
-                            <div class="timeline-item"><b>Intermediate Junction</b><br><small>Expected in 2 hours</small></div>
-                            <div class="timeline-item"><b id="trackDest">Destination</b><br><small>Expected Arrival: 08:35</small></div>
-                        </div>
+                    <h3>Live Train Status</h3>
+                    <div class="track-path">
+                        <div class="track-point"><b id="trackSrc">Delhi</b><br><small>Departed at 16:30</small></div>
+                        <div class="track-point active"><b>Midway Station</b><br><small>Approaching - On Time</small></div>
+                        <div class="track-point"><b id="trackDest">Mumbai</b><br><small>Expected 08:35</small></div>
                     </div>
                 </div>
             </section>
 
             <section id="food-module" class="view">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
-                    <h3>E-Catering Menu</h3>
-                    <div id="foodCart" style="background:var(--gold); padding:8px 20px; border-radius:30px; font-weight:800;">Cart: 0 Items</div>
-                </div>
-                <div class="food-grid">
-                    <div class="food-card">
-                        <span style="font-size:50px;">🍱</span>
-                        <h4 style="margin-top:15px;">Executive Thali</h4>
-                        <p style="color:var(--success); font-weight:800; font-size:18px; margin:10px 0;">₹210</p>
-                        <button class="btn-prime" style="width:100%" onclick="addFood('Thali', 210)">Add to Seat</button>
-                    </div>
-                    <div class="food-card">
-                        <span style="font-size:50px;">🍕</span>
-                        <h4 style="margin-top:15px;">Cheese Pizza</h4>
-                        <p style="color:var(--success); font-weight:800; font-size:18px; margin:10px 0;">₹280</p>
-                        <button class="btn-prime" style="width:100%" onclick="addFood('Pizza', 280)">Add to Seat</button>
-                    </div>
-                    <div class="food-card">
-                        <span style="font-size:50px;">🥪</span>
-                        <h4 style="margin-top:15px;">Grill Sandwich</h4>
-                        <p style="color:var(--success); font-weight:800; font-size:18px; margin:10px 0;">₹120</p>
-                        <button class="btn-prime" style="width:100%" onclick="addFood('Sandwich', 120)">Add to Seat</button>
-                    </div>
-                </div>
+                <div class="glass-card"><h3>E-Catering Menu</h3>
+                    <div class="meal-grid">
+                        <div class="meal-card" onclick="addFood('Executive Thali')">
+                            <img src="https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=400" alt="Thali">
+                            <b>Executive Thali</b><br>
+                            <small>₹240</small>
+                            
+                        </div>
+                        <div class="meal-card" onclick="addFood('Veg Biryani')">
+                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTupm1r7DOk3bHIGlaeKsxuOEIdjRXiF6_rkHiLQo0iDw&s=10" alt="Biryani">
+                            <b>Veg Biryani</b><br><small>₹180</small>
+                        </div>
+                        <div class="meal-card" onclick="addFood('Standard Breakfast')">
+                            <img src="https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?auto=format&fit=crop&w=400" alt="Breakfast">
+                            <b>Breakfast</b><br><small>₹120</small>
+                        </div>
+                </div></div>
             </section>
 
-            <section id="history-module" class="view">
-                <div class="glass-card" style="padding:0;">
-                    <table style="width:100%; border-collapse:collapse;">
-                        <thead style="background:#f8fafc; text-align:left;">
-                            <tr>
-                                <th style="padding:20px;">PNR Number</th>
-                                <th>Train Details</th>
-                                <th>Journey Date</th>
-                                <th>Status</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="histBody">
-                            <tr style="border-bottom:1px solid #f1f5f9;">
-                                <td style="padding:20px;"><b>4255-889012</b></td>
-                                <td>Rajdhani Express<br><small>NDLS → BCT</small></td>
-                                <td>28 Jan 2026</td>
-                                <td><span style="background:#dcfce7; color:#166534; padding:5px 10px; border-radius:6px; font-size:11px; font-weight:800;">CONFIRMED</span></td>
-                                <td><button class="btn-prime" style="padding:8px 15px; font-size:12px;" onclick="viewHistoryTicket('4255-889012', 'Rajdhani Express', '2026-01-28', 'NDLS → BCT', 'Aman Sharma', 'aman@example.com', 'L24, L25')">E-Ticket</button></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
+            <section id="history-module" class="view"><div class="glass-card"><h3>Recent Bookings</h3><div id="histBody" style="margin-top:15px;"><p style="color:#94a3b8; text-align:center;">No previous bookings found.</p></div></div></section>
 
             <section id="settings-module" class="view">
                 <div class="glass-card">
-                    <h3 style="margin-bottom:25px;"><i class="fa fa-sliders"></i> User Preferences</h3>
-                    
-                    <div style="display:flex; justify-content:space-between; align-items:center; padding:15px 0; border-bottom:1px solid #e2e8f0;">
-                        <div>
-                            <b>Night Mode</b><br><small>Enable dark theme for eye comfort</small>
-                        </div>
-                        <label class="switch">
-                            <input type="checkbox" onchange="document.body.classList.toggle('dark-theme')">
-                            <span class="slider"></span>
-                        </label>
+                    <h3>Display & Personalization</h3>
+                    <div class="setting-row">
+                        <div><b>Dark Mode</b><br><small>High contrast dark background</small></div>
+                        <label class="switch"><input type="checkbox" onchange="document.body.classList.toggle('dark-theme')"><span class="slider"></span></label>
                     </div>
-
-                    <div style="display:flex; justify-content:space-between; align-items:center; padding:15px 0; border-bottom:1px solid #e2e8f0;">
-                        <div>
-                            <b>Push Notifications</b><br><small>Alerts for PNR status changes</small>
-                        </div>
-                        <label class="switch">
-                            <input type="checkbox" checked>
-                            <span class="slider"></span>
-                        </label>
+                    <div class="setting-row">
+                        <div><b>Accessibility Font</b><br><small>Increase system text size</small></div>
+                        <label class="switch"><input type="checkbox" onchange="alert('Font size adjusted')"><span class="slider"></span></label>
                     </div>
-
-                    <div style="display:flex; justify-content:space-between; align-items:center; padding:15px 0; border-bottom:1px solid #e2e8f0;">
-                        <div>
-                            <b>Two-Factor Auth</b><br><small>Secure your payments with OTP</small>
-                        </div>
-                        <label class="switch">
-                            <input type="checkbox" checked>
-                            <span class="slider"></span>
-                        </label>
+                    <div class="setting-row">
+                        <div><b>System Language</b><br><small>Preferred interface language</small></div>
+                        <select style="width:140px; font-size:12px;"><option>English (US)</option><option>Hindi</option><option>Spanish</option></select>
                     </div>
+                </div>
 
-                    <div style="margin-top:30px;">
-                        <button class="btn-prime" style="background:var(--danger);" onclick="alert('Session Cleared')">Clear Cache</button>
-                        <button class="btn-prime" onclick="alert('Settings Saved')">Save Changes</button>
+                <div class="glass-card">
+                    <h3>Account & Security</h3>
+                    <div class="setting-row">
+                        <div><b>Incognito Booking</b><br><small>Don't save history for this session</small></div>
+                        <label class="switch"><input type="checkbox" onchange="alert('Privacy Mode Activated')"><span class="slider"></span></label>
+                    </div>
+                    <div class="setting-row">
+                        <div><b>Currency</b><br><small>Select payment display</small></div>
+                        <select style="width:140px; font-size:12px;"><option>INR (₹)</option><option>USD ($)</option><option>EUR (€)</option></select>
+                    </div>
+                    <div class="setting-row">
+                        <div><b>Email Notifications</b><br><small>Send ticket copy to email</small></div>
+                        <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
                     </div>
                 </div>
             </section>
-
         </div>
     </main>
 
     <script>
-        // FUNCTION TO DISABLE PREVIOUS DATES
-        function setupMinDate() {
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('jDate').setAttribute('min', today);
-        }
+        function setupMinDate() { document.getElementById('jDate').setAttribute('min', new Date().toISOString().split('T')[0]); }
+        let state = { train: '', seats: [], passengerName: 'Aman Sharma', passengerEmail: '', price: 0, date: '', src: 'Delhi', dest: 'Mumbai' };
 
-        let state = {
-            view: 'booking-module',
-            bk_step: 'bk-search',
-            src: 'New Delhi (NDLS)', dest: 'Mumbai Central (BCT)', date: '',
-            train: '', class: '', price: 0,
-            seats: [],
-            cart: 0,
-            passengerName: '',
-            passengerEmail: ''
-        };
+        function updateUserProfile(name) {
+            const displayName = name.trim() || "Aman Sharma";
+            document.getElementById('userDisplay').innerText = displayName;
+            const initials = displayName.split(" ").map(n => n[0]).join("").toUpperCase().substring(0, 2);
+            document.getElementById('userInitial').innerText = initials || "AS";
+            state.passengerName = displayName;
+        }
 
         function navigate(moduleID) {
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-            if (event) event.currentTarget.classList.add('active');
-            
-            document.querySelectorAll('main > .container > section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('section.view').forEach(s => s.classList.remove('active'));
             document.getElementById(moduleID).classList.add('active');
-            if (event) document.getElementById('headerTitle').innerText = event.currentTarget.innerText;
-        }
+            document.getElementById('headerTitle').innerText = moduleID.replace('-module', '').toUpperCase().replace('-', ' ');
+            
+            if(moduleID === 'status-module') {
+                document.getElementById('trackSrc').innerText = document.getElementById('src').value || "Delhi";
+                document.getElementById('trackDest').innerText = document.getElementById('dest').value || "Mumbai";
+            }
 
-        function showBkStep(stepID) {
-            document.querySelectorAll('#booking-module .view').forEach(v => v.classList.remove('active'));
-            document.getElementById(stepID).classList.add('active');
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => { if(item.innerText.toLowerCase().includes(moduleID.split('-')[0])) item.classList.add('active'); });
         }
 
         function searchTrains() {
+            state.date = document.getElementById('jDate').value;
             state.src = document.getElementById('src').value;
             state.dest = document.getElementById('dest').value;
-            state.date = document.getElementById('jDate').value;
-            if(!state.date) return alert("Please select journey date");
-
+            if(!state.date) return alert("Select Date");
             document.getElementById('globalLoader').style.display = 'flex';
-            document.getElementById('loaderText').innerText = "Fetching Available Trains...";
-            
             setTimeout(() => {
                 document.getElementById('globalLoader').style.display = 'none';
-                showBkStep('bk-results');
+                document.querySelectorAll('#booking-module .view').forEach(v => v.classList.remove('active'));
+                document.getElementById('bk-results').classList.add('active');
                 document.getElementById('step2').classList.add('active');
-            }, 1500);
+            }, 800);
         }
 
         function selectTrain(cls, price) {
-            state.class = cls;
-            state.price = price;
-            state.train = "Rajdhani Express (12952)";
-            
-            showBkStep('bk-berths');
+            state.price = price; state.train = "Rajdhani Exp (12952)";
+            document.querySelectorAll('#booking-module .view').forEach(v => v.classList.remove('active'));
+            document.getElementById('bk-berths').classList.add('active');
             document.getElementById('step3').classList.add('active');
             initCoachMap();
         }
 
         function initCoachMap() {
-            const container = document.getElementById('coachMap');
-            container.innerHTML = '';
-            for(let i=1; i<=12; i++) {
+            const container = document.getElementById('coachMap'); container.innerHTML = '';
+            for(let i=1; i<=6; i++) {
                 const group = document.createElement('div');
                 group.className = 'berth-group';
-                group.innerHTML = `
-                    <div class="berth" onclick="toggleBerth(this, '${i}L')">${i}L</div>
-                    <div class="berth booked">${i}M</div>
-                    <div class="berth" onclick="toggleBerth(this, '${i}U')">${i}U</div>
-                `;
+                group.innerHTML = `<div class="berth" onclick="toggleBerth(this, '${i}L')">${i}L</div><div class="berth booked">${i}M</div><div class="berth" onclick="toggleBerth(this, '${i}U')">${i}U</div>`;
                 container.appendChild(group);
             }
         }
@@ -442,127 +708,51 @@
             el.classList.toggle('selected');
             if(el.classList.contains('selected')) state.seats.push(id);
             else state.seats = state.seats.filter(s => s !== id);
-            
             document.getElementById('selBerths').innerText = state.seats.join(', ') || 'None';
             document.getElementById('totalFare').innerText = '₹' + (state.seats.length * state.price);
-            document.getElementById('berthContinue').disabled = state.seats.length === 0 ? true : false;
+            document.getElementById('berthContinue').disabled = state.seats.length === 0;
         }
 
         function toCheckout() {
-            state.passengerName = document.getElementById('passName').value.trim();
-            state.passengerEmail = document.getElementById('passEmail').value.trim();
-
-            if(!state.passengerName || !state.passengerEmail) {
-                return alert("Please enter Passenger Name and Email to proceed.");
-            }
-
-            document.getElementById('userDisplay').innerText = state.passengerName;
-            document.getElementById('userInitial').innerText = state.passengerName.substring(0,2).toUpperCase();
-
-            showBkStep('bk-pay');
+            state.passengerEmail = document.getElementById('passEmail').value;
+            if(!state.passengerName || !state.passengerEmail) return alert("Enter Passenger Details");
+            document.querySelectorAll('#booking-module .view').forEach(v => v.classList.remove('active'));
+            document.getElementById('bk-pay').classList.add('active');
             document.getElementById('step4').classList.add('active');
-            
-            const base = state.seats.length * state.price;
-            const total = base + 35;
-            
-            document.getElementById('invoiceUser').innerHTML = `<b>Billed to:</b> ${state.passengerName}<br>${state.passengerEmail}`;
-            document.getElementById('invoiceContent').innerHTML = `
-                <div style="display:flex; justify-content:space-between; margin-bottom:15px; opacity:0.8;"><span>Base Fare</span><span>₹${base}</span></div>
-                <div style="display:flex; justify-content:space-between; margin-bottom:15px; opacity:0.8;"><span>Booking Fee</span><span>₹35</span></div>
-                <hr style="border:none; border-top:1px dashed #ffffff44; margin:20px 0;">
-                <div style="display:flex; justify-content:space-between; font-size:22px; font-weight:800; color:var(--gold);"><span>Total Pay</span><span>₹${total}</span></div>
-            `;
-        }
-
-        function selPay(el) {
-            document.querySelectorAll('.pay-method').forEach(m => m.classList.remove('active'));
-            el.classList.add('active');
+            document.getElementById('invoiceContent').innerHTML = `<h4>Summary for ${state.passengerName}</h4><p>Base Fare: ₹${state.seats.length * state.price}</p>`;
         }
 
         function runPayment() {
             document.getElementById('globalLoader').style.display = 'flex';
-            document.getElementById('loaderText').innerText = "Securing Bank Transaction...";
-            
             setTimeout(() => {
                 document.getElementById('globalLoader').style.display = 'none';
-                showBkStep('bk-ticket');
+                document.querySelectorAll('#booking-module .view').forEach(v => v.classList.remove('active'));
+                document.getElementById('bk-ticket').classList.add('active');
                 document.getElementById('step5').classList.add('active');
-                
-                const pnr = `4255-${Math.floor(Math.random()*900000)}`;
-                const seats = state.seats.join(', ');
-                
-                const newRow = `<tr style="border-bottom:1px solid #f1f5f9;">
-                    <td style="padding:20px;"><b>${pnr}</b></td>
-                    <td>Rajdhani Express<br><small>${state.src} → ${state.dest}</small></td>
-                    <td>${state.date}</td>
-                    <td><span style="background:#dcfce7; color:#166534; padding:5px 10px; border-radius:6px; font-size:11px; font-weight:800;">CONFIRMED</span></td>
-                    <td><button class="btn-prime" style="padding:8px 15px; font-size:12px;" onclick="viewHistoryTicket('${pnr}', 'Rajdhani Express', '${state.date}', '${state.src} → ${state.dest}', '${state.passengerName}', '${state.passengerEmail}', '${seats}')">E-Ticket</button></td>
-                </tr>`;
-                document.getElementById('histBody').innerHTML = newRow + document.getElementById('histBody').innerHTML;
-            }, 3000);
+                saveToHistory();
+            }, 1500);
         }
 
-        // NEW FUNCTION: VIEW ETICKET FROM HISTORY
-        function viewHistoryTicket(pnr, train, date, route, pass, email, seats) {
-            // Update global state temporarily to reflect history item
-            state.passengerName = pass;
-            state.passengerEmail = email;
-            state.train = train;
-            state.date = date;
-            state.src = route.split(' → ')[0];
-            state.dest = route.split(' → ')[1];
-            state.seats = seats.split(', ');
-
-            // Navigate to Booking Module > Ticket View
-            navigate('booking-module');
-            showBkStep('bk-ticket');
-            
-            // Populate Ticket UI
-            showTicketUI();
-            document.getElementById('t_pnr').innerText = pnr; // Set specific PNR
+        function saveToHistory() {
+            const pnr = "PNR-" + Math.floor(Math.random()*900000 + 100000);
+            state.pnr = pnr;
+            const historyItem = `<div class="glass-card" style="margin-bottom:10px;"><div style="display:flex; justify-content:space-between; align-items:center;"><div><b>${state.train}</b><br><small>${state.date} | PNR: ${pnr}</small></div><div style="text-align:right;"><small>${state.passengerName}</small><br><b>${state.seats.join(', ')}</b></div></div></div>`;
+            const histBody = document.getElementById('histBody');
+            if(histBody.innerText.includes("No previous bookings")) histBody.innerHTML = '';
+            histBody.innerHTML = historyItem + histBody.innerHTML;
         }
 
         function showTicketUI() {
             document.getElementById('ticketVisual').style.display = 'block';
-            document.getElementById('t_train').innerText = state.train;
+            document.getElementById('t_pnr').innerText = state.pnr;
             document.getElementById('t_date').innerText = state.date;
-            document.getElementById('t_route').innerText = state.src + " → " + state.dest;
-            document.getElementById('t_seats').innerText = state.seats.join(', ');
+            document.getElementById('t_train').innerText = state.train;
             document.getElementById('t_passName').innerText = state.passengerName;
             document.getElementById('t_passEmail').innerText = state.passengerEmail;
-            
-            // Ensure PNR is visible (if not already set by history)
-            if(!document.getElementById('t_pnr')) {
-                // Find PNR container and add ID if needed
-                const pnrDiv = document.querySelector('.final-ticket b');
-                if(pnrDiv) pnrDiv.id = 't_pnr';
-            }
+            document.getElementById('t_seats').innerText = state.seats.join(', ');
         }
 
-        function startTracking() {
-            const trainNo = document.getElementById('trackInput').value;
-            if(!trainNo) return alert("Enter Train Number");
-
-            document.getElementById('globalLoader').style.display = 'flex';
-            document.getElementById('loaderText').innerText = "Connecting to Satellite GPS...";
-            
-            setTimeout(() => {
-                document.getElementById('globalLoader').style.display = 'none';
-                
-                document.getElementById('trackingTitle').innerText = "Train: " + trainNo;
-                document.getElementById('trackingRoute').innerText = state.src + " ➔ " + state.dest;
-                document.getElementById('trackSrc').innerText = state.src;
-                document.getElementById('trackDest').innerText = state.dest;
-
-                document.getElementById('trackResult').style.display = 'block';
-            }, 1500);
-        }
-
-        function addFood(name, price) {
-            state.cart++;
-            document.getElementById('foodCart').innerText = `Cart: ${state.cart} Items`;
-            alert(`${name} has been assigned to your seat!`);
-        }
+        function addFood(itemName) { alert(itemName + " was added to your seat for " + state.passengerName + "!"); }
     </script>
 </body>
 </html>
