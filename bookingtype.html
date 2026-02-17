@@ -30,56 +30,64 @@ body{
   }
 }
 
-/* UPDATED NAVBAR FOR SINGLE LINE ADJUSTMENT */
+/* --- FIXED NAVBAR SECTION --- */
 nav {
   position: sticky;
   top: 0;
-  background: rgba(0, 0, 0, 0.85);
-  padding: 15px 5px; /* Reduced side padding */
+  background: rgba(0,0,0,0.9);
+  padding: 10px 5px; /* Minimal padding to save horizontal space */
   display: flex;
-  justify-content: center;
+  justify-content: space-between; /* Spreads items to the edges */
   align-items: center;
-  gap: 12px; /* Balanced spacing */
   z-index: 1000;
-  overflow: hidden; /* Prevents stray pixels from leaking */
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0; /* Prevents logo from being squished */
 }
 
 .navbar-brand img {
-  height: 50px; /* Reduced height to fit better */
+  height: 45px; /* Optimized height for mobile visibility */
   width: auto;
-  display: block;
+  border-radius: 50%; /* Keeps your logo style consistent */
+}
+
+/* Links container to manage spacing specifically */
+.nav-links {
+  display: flex;
+  gap: 8px; /* Balanced spacing between links */
+  align-items: center;
 }
 
 nav a {
   color: #fff;
   text-decoration: none;
   font-weight: bold;
-  font-size: 14px; /* Standard size */
+  font-size: 13px; /* Slightly reduced but perfectly readable */
+  white-space: nowrap; /* Forces text to stay on one line */
   transition: 0.3s;
-  white-space: nowrap;
 }
 
 nav a:hover { color: #00ffd5; }
 
-/* MOBILE SPECIFIC: Reduces size to keep in one line */
-@media (max-width: 600px) {
-  nav {
-    gap: 6px; /* Tighter gap for mobile */
-    padding: 10px 2px;
-  }
-  nav a {
-    font-size: 10px; /* Smaller text for small screens */
-  }
-  .navbar-brand img {
-    height: 35px; /* Smaller logo for mobile */
-  }
+/* Adjustments specifically for very small screens */
+@media (max-width: 400px) {
+  nav { gap: 4px; }
+  nav a { font-size: 11px; }
+  .navbar-brand img { height: 35px; }
 }
+/* --- END OF NAVBAR UPDATES --- */
 
-/* END OF NAVBAR UPDATES */
 
 h1,h2{text-align:center;margin:20px 0;}
 
+
 section{padding:40px 20px;}
+
 
 .cards{
   display:flex;
@@ -113,6 +121,7 @@ section{padding:40px 20px;}
 .train{background:linear-gradient(135deg,#1fa2ff,#12d8fa);}
 .flight{background:linear-gradient(135deg,#f7971e,#ffd200);}
 
+
 .applied{
   position:absolute;
   top:10px;
@@ -125,6 +134,7 @@ section{padding:40px 20px;}
   font-weight:bold;
   display:none;
 }
+
 
 #scanner{
   max-width:320px;
@@ -163,11 +173,13 @@ footer {
  <a class="navbar-brand" href="#">
     <img src="djgst_logo.png" alt="SkyBound Logo">
  </a>
+ <div class="nav-links">
   <a href="#home">Home</a>
   <a href="#booking">Booking</a>
   <a href="#scanner-section">Download App</a>
   <a href="#about">About Us</a>
   <a href="#offers">Offers & Discounts</a>
+ </div>
 </nav>
 
 <section id="home">
