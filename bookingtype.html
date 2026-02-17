@@ -30,44 +30,56 @@ body{
   }
 }
 
-/* UPDATED NAVBAR CSS */
-nav{
-  position:sticky;
-  top:0;
-  background:rgba(0,0,0,0.8);
-  padding:10px 15px;
-  display:flex;
-  justify-content:center;
-  align-items: center;
-  flex-wrap: wrap; /* Allows items to wrap if screen is narrow */
-  gap:15px;
-  z-index:1000;
-}
-
-.navbar-brand {
+/* UPDATED NAVBAR FOR SINGLE LINE ADJUSTMENT */
+nav {
+  position: sticky;
+  top: 0;
+  background: rgba(0, 0, 0, 0.85);
+  padding: 15px 5px; /* Reduced side padding */
   display: flex;
+  justify-content: center;
   align-items: center;
+  gap: 12px; /* Balanced spacing */
+  z-index: 1000;
+  overflow: hidden; /* Prevents stray pixels from leaking */
 }
 
 .navbar-brand img {
-  max-width: 100px; /* Prevents logo from being cut off */
-  height: auto;
+  height: 50px; /* Reduced height to fit better */
+  width: auto;
+  display: block;
 }
 
-nav a{
-  color:#fff;
-  text-decoration:none;
-  font-weight:bold;
-  white-space: nowrap; /* Keeps link text on one line */
+nav a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 14px; /* Standard size */
+  transition: 0.3s;
+  white-space: nowrap;
 }
-nav a:hover{color:#00ffd5;}
 
+nav a:hover { color: #00ffd5; }
+
+/* MOBILE SPECIFIC: Reduces size to keep in one line */
+@media (max-width: 600px) {
+  nav {
+    gap: 6px; /* Tighter gap for mobile */
+    padding: 10px 2px;
+  }
+  nav a {
+    font-size: 10px; /* Smaller text for small screens */
+  }
+  .navbar-brand img {
+    height: 35px; /* Smaller logo for mobile */
+  }
+}
+
+/* END OF NAVBAR UPDATES */
 
 h1,h2{text-align:center;margin:20px 0;}
 
-
 section{padding:40px 20px;}
-
 
 .cards{
   display:flex;
@@ -101,7 +113,6 @@ section{padding:40px 20px;}
 .train{background:linear-gradient(135deg,#1fa2ff,#12d8fa);}
 .flight{background:linear-gradient(135deg,#f7971e,#ffd200);}
 
-
 .applied{
   position:absolute;
   top:10px;
@@ -114,7 +125,6 @@ section{padding:40px 20px;}
   font-weight:bold;
   display:none;
 }
-
 
 #scanner{
   max-width:320px;
@@ -129,7 +139,7 @@ section{padding:40px 20px;}
 #scanner:hover {
   background: rgba(255,255,255,0.2);
 }
-#scanner img{width:120px;} /* Slightly larger for the store icon */
+#scanner img{width:120px;} 
 #qr-result{margin-top:10px;font-size:14px; color:#00ffd5;}
 
 #about p{
