@@ -1,132 +1,147 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="icon" sizes="48×48" type="image/png" href="https://raw.githubusercontent.com/username/repo/main/logo.png">
-<meta name="google-site-verification" content="tEscgbpIR1RByuhAEAvaJWrVwTEQQ_vOUViiQj_aIok" />
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DJGST Travels – Welcome</title>
-<meta name="description" content="DJGST Travels ticket booking system for bus, train and flight reservations.">
-<meta name="keywords" content="DJGST, DJGST Travels, ticket booking, bus booking, train booking, flight booking">
-<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+  <link rel="icon" sizes="48x48" type="image/png" href="https://raw.githubusercontent.com/username/repo/main/logo.png">
+  <meta name="google-site-verification" content="tEscgbpIR1RByuhAEAvaJWrVwTEQQ_vOUViiQj_aIok" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DJGST Travels – Welcome</title>
+  <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
 
-<style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: Arial, sans-serif;
-}
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
 
-body {
-  background-color: #0f3b6d;
-}
+    body {
+      background-color: #0f3b6d;
+    }
 
+    /* Splash Screen - Centering Logic */
+    #splash {
+      position: fixed;
+      inset: 0;
+      background: #0a305a;
+      display: flex;
+      flex-direction: column; /* Stack children vertically */
+      align-items: center;    /* Horizontal center */
+      justify-content: center; /* Vertical center */
+      z-index: 1000;
+      text-align: center;
+    }
 
-#splash {
-  position: fixed;
-  inset: 0;
-  background: #0a305a;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
+    .splash-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+    }
 
-.splash-box {
-  text-align: center;
-  color: #fff;
-}
+    /* Ensures the Lottie player stays centered as a block */
+    lottie-player {
+      margin: 0 auto; 
+      display: block;
+    }
 
-.splash-box h2 {
-  margin-top: 10px;
-  letter-spacing: 1px;
-}
+    .splash-box h1 {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
 
-.splash-box p {
-  font-size: 14px;
-  opacity: 0.8;
-}
+    .splash-box h2 {
+      margin-top: 10px;
+      letter-spacing: 1px;
+    }
 
- 
-#sschome {
-  min-height: 100vh;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, #1b263b, #415a77);
-}
+    .splash-box p {
+      font-size: 14px;
+      opacity: 0.8;
+    }
 
-.sschome-card {
-  background: #d4e9ed;
-  padding: 30px;
-  border-radius: 12px;
-  width: 280px;
-  text-align: center;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-}
+    /* Home Screen Styling */
+    #sschome {
+      min-height: 100vh;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #1b263b, #415a77);
+    }
 
-.sscbutton {
-  margin-top: 15px;
-  padding: 10px 20px;
-  background: #1bb307;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  display: none;
-  font-size: 16px;
-  transition: background 0.3s;
-}
+    .sschome-card {
+      background: #d4e9ed;
+      padding: 30px;
+      border-radius: 12px;
+      width: 280px;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
 
-.sscbutton:hover {
-  background: #0eb508;
-}
-</style>
+    .sscbutton {
+      margin-top: 15px;
+      padding: 10px 20px;
+      background: #1bb307;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      display: none;
+      font-size: 16px;
+      transition: background 0.3s;
+    }
+
+    .sscbutton:hover {
+      background: #0eb508;
+    }
+  </style>
 </head>
 
 <body>
 
- 
-<div id="splash">
-  <div class="splash-box">
-<h1>welcome to DJGST Travels 😌</h1>
+  <div id="splash">
+    <div class="splash-box">
+      <h1>Welcome to DJGST Travels 😌</h1>
 
-    <lottie-player
-      src="https://assets9.lottiefiles.com/packages/lf20_kkflmtur.json"
-      background="transparent"
-      speed="1"
-      style="width:200px; height:200px;"
-      loop
-      autoplay>
-    </lottie-player>
-    <h2>DJGST TRAVELS</h2>
-    <p>Smart Ticket Reservation</p>
+      <lottie-player
+        src="https://assets9.lottiefiles.com/packages/lf20_kkflmtur.json"
+        background="transparent"
+        speed="1"
+        style="width: 250px; height: 250px;" 
+        loop
+        autoplay>
+      </lottie-player>
+
+      <h2>DJGST TRAVELS</h2>
+      <p>Smart Ticket Reservation</p>
+    </div>
   </div>
-</div>
 
- 
-<div id="sschome">
-  <div class="sschome-card">
-    <h2>Welcome</h2>
-    <p>Book your journey with comfort</p>
-    <a href="LOGIN.html">
-      <button id="bookBtn" class="sscbutton">Book Tickets</button>
-    </a>
+  <div id="sschome">
+    <div class="sschome-card">
+      <h2>Welcome</h2>
+      <p>Book your journey with comfort</p>
+      <a href="LOGIN.html">
+        <button id="bookBtn" class="sscbutton">Book Tickets</button>
+      </a>
+    </div>
   </div>
-</div>
 
-<script>
-window.addEventListener("load", () => {
-  setTimeout(() => {
-    document.getElementById("splash").style.display = "none";
-    document.getElementById("sschome").style.display = "flex";
-  }, 5000);
+  <script>
+    window.addEventListener("load", () => {
+      // Hide splash after 5 seconds
+      setTimeout(() => {
+        document.getElementById("splash").style.display = "none";
+        document.getElementById("sschome").style.display = "flex";
+      }, 5000);
 
-  setTimeout(() => {
-    document.getElementById("bookBtn").style.display = "inline-block";
-  }, 1000);
-});
-</script>
+      // Show the button shortly after load
+      setTimeout(() => {
+        document.getElementById("bookBtn").style.display = "inline-block";
+      }, 1000);
+    });
+  </script>
 </body>
 </html>
