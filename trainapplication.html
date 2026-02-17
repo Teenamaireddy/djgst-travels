@@ -26,23 +26,31 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
         body { background: var(--bg); display: flex; height: 100vh; overflow: hidden; color: #1e293b; transition: 0.3s; }
 
-        /* PERMANENT SIDEBAR CSS */
+        /* SIDEBAR WITH SCROLL FIX */
         aside { 
             width: var(--sidebar-width); 
             background: var(--primary); 
             color: white; 
-            padding: 30px; 
+            padding: 20px 25px; 
             display: flex; 
             flex-direction: column; 
             z-index: 1000; 
             left: 0;
             position: relative;
             flex-shrink: 0;
+            overflow-y: auto;
+            scrollbar-width: none;
         }
+        aside::-webkit-scrollbar { display: none; }
 
-        .brand { font-size: 24px; font-weight: 800; color: var(--accent); margin-bottom: 50px; display: flex; align-items: center; gap: 12px; }
+        .brand { font-size: 24px; font-weight: 800; color: var(--accent); margin-bottom: 30px; display: flex; align-items: center; gap: 12px; }
         .nav-group { flex: 1; }
-        .nav-item { padding: 16px; border-radius: 12px; display: flex; align-items: center; gap: 15px; cursor: pointer; transition: 0.3s; color: #94a3b8; font-weight: 600; margin-bottom: 8px; }
+        .nav-item { 
+            padding: 14px; 
+            border-radius: 12px; 
+            display: flex; 
+            align-items: center; 
+            gap: 15px; cursor: pointer; transition: 0.3s; color: #94a3b8; font-weight: 600; margin-bottom: 8px; }
         .nav-item:hover, .nav-item.active { background: rgba(255,255,255,0.1); color: white; }
 
         main { flex: 1; overflow-y: auto; position: relative; display: flex; flex-direction: column; width: 100%; min-width: 0; }
@@ -122,11 +130,11 @@
             box-shadow:2px 2px 2px 5px blue;
             color: blue;
         }
-    .tbs:{
-        color:white;
-        background:blue;
-        transition:0.5s;
-    }
+        .tbs {
+            color:white;
+            background:blue;
+            transition:0.5s;
+        }
     </style>
 </head>
 <body onload="setupMinDate()">
@@ -146,7 +154,7 @@
             <div class="nav-item" onclick="navigate('food-module')"><i class="fa fa-utensils"></i> Order Meals</div>
             <div class="nav-item" onclick="navigate('history-module')"><i class="fa fa-history"></i> My Bookings</div>
         </div>
-        <div class="nav-item" onclick="navigate('settings-module')"><i class="fa fa-gear"></i> System Settings</div>
+        <div class="nav-item" onclick="navigate('settings-module')" style="margin-top:20px;"><i class="fa fa-gear"></i> System Settings</div>
     </aside>
 
     <main>
@@ -216,8 +224,31 @@
 
                 <div id="bk-ticket" class="view">
                     <button class="btn-back" onclick="navigate('booking-module')"><i class="fa fa-home"></i> New Booking</button>
-                    <div class="glass-card" style="text-align:center;"><i class="fa fa-check-circle" style="font-size:60px; color:var(--success);"></i><h2 style="margin:15px 0;">Booking Confirmed!</h2><button class="btn-prime" onclick="showTicketUI()">View E-Ticket</button></div>
-                    <div class="final-ticket" id="ticketVisual" style="display:none; margin-top:20px;"><div class="ticket-header"><h3 id="t_train">--</h3></div><div style="padding:20px;"><div style="display:flex; justify-content:space-between; margin-bottom:15px;"><div><small>PNR</small><br><b id="t_pnr">--</b></div><div><small>DATE</small><br><b id="t_date">--</b></div></div><p>Passenger: <b id="t_passName">--</b></p><p>Email: <b id="t_passEmail">--</b></p><p>Seats: <b id="t_seats">--</b></p></div></div>
+                    <div class="glass-card" style="text-align:center;">
+                        <i class="fa fa-check-circle" style="font-size:60px; color:var(--success);"></i>
+                        <h2 style="margin:15px 0;">Booking Confirmed!</h2>
+                        <div style="display: flex; gap: 10px; justify-content: center;">
+                            <button class="btn-prime" onclick="showTicketUI()">View E-Ticket</button>
+                            <button class="btn-prime" style="background: var(--primary);" onclick="downloadTicket()"><i class="fa fa-download"></i> Download</button>
+                        </div>
+                    </div>
+                    
+                    <div class="final-ticket" id="ticketVisual" style="display:none; margin-top:20px;">
+                        <div class="ticket-header"><h3 id="t_train">--</h3></div>
+                        <div style="padding:20px;">
+                            <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
+                                <div><small>PNR</small><br><b id="t_pnr">--</b></div>
+                                <div><small>DATE</small><br><b id="t_date">--</b></div>
+                            </div>
+                            <div style="margin-bottom:15px; padding-bottom:10px; border-bottom: 1px dashed #ddd;">
+                                <small>JOURNEY</small><br>
+                                <b id="t_route">-- to --</b>
+                            </div>
+                            <p>Passenger: <b id="t_passName">--</b></p>
+                            <p>Email: <b id="t_passEmail">--</b></p>
+                            <p>Seats: <b id="t_seats">--</b></p>
+                        </div>
+                    </div>
                 </div>
             </section>
 
@@ -239,8 +270,7 @@
                     <div class="meal-grid">
                         <div class="meal-card" onclick="addFood('Executive Thali')">
                             <img src="https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=400" alt="Thali">
-                            <b>Executive Thali</b><br>
-                            <small>₹240</small>
+                            <b>Executive Thali</b><br><small>₹240</small>
                         </div>
                         <div class="meal-card" onclick="addFood('Veg Biryani')">
                             <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTupm1r7DOk3bHIGlaeKsxuOEIdjRXiF6_rkHiLQo0iDw&s=10" alt="Biryani">
@@ -275,7 +305,6 @@
                         <select style="width:140px; font-size:12px;"><option>English (US)</option><option>Hindi</option><option>Spanish</option></select>
                     </div>
                 </div>
-
                 <div class="glass-card">
                     <h3>Account & Security</h3>
                     <div class="setting-row">
@@ -310,21 +339,15 @@
         function goBack(targetId, stepNum) {
             document.querySelectorAll('#booking-module .view').forEach(v => v.classList.remove('active'));
             document.getElementById(targetId).classList.add('active');
-            
-            // Revert steps
-            for(let i = 5; i > stepNum; i--) {
-                document.getElementById('step' + i).classList.remove('active');
-            }
+            for(let i = 5; i > stepNum; i--) { document.getElementById('step' + i).classList.remove('active'); }
         }
 
         function navigate(moduleID) {
-            // Reset Booking flow if navigating away
             if(moduleID === 'booking-module') {
                 document.querySelectorAll('#booking-module .view').forEach(v => v.classList.remove('active'));
                 document.getElementById('bk-search').classList.add('active');
                 for(let i=2; i<=5; i++) document.getElementById('step'+i).classList.remove('active');
             }
-
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
             document.querySelectorAll('section.view').forEach(s => s.classList.remove('active'));
             document.getElementById(moduleID).classList.add('active');
@@ -334,7 +357,6 @@
                 document.getElementById('trackSrc').innerText = document.getElementById('src').value || "Delhi";
                 document.getElementById('trackDest').innerText = document.getElementById('dest').value || "Mumbai";
             }
-
             const navItems = document.querySelectorAll('.nav-item');
             navItems.forEach(item => { if(item.innerText.toLowerCase().includes(moduleID.split('-')[0])) item.classList.add('active'); });
         }
@@ -386,7 +408,7 @@
             document.querySelectorAll('#booking-module .view').forEach(v => v.classList.remove('active'));
             document.getElementById('bk-pay').classList.add('active');
             document.getElementById('step4').classList.add('active');
-            document.getElementById('invoiceContent').innerHTML = `<h4>Summary for ${state.passengerName}</h4><p>Base Fare: ₹${state.seats.length * state.price}</p>`;
+            document.getElementById('invoiceContent').innerHTML = `<h4>Summary for ${state.passengerName}</h4><p>Route: ${state.src} to ${state.dest}</p><p>Base Fare: ₹${state.seats.length * state.price}</p>`;
         }
 
         function runPayment() {
@@ -414,9 +436,33 @@
             document.getElementById('t_pnr').innerText = state.pnr;
             document.getElementById('t_date').innerText = state.date;
             document.getElementById('t_train').innerText = state.train;
+            document.getElementById('t_route').innerText = state.src + " to " + state.dest;
             document.getElementById('t_passName').innerText = state.passengerName;
             document.getElementById('t_passEmail').innerText = state.passengerEmail;
             document.getElementById('t_seats').innerText = state.seats.join(', ');
+        }
+
+        function downloadTicket() {
+            const ticketData = `
+RAILNEXUS E-TICKET
+-------------------------
+PNR: ${state.pnr}
+Train: ${state.train}
+Date: ${state.date}
+Route: ${state.src} to ${state.dest}
+Passenger: ${state.passengerName}
+Seats: ${state.seats.join(', ')}
+Total Fare: ₹${state.seats.length * state.price}
+-------------------------
+Thank you for choosing RailNexus!
+            `;
+            const blob = new Blob([ticketData], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Ticket_${state.pnr}.txt`;
+            a.click();
+            window.URL.revokeObjectURL(url);
         }
 
         function addFood(itemName) { alert(itemName + " was added to your seat for " + state.passengerName + "!"); }
