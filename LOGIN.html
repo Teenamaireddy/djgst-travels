@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login – DJGST Travels Ticket Booking</title>
     <style>
-        /* Base Layout */
+        
         body {
             background: linear-gradient(105deg, azure, peach);
             display: flex;
@@ -19,7 +19,7 @@
             box-sizing: border-box;
         }
 
-        /* Card Container */
+    
         .flip-card {
             background-color: transparent;
             width: 100%;
@@ -40,8 +40,6 @@
         .flipped {
             transform: rotateY(180deg);
         }
-
-        /* Front & Back Styling */
         .flip-card-front, .flip-card-back {
             position: absolute;
             width: 100%;
@@ -69,7 +67,7 @@
             filter: brightness(0.5);
         }
 
-        /* Form Elements */
+        
         .form-box h2 {
             margin-bottom: 20px;
             color: #fff;
@@ -92,7 +90,7 @@
             box-sizing: border-box;
         }
 
-        /* Show Password Styling */
+        
         .toggle-pw {
             display: block;
             text-align: right;
@@ -127,7 +125,7 @@
         }
 
         span {
-            color: #ffeb3b; /* Brighter color for visibility */
+            color: #ffeb3b; 
             cursor: pointer;
             font-weight: bold;
             text-decoration: underline;
@@ -181,7 +179,7 @@
     </div>
 
     <script>
-        // Toggle Password Visibility
+        
         function toggleVisibility(id) {
             const field = document.getElementById(id);
             if (field.type === "password") {
@@ -191,20 +189,20 @@
             }
         }
 
-        // Login Validation Logic
+        
         function validateLogin() {
             const email = document.getElementById("loginEmail").value.trim();
             const password = document.getElementById("loginPassword").value.trim();
 
             if (email !== "" && password !== "") {
-                alert("Success! Redirecting you now...");
+                alert("your login successful!!...");
                 window.location.href = "bookingtype.html"; // Final navigation
             } else {
                 alert("Hold on! Please enter your email and password first.");
             }
         }
 
-        // Signup Validation Logic
+        
         function validateSignup() {
             const name = document.getElementById("regName").value.trim();
             const email = document.getElementById("regEmail").value.trim();
