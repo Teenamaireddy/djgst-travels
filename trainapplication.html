@@ -71,6 +71,7 @@
 
         .btn-prime { background: var(--accent); color: white; border: none; padding: 12px 20px; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.3s; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; white-space: nowrap; }
         .btn-prime:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.4); }
+        .btn-back { background: #f1f5f9; color: #475569; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-weight: 600; margin-bottom: 15px; display: inline-flex; align-items: center; gap: 5px; }
 
         .stepper { display: flex; justify-content: space-between; margin-bottom: 30px; position: relative; }
         .stepper::before { content: ''; position: absolute; top: 15px; left: 0; width: 100%; height: 2px; background: #e2e8f0; z-index: 1; }
@@ -116,6 +117,16 @@
         .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
         input:checked + .slider { background-color: var(--accent); }
         input:checked + .slider:before { transform: translateX(23px); }
+        .tbs:hover{
+            background-color:white;
+            box-shadow:2px 2px 2px 5px blue;
+            color: blue;
+        }
+    .tbs:{
+        color:white;
+        background:blue;
+        transition:0.5s;
+    }
     </style>
 </head>
 <body onload="setupMinDate()">
@@ -169,10 +180,21 @@
                 </div>
 
                 <div id="bk-results" class="view">
-                    <div class="glass-card" style="padding:0;"><div class="train-card"><div class="train-info"><b>12952 - RAJDHANI EXP</b><br><small>Daily | 16:30 - 08:35</small></div><div class="train-actions"><button class="btn-prime" style="background:#f1f5f9; color:black;" onclick="selectTrain('3rd AC', 2480)">3A - ₹2480</button><button class="btn-prime" onclick="selectTrain('2nd AC', 4100)">2A - ₹4100</button></div></div></div>
+                    <button class="btn-back" onclick="goBack('bk-search', 1)"><i class="fa fa-arrow-left"></i> Change Search</button>
+                    <div class="glass-card" style="padding:0;">
+                        <div class="train-card">
+                            <div class="train-info">
+                                <b>12952 - RAJDHANI EXP</b><br>
+                                <small>Daily | 16:30 - 08:35</small></div><div class="train-actions">
+                                <button class="tbs btn-prime" onclick="selectTrain('3rd AC', 2480)">3A - ₹2480</button><br><br>
+                                <button class="tbs btn-prime" onclick="selectTrain('2nd AC', 4100)">2A - ₹4100</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div id="bk-berths" class="view">
+                    <button class="btn-back" onclick="goBack('bk-results', 2)"><i class="fa fa-arrow-left"></i> Change Train</button>
                     <div class="glass-card">
                         <h3>Coach B4 - Layout</h3>
                         <div class="coach-container" id="coachMap"></div>
@@ -188,16 +210,19 @@
                 </div>
 
                 <div id="bk-pay" class="view">
+                    <button class="btn-back" onclick="goBack('bk-berths', 3)"><i class="fa fa-arrow-left"></i> Modify Berths</button>
                     <div class="glass-card"><h3>Payment Summary</h3><div id="invoiceContent" style="margin:20px 0;"></div><button class="btn-prime" style="width:100%; justify-content:center;" onclick="runPayment()">PROCESS PAYMENT</button></div>
                 </div>
 
                 <div id="bk-ticket" class="view">
+                    <button class="btn-back" onclick="navigate('booking-module')"><i class="fa fa-home"></i> New Booking</button>
                     <div class="glass-card" style="text-align:center;"><i class="fa fa-check-circle" style="font-size:60px; color:var(--success);"></i><h2 style="margin:15px 0;">Booking Confirmed!</h2><button class="btn-prime" onclick="showTicketUI()">View E-Ticket</button></div>
                     <div class="final-ticket" id="ticketVisual" style="display:none; margin-top:20px;"><div class="ticket-header"><h3 id="t_train">--</h3></div><div style="padding:20px;"><div style="display:flex; justify-content:space-between; margin-bottom:15px;"><div><small>PNR</small><br><b id="t_pnr">--</b></div><div><small>DATE</small><br><b id="t_date">--</b></div></div><p>Passenger: <b id="t_passName">--</b></p><p>Email: <b id="t_passEmail">--</b></p><p>Seats: <b id="t_seats">--</b></p></div></div>
                 </div>
             </section>
 
             <section id="status-module" class="view">
+                <button class="btn-back" onclick="navigate('booking-module')"><i class="fa fa-arrow-left"></i> Dashboard</button>
                 <div class="glass-card">
                     <h3>Live Train Status</h3>
                     <div class="track-path">
@@ -209,13 +234,13 @@
             </section>
 
             <section id="food-module" class="view">
+                <button class="btn-back" onclick="navigate('booking-module')"><i class="fa fa-arrow-left"></i> Dashboard</button>
                 <div class="glass-card"><h3>E-Catering Menu</h3>
                     <div class="meal-grid">
                         <div class="meal-card" onclick="addFood('Executive Thali')">
                             <img src="https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=400" alt="Thali">
                             <b>Executive Thali</b><br>
                             <small>₹240</small>
-                            
                         </div>
                         <div class="meal-card" onclick="addFood('Veg Biryani')">
                             <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTupm1r7DOk3bHIGlaeKsxuOEIdjRXiF6_rkHiLQo0iDw&s=10" alt="Biryani">
@@ -228,9 +253,13 @@
                 </div></div>
             </section>
 
-            <section id="history-module" class="view"><div class="glass-card"><h3>Recent Bookings</h3><div id="histBody" style="margin-top:15px;"><p style="color:#94a3b8; text-align:center;">No previous bookings found.</p></div></div></section>
+            <section id="history-module" class="view">
+                <button class="btn-back" onclick="navigate('booking-module')"><i class="fa fa-arrow-left"></i> Dashboard</button>
+                <div class="glass-card"><h3>Recent Bookings</h3><div id="histBody" style="margin-top:15px;"><p style="color:#94a3b8; text-align:center;">No previous bookings found.</p></div></div>
+            </section>
 
             <section id="settings-module" class="view">
+                <button class="btn-back" onclick="navigate('booking-module')"><i class="fa fa-arrow-left"></i> Dashboard</button>
                 <div class="glass-card">
                     <h3>Display & Personalization</h3>
                     <div class="setting-row">
@@ -278,7 +307,24 @@
             state.passengerName = displayName;
         }
 
+        function goBack(targetId, stepNum) {
+            document.querySelectorAll('#booking-module .view').forEach(v => v.classList.remove('active'));
+            document.getElementById(targetId).classList.add('active');
+            
+            // Revert steps
+            for(let i = 5; i > stepNum; i--) {
+                document.getElementById('step' + i).classList.remove('active');
+            }
+        }
+
         function navigate(moduleID) {
+            // Reset Booking flow if navigating away
+            if(moduleID === 'booking-module') {
+                document.querySelectorAll('#booking-module .view').forEach(v => v.classList.remove('active'));
+                document.getElementById('bk-search').classList.add('active');
+                for(let i=2; i<=5; i++) document.getElementById('step'+i).classList.remove('active');
+            }
+
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
             document.querySelectorAll('section.view').forEach(s => s.classList.remove('active'));
             document.getElementById(moduleID).classList.add('active');
