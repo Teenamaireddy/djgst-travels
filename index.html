@@ -5,7 +5,17 @@
   <meta name="google-site-verification" content="tEscgbpIR1RByuhAEAvaJWrVwTEQQ_vOUViiQj_aIok" />
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DJGST Travels – Welcome</title>
+
+  <!-- ✅ STRONG SEO TITLE -->
+  <title>DJGST Travels – Bus Train Flight Ticket Booking</title>
+
+  <!-- ✅ SEO META -->
+  <meta name="description" content="DJGST Travels online bus, train and flight ticket reservation system. Book tickets, choose amenities, make secure payment and track journeys.">
+  <meta name="keywords" content="DJGST Travels, bus booking, train booking, flight booking, ticket reservation, travel booking India">
+
+  <!-- ✅ BRAND SIGNAL FOR GOOGLE -->
+  <meta name="author" content="DJGST Travels">
+
   <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
 
   <style>
@@ -20,15 +30,14 @@
       background-color: #0f3b6d;
     }
 
-    /* Splash Screen - Centering Logic */
     #splash {
       position: fixed;
       inset: 0;
       background: #0a305a;
       display: flex;
-      flex-direction: column; /* Stack children vertically */
-      align-items: center;    /* Horizontal center */
-      justify-content: center; /* Vertical center */
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
       z-index: 1000;
       text-align: center;
     }
@@ -41,7 +50,6 @@
       color: #fff;
     }
 
-    /* Ensures the Lottie player stays centered as a block */
     lottie-player {
       margin: 0 auto; 
       display: block;
@@ -62,7 +70,6 @@
       opacity: 0.8;
     }
 
-    /* Home Screen Styling */
     #sschome {
       min-height: 100vh;
       display: none;
@@ -96,10 +103,25 @@
     .sscbutton:hover {
       background: #0eb508;
     }
+
+    /* ✅ Hidden SEO text (not visible but helps Google) */
+    .seo-hidden {
+      position: absolute;
+      left: -9999px;
+      top: -9999px;
+    }
   </style>
 </head>
 
 <body>
+
+  <!-- ✅ SEO CONTENT FOR GOOGLE -->
+  <div class="seo-hidden">
+    <h1>DJGST Travels</h1>
+    <p>DJGST Travels is an online bus, train and flight ticket booking website.</p>
+    <p>Book bus tickets, train tickets and flight tickets with DJGST Travels reservation system.</p>
+    <p>DJGST Travels provides amenities selection, secure payment and ticket tracking.</p>
+  </div>
 
   <div id="splash">
     <div class="splash-box">
@@ -131,13 +153,11 @@
 
   <script>
     window.addEventListener("load", () => {
-      // Hide splash after 5 seconds
       setTimeout(() => {
         document.getElementById("splash").style.display = "none";
         document.getElementById("sschome").style.display = "flex";
       }, 5000);
 
-      // Show the button shortly after load
       setTimeout(() => {
         document.getElementById("bookBtn").style.display = "inline-block";
       }, 1000);
