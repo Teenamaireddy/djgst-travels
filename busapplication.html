@@ -221,7 +221,7 @@
                         <input type="date">
                     </div>
                 </div>
-                <button class="btn-action" onclick="alert('Searching...')">Find Transport</button>
+                <button id="openPaymentBtn" class="btn-action">Find Transport</button>
             </div>
 
             <div class="card">
@@ -239,12 +239,34 @@
     </main>
 
     <script>
-        // Responsive Logic: If mobile, ensure clicks feel snappy
+        // --- YOUR ORIGINAL LOGIC ---
         document.querySelectorAll('.nav-link').forEach(link => {
             link.addEventListener('click', function() {
                 document.querySelector('.nav-link.active').classList.remove('active');
                 this.classList.add('active');
             });
+        });
+
+        // --- NEW PAYMENT REDIRECTION LOGIC ---
+        document.getElementById('openPaymentBtn').addEventListener('click', function() {
+            // Define your UPI details
+            const upiId = "9876543210@ybl"; // PhonePe VPA
+            const name = "DJGST Travels";
+            const amount = "1450.00";
+            const note = "Ticket Booking Payment";
+
+            // Standard UPI Deep Link URI
+            const upiUri = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(name)}&am=${amount}&cu=INR&tn=${encodeURIComponent(note)}`;
+
+            // Attempt to open the UPI App
+            window.location.href = upiUri;
+
+            // Fallback: If the app doesn't open within 2.5 seconds, redirect to the official website
+            setTimeout(function() {
+                if (!document.hidden) {
+                    window.location.href = "https://www.phonepe.com/";
+                }
+            }, 2500);
         });
     </script>
 </body>
