@@ -67,7 +67,7 @@
         .grid-forms { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; }
         .input-wrap { display: flex; flex-direction: column; gap: 8px; }
         .input-wrap label { font-size: 11px; font-weight: 700; color: var(--text-gray); text-transform: uppercase; }
-        .input-wrap input, select { padding: 14px; border: 1px solid var(--border-color); border-radius: 12px; }
+        .input-wrap input, select { padding: 14px; border: 1px solid var(--border-color); border-radius: 12px; width: 100%; }
 
         .btn-action { background: var(--accent); color: var(--white); border: none; padding: 16px 32px; border-radius: 14px; font-weight: 700; cursor: pointer; transition: 0.3s; display: inline-flex; align-items: center; gap: 12px; justify-content: center; }
         .btn-action:disabled { opacity: 0.5; cursor: not-allowed; }
@@ -92,8 +92,30 @@
 
         /* Modal / Ticket */
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; place-items: center; z-index: 4000; backdrop-filter: blur(10px); }
-        .ticket-box { background: white; border-radius: 24px; width: 450px; overflow: hidden; animation: pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .ticket-box { background: white; border-radius: 24px; width: 450px; max-width: 90%; overflow: hidden; animation: pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
         @keyframes pop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        /* RESPONSIVE MEDIA QUERIES */
+        @media (max-width: 992px) {
+            body { flex-direction: column; }
+            aside { width: 100%; height: auto; padding: 15px 20px; flex-direction: row; align-items: center; justify-content: space-between; }
+            .brand { margin-bottom: 0; }
+            .nav-group { display: none; } /* Navigation can be moved to a mobile menu */
+            header { padding: 0 20px; }
+            .module { padding: 20px; }
+            .grid-forms { grid-template-columns: 1fr; }
+            .bus-row { grid-template-columns: 1fr 1fr; gap: 15px; }
+            .price { grid-column: 1 / span 2; }
+            .seat-view { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 600px) {
+            .ticket-box { width: 95%; }
+            .section-title { font-size: 18px; }
+            .btn-action { width: 100%; padding: 14px; }
+            .brand h1 { font-size: 18px; }
+            .brand img { height: 40px; width: 60px; }
+        }
 
         @media print {
             aside, header, .btn-action, .stepper { display: none !important; }
@@ -104,8 +126,6 @@
 </head>
 <body>
 
-
-
     <div id="loader-overlay">
         <div style="text-align: center;">
             <div class="spinner"></div>
@@ -115,26 +135,26 @@
 
     <aside>
         <div class="brand">
-        <a class="navbar-brand" href="#">
+            <a class="navbar-brand" href="#">
                 <img height="80" width="120" src="djgst_logo.png" alt="SkyBound Logo">
-        </a>
-            <h1>DJGST</h1></div>
+            </a>
+            <h1>DJGST</h1>
+        </div>
         <div class="nav-group" style="flex-grow: 1;">
             <div class="nav-link active"><i class="fa fa-plus-circle"></i> New Booking</div>
         </div>
-        
     </aside>
 
     <main>
         <header>
-            <h2 id="page-title" style="font-weight: 800;">New Booking</h2>  <div class="user-panel">
+            <h2 id="page-title" style="font-weight: 800;">New Booking</h2>  
+            <div class="user-panel" style="display: flex; align-items: center; gap: 10px;">
                 <div style="text-align: right">
                     <p style="font-size: 14px; font-weight: 700;">DJGST</p>
                     <p style="font-size: 11px; color: var(--text-gray);">TRAVELS</p>
                 </div>
-                <div class="avatar">DT</div>
+                <div class="avatar" style="background: var(--accent); color: white; width: 35px; height: 35px; border-radius: 50%; display: grid; place-items: center; font-weight: 700;">DT</div>
             </div>
-            
         </header>
 
         <section id="mod-booking" class="module active">
@@ -148,10 +168,10 @@
             <div id="step-search" class="bk-stage">
                 <div class="card">
                     <h3 class="section-title"><i class="fa fa-user-tag"></i> Passenger & Route</h3>
-                    <div class="grid-forms row">
-                        <div class="input-wrap"><label class="col-12 col-xs-12 col-xl-6 col-lg-6">Full Name</label><input type="text" id="u-name" placeholder="John Doe"></div>
-                        <div class="input-wrap"><label class="col-12 col-xs-12 col-xl-6 col-lg-6">Origin</label><input type="text" id="u-src" value="Hyderabad"></div><br>
-                        <div class="input-wrap"><label class="col-12 col-xs-12 col-xl-6 col-lg-6">Destination</label><input type="text" id="u-dest" value="Bangalore"></div>
+                    <div class="grid-forms">
+                        <div class="input-wrap"><label>Full Name</label><input type="text" id="u-name" placeholder="John Doe"></div>
+                        <div class="input-wrap"><label>Origin</label><input type="text" id="u-src" value="Hyderabad"></div>
+                        <div class="input-wrap"><label>Destination</label><input type="text" id="u-dest" value="Bangalore"></div>
                     </div>
                     <div class="grid-forms" style="margin-top:20px">
                         <div class="input-wrap"><label>Travel Date</label><input type="date" id="u-date"></div>
