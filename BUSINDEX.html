@@ -1,7 +1,3 @@
-
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -22,7 +18,6 @@
         .nav-link {
             margin-left: 100px;
             font-size: x-large;
-
             color: white !important; 
         }
         .custom-navbar {
@@ -41,21 +36,26 @@
 
         /* --- CAROUSEL STYLES --- */
         .carousel-item {
-            height: 600px; 
+            /* Changed to 100vh to ensure it fills the screen height */
+            height: 100vh; 
             background-color: #000;
         }
         .carousel-item img {
             height: 100%;
             width: 100%;
-            object-fit: cover; 
-            background-size: cover;
+            /* CHANGED: 'contain' ensures the whole image is seen without cropping */
+            object-fit: contain; 
+            background-color: #000; 
         }
         .carousel-caption {
             background: rgba(0, 0, 0, 0.6); 
             padding: 25px;
             border-radius: 15px;
-            bottom: 15%;
+            /* Placed at the bottom as per your design */
+            bottom: 10%;
             border: 1px solid rgba(255,255,255,0.2);
+            left: 15%;
+            right: 15%;
         }
         .carousel-caption h3 {
             font-size: 2rem;
@@ -127,6 +127,15 @@
                 </div>
             </div>
         </div>
+
+        <button class="carousel-control-prev" type="button" data-bs-target="#trainHeroCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#trainHeroCarousel" data-bs-slide-to="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
     </div>
 </body>
 </html>
