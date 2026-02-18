@@ -15,6 +15,11 @@ body{
   background:linear-gradient(135deg,#141e30,#243b55);
 }
 
+/* Fix for the navbar covering content */
+section {
+  padding: 60px 20px; /* Increased padding */
+  scroll-margin-top: 80px; /* Offset for anchor links so headings aren't hidden */
+}
 
 .letter {
   display: inline-block;
@@ -34,13 +39,14 @@ nav {
   position: sticky;
   top: 0;
   background: rgba(0,0,0,0.9);
-  padding: 10px 5px; 
+  padding: 10px 20px; /* Balanced padding */
   display: flex;
   justify-content: space-between; 
   align-items: center;
   z-index: 1000;
   width: 100%;
   box-sizing: border-box;
+  height: 70px; /* Defined height to help with layout spacing */
 }
 
 .navbar-brand {
@@ -50,14 +56,14 @@ nav {
 }
 
 .navbar-brand img {
-  height: 150px; 
+  height: 50px; /* Adjusted height to fit within the 70px nav comfortably */
   width: auto;
   border-radius: 50%; 
 }
 
 .nav-links {
   display: flex;
-  gap: 10px; 
+  gap: 15px; 
   align-items: center;
 }
 
@@ -65,26 +71,21 @@ nav a {
   color: #fff;
   text-decoration: none;
   font-weight: bold;
-  font-size: 13px; 
+  font-size: 14px; 
   white-space: nowrap; 
   transition: 0.3s;
 }
 
 nav a:hover { color: #00ffd5; }
 
-@media (max-width: 400px) {
-  nav { gap: 4px; }
+@media (max-width: 600px) {
+  nav { padding: 10px 5px; }
   nav a { font-size: 11px; }
-  .navbar-brand img { height: 35px; }
+  .nav-links { gap: 8px; }
+  .navbar-brand img { height: 40px; }
 }
 
-
-
 h1,h2{text-align:center;margin:20px 0;}
-
-
-section{padding:40px 20px;}
-
 
 .cards{
   display:flex;
@@ -118,7 +119,6 @@ section{padding:40px 20px;}
 .train{background:linear-gradient(135deg,#1fa2ff,#12d8fa);}
 .flight{background:linear-gradient(135deg,#f7971e,#ffd200);}
 
-
 .applied{
   position:absolute;
   top:10px;
@@ -131,7 +131,6 @@ section{padding:40px 20px;}
   font-weight:bold;
   display:none;
 }
-
 
 #scanner{
   max-width:320px;
@@ -189,7 +188,6 @@ footer {
 <section id="booking">
   <h2 class="animate-heading">Book Your Tickets</h2>
   <div class="cards">
-
      <div class="card bus">
       <img src="https://th.bing.com/th/id/OIP.T2zekmClcpx9haN4rV0DWwHaHa?w=162&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3">
       <h3>bus Booking</h3>
@@ -204,7 +202,7 @@ footer {
     </div>
 
     <div class="card flight">
-      <img src="data:image/jpeg;base64,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" height="80" width="80">
+      <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBwgHBgkIBwgKCgkLDRYPDQwMDRsUFRAWIB0iIiAdHx8kKDQsJCYxJx8fLT0tMTU3Ojo6Iys/RD84QzQ5OjcBCgoKDQwNGg8PGjclHyU3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3N//AABEIAJQAlAMBIgACEQEDEQH/xAAbAAACAwEBAQAAAAAAAAAAAAACAwAEBQEGB//EADMQAAICAQMDAwIEBQQDAAAAAAECAAMRBBIhMUFRBRMiYXEUgZGhBjJSXrEVQtHwIzPB/8QAGgEAAgMBAQAAAAAAAAAAAAAAAgMAAQQFBv/EACcRAAICAQQBBAIDAQAAAAAAAAABAgMRBBIhMUETIjJRFGEjQlIF/9oADAMBAAIRAxEAPwDzAE6IW2dxPQnByDidAh4ndshMggQgJ3bDCknAGT4EgOQAIYWdCwwshWQQIQEILCCyFZOBYQENQB1BPHHOOZ1R5kKOAQ1WEFjFWUQELGBY6rTs3JG1fJj0rVeFyx8mA5B7fsQlJIyRHJTwSB07x61+ZaqexKHpRiK3xuXscdILbCWCj7ZnZeFUkrciYPDbZ0LGbZ3bHgZFhYQWMCzoWQmQVAyMjI8eYWOSVG3xCCwgsgLYAEILxDCwwkhQAWEFhhIarIQALGKn0jqKDZYqdMy3clSEJWoO3v1gt4LSzyVK6S3bA+ssoldfbc37TqqW4jkQDtKayWpY6BCs5+R48RqqBwohKuZYppzy3Cj9/pBfHRW7LFpXmPVISrk9OY9aiOsWwkKFcksbZJRe4+fhYQWMCzoWahYvbDWpyhYKSoOC2OAYYWGoOMZOOuM/98mQnAkLiEFjNuYQTmQrIAEILGKkMLziQrICoT2jkp7tx/mEqZPEaEOeZTKyQcDai4z1PeElcNEjlSQptsBU8RqJG105Geg8xq1+IDZAa6txx+ZPgSzXU1zLXUMDtnv9TOIvbtLVdjKMVqEGO3Uxcmw448jKtOlAZ2YFl6EeYoLnmHy2BztHQRipFhuWeEK2SSxsklZJg+ebYQSN2wgs2isigsJV+kYF5hhPEhGxaoT2j66q+rE7v2EgWGqSikye3V/cT9IYwBhVG3wYSpDVJCZBCk9TDWuMVJ7D0n0jS3ejFTUn4i6rO9uoPUY8doi65VJZH0aeV7aXg8gqYlmmlQNz9P6fMb7ftOVKfNTg57GX9J6RrtWQUpYKf99nxEuVkUsti41zb2pclJibD0AA6AdoVdRY4UczeT+HCoHvautGPQBc5/eVPUtPVoLq9L+Jqexxu2KcPjyRmI/JrbwmP/Dv7cSkK1HTn6xirGGplbaysp/pYYI/KGqQ92TPh9MBUjUSGqYj66wDlukCTDjHJK9JY67hjH3kjmsYnI4HgSRW6RpxWfNtkLYccdfr0MdshBJ0jCnjkdodRRcnsaqqvGeCqBGX7ECOv9JdVNmkY31dSMfNfuO/3EoPpbLWBoYLaMkD+s+PvLOg9RekBmJVh025547TI3KEvadmNVWppU33+hSrntDVJrm/Ra0btUjV2Zx7qDaSfqD1/wC8x+n9HosAc63an91WDj9YX5Mf7GKWguT9vKMYJHV0s7BUUsx7KMmeko0Ho2nOW93UEf1nA/QYlpfVtNpFCaamqnccAKAuf+YqWs/zEdD/AJk383gxtJ6Br9QARR7QPe47cfl1/aeu0lC6PTrWbEUKMfETymo/jGhrKlqte3fqDpiaVLCuwdQ3jEzLvXfUtQlmEp01tes2AXv7nu0AjLDZ0J5wD45mSz1bvkdCiivTp4fZ7j3PT9Na1ldVfuE5LYyT+cq6n1/TV3VUPqKUtv3e1WzjdZtGW2jvgdZ4lbr7LA12v1Fhr1h1FVxwnw6CtgP5lGe8HQpo9NVUmioQit7HrKjcULnLbSeRnPaRUZ7HqUF8Uep0Pr+n9V0dOu0lrNp71bYzKUPBI6Hnsf0mNovQ/Sq/4ht9a1d92ptus92upyClbH69WAPTPAnFqv1A2ui7PDDM0NLpFrxn5Y6ZHA+whqj6FT1tdfbNrW6mvWUjKfPjae+P+JWrpz25h6ere6juTjJmylVWlOclmxKclSsIxKD1U9+MIy/w9Ic7SD5InNhzNoW12LizH2i7KKnqzWMGLV+e0HPR46MrZ9JyXPakjN4n0T5xsndkfshqMDAA/MZnWycgztdq6NBXW+obaLLFrU/3Hp9oyvTjV3l6k1VzvztSvAP7TT0tFNtjDU2KlS8svUt9AJY1151NDaXThtNpmGGFbbXcf3MOfyB/WZrG5SxFHT0s66at0+2ZVV9GnuekV7bax8ssGx9M5PP0nbPVahkHVLuyRheT+nWLX+H9CBgVn82J/wAxo9F044Uso8LxJ6S8jvzofeDn+s7wDXVY2e5+I/UzMFa5zbYbCupbU1m5za1bnj4k4wAO026vSdMmAEY48mWU0WnRSPaXGOciRQSAeth9tmDpPd12q/D6NS5bLu54Az1OB3nsPSf4W0uA2sc3HqVAwsf6Doqq2NqU8tyAq4wJd1/qO7U/6bo2/wDPtDWsOlSk4GT5POPsfHOG66PlaybEUKMfETymo/jGhrKlqte3fqDpiaVLCuwdQ3jEzLvXfUtQlmEp01tes2AXv7nu0AjLDZ0J5wD45mSz1bvkdCiivTp4fZ7j3PT9Na1ldVfuE5LYyT+cq6n1/TV3VUPqKUtv3e1WzjdZtGW2jvgdZ4lbr7LA12v1Fhr1h1FVxwnw6CtgP5lGe8HQpo9NVUmioQit7HrKjcULnLbSeRnPaRUZ7HqUF8Uep0Pr+n9V0dOu0lrNp71bYzKUPBI6Hnsf0mNovQ/Sq/4ht9a1d92ptus92upyClbH69WAPTPAnFqv1A2ui7PDDM0NLpFrxn5Y6ZHA+whqj6FT1tdfbNrW6mvWUjKfPjae+P+JWrpz25h6ere6juTjJmylVWlOclmxKclSsIxKD1U9+MIy/w9Ic7SD5InNhzNoW12LizH2i7KKnqzWMGLV+e0HPR46MrZ9JyXPakjN4n0T5xsndkfshqMDAA/MZnWycgztdq6NBXW+obaLLFrU/3Hp9oyvTjV3l6k1VzvztSvAP7TT0tFNtjDU2KlS8svUt9AJY1151NDaXThtNpmGGFbbXcf3MOfyB/WZrG5SxFHT0s66at0+2ZVV9GnuekV7bax8ssGx9M5PP0nbPVahkHVLuyRheT+nWLX+H9CBgVn82J/wAxo9F044Uso8LxJ6S8jvzofeDn+s7wDXVY2e5+I/UzMFa5zbYbCupbU1m5za1bnj4k4wAO026vSdMmAEY48mWU0WnRSPaXGOciRQSAeth9tmDpPd12q/D6NS5bLu54Az1OB3nsPSf4W0uA2sc3HqVAwsf6Doqq2NqU8tyAq4wJd1/qO7U/6bo2/wDPtDWsOlSk4GT5POPsfHOG66PlaybEUKMfETymo/jGhrKlqte3fqDpiaVLCuwdQ3jEzLvXfUtQlmEp01tes2AXv7nu0AjLDZ0J5wD45mSz1bvkdCiivTp4fZ7j3PT9Na1ldVfuE5LYyT+cq6n1/TV3VUPqKUtv3e1WzjdZtGW2jvgdZ4lbr7LA12v1Fhr1h1FVxwnw6CtgP5lGe8HQpo9NVUmioQit7HrKjcULnLbSeRnPaRUZ7HqUF8Uep0Pr+n9V0dOu0lrNp71bYzKUPBI6Hnsf0mNovQ/Sq/4ht9a1d92ptus92upyClbH69WAPTPAnFqv1A2ui7PDDM0NLpFrxn5Y6ZHA+whqj6FT1tdfbNrW6mvWUjKfPjae+P+JWrpz25h6ere6juTjJmylVWlOclmxKclSsIxKD1U9+MIy/w9Ic7SD5InNhzNoW12LizH2i7KKnqzWMGLV+e0HPR46MrZ9JyXPakjN4n0T5xsndkfshqMDAA/MZnWycgztdq6NBXW+obaLLFrU/3Hp9oyvTjV3l6k1VzvztSvAP7TT0tFNtjDU2KlS8svUt9AJY1151NDaXThtNpmGGFbbXcf3MOfyB/WZrG5SxFHT0s66at0+2ZVV9GnuekV7bax8ssGx9M5PP0nbPVahkHVLuyRheT+nWLX+H9CBgVn82J/wAxo9F044Uso8LxJ6S8jvzofeDn+s7wDXVY2e5+I/UzMFa5zbYbCupbU1m5za1bnj4k4wAO026vSdMmAEY48mWU0WnRSPaXGOciRQSAeth9tmDpPd12q/D6NS5bLu54Az1OB3nsPSf4W0uA2sc3HqVAwsf6Doqq2NqU8tyAq4wJd1/qO7U/6bo2/wDPtDWsOlSk4GT5POPsfHOG66PlaybEUKMfETymo/jGhrKlqte3fqDpiaVLCuwdQ3jEzLvXfUtQlmEp01tes2AXv7nu0AjLDZ0J5wD45mSz1bvkdCiivTp4fZ7j3PT9Na1ldVfuE5LYyT+cq6n1/TV3VUPqKUtv3e1WzjdZtGW2jvgdZ4lbr7LA12v1Fhr1h1FVxwnw6CtgP5lGe8HQpo9NVUmioQit7HrKjcULnLbSeRnPaRUZ7HqUF8Uep0Pr+n9V0dOu0lrNp71bYzKUPBI6Hnsf0mNovQ/Sq/4ht9a1d92ptus92upyClbH69WAPTPAnFqv1A2ui7PDDM0NLpFrxn5Y6ZHA+whqj6FT1tdfbNrW6mvWUjKfPjae+P+JWrpz25h6ere6juTjJmylVWlOclmxKclSsIxKD1U9+MIy/w9Ic7SD5InNhzNoW12LizH2i7KKnqzWMGLV+e0HPR46MrZ9JyXPakjN4n0T5xsndkfshqMDAA/MZnWycgztdq6NBXW+obaLLFrU/3Hp9oyvTjV3l6k1VzvztSvAP7TT0tFNtjDU2KlS8svUt9AJY1151NDaXThtNpmGGFbbXcf3MOfyB/WZrG5SxFHT0s66at0+2ZVV9GnuekV7bax8ssGx9M5PP0nbPVahkHVLuyRheT+nWLX+H9CBgVn82J/wAxo9F044Uso8LxJ6S8jvzofeDn+s7wDXVY2e5+I/UzMFa5zbYbCupbU1m5za1bnj4k4wAO026vSdMmAEY48mWU0WnRSPaXGOciRQSAeth9tmDpPd12q/D6NS5bLu54Az1OB3nsPSf4W0uA2sc3HqVAwsf6Doqq2NqU8tyAq4wJd1/qO7U/6bo2/wDPtDWsOlSk4GT5POPsfHOG66PlaybEUKMfETymo/jGhrKlqte3fqDpiaVLCuwdQ3jEzLvXfUtQlmEp01tes2AXv7nu0AjLDZ0J5wD45mSz1bvkdCiivTp4fZ7j3PT9Na1ldVfuE5LYyT+cq6n1/TV3VUPqKUtv3e1WzjdZtGW2jvgdZ4lbr7LA12v1Fhr1h1FVxwnw6CtgP5lGe8HQpo9NVUmioQit7HrKjcULnLbSeRnPaRUZ7HqUF8Uep0Pr+n9V0dOu0lrNp71bYzKUPBI6Hnsf0mNovQ/Sq/4ht9a1d92ptus92upyClbH69WAPTPAnFqv1A2ui7PDDM0NLpFrxn5Y6ZHA+whqj6FT1tdfbNrW6mvWUjKfPjae+P+JWrpz25h6ere6juTjJmylVWlOclmxKclSsIxKD1U9+MIy/w9Ic7SD5InNhzNoW12LizH2i7KKnqzWMGLV+e0HPR46MrZ9JyXPakjN4n0T5xsndkfshqMDAA/MZnWycgztdq6NBXW+obaLLFrU/3Hp9oyvTjV3l6k1VzvztSvAP7TT0tFNtjDU2KlS8svUt9AJY1151NDaXThtNpmGGFbbXcf3MOfyB/WZrG5SxFHT0s66at0+2ZVV9GnuekV7bax8ssGx9M5PP0nbPVahkHVLuyRheT+nWLX+H9CBgVn82J/wAxo9F044Uso8LxJ6S8jvzofeDn+s7wDXVY2e5+I/UzMFa5zbYbCupbU1m5za1bnj4k4wAO026vSdMmAEY48mWU0WnRSPaXGOciRQSAeth9tmDpPd12q/D6NS5bLu54Az1OB3nsPSf4W0uA2sc3HqVAwsf6Doqq2NqU8tyAq4wJd1/qO7U/6bo2/DP0" height="80" width="80">
       <h3>Flight Booking</h3>
       <p>Domestic & international flights</p>
       <a href="FLIGHTINDEX.html"><button>Book Now</button></a>
@@ -282,7 +280,6 @@ footer {
 </footer>
 
 <script>
-
 document.querySelectorAll('.animate-heading').forEach(heading => {
   const text = heading.innerText;
   heading.innerText = ''; 
@@ -310,17 +307,6 @@ function applyOffer(btn) {
   btn.innerText = "Applied " + discount;
   btn.style.background = "#00ff99";
   btn.style.color = "#000";
-}
-
-function scanQR(){
-  let links=[
-    "Bus Booking Page",
-    "Train Booking Page",
-    "Flight Booking Page",
-    "Download Booking App"
-  ];
-  document.getElementById("qr-result").innerText =
-    "Scanned: " + links[Math.floor(Math.random()*links.length)];
 }
 </script>
 
