@@ -32,24 +32,25 @@ input, select{ width:100%; padding:14px; border:1px solid #e2e8f0; border-radius
 .btn-action{ background:var(--primary); color:white; border:none; padding:16px; border-radius:14px; cursor:pointer; width:100%; font-weight:700; transition: 0.3s; }
 .btn-action:hover{ opacity: 0.9; transform: scale(0.98); }
 
+/* SURPRISE ENVELOPE STYLES */
+#surprise-wrap { display:none; text-align:center; padding:40px 0; perspective: 1000px; }
+.envelope { width: 220px; height: 150px; background: #c2410c; margin: 0 auto; position: relative; cursor: pointer; border-radius: 0 0 10px 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: transform 0.5s; }
+.envelope:hover { transform: translateY(-10px) rotate(2deg); }
+.envelope-flap { position: absolute; top: 0; left: 0; border-left: 110px solid transparent; border-right: 110px solid transparent; border-top: 90px solid #ea580c; transform-origin: top; transition: all 0.4s; z-index: 2; }
+.envelope-glow { position: absolute; inset: 0; background: radial-gradient(circle, var(--gold) 0%, transparent 70%); opacity: 0; animation: pulseGlow 2s infinite; }
+@keyframes pulseGlow { 0% { opacity: 0.2; transform: scale(0.8); } 50% { opacity: 0.5; transform: scale(1.2); } 100% { opacity: 0.2; transform: scale(0.8); } }
+.envelope-text { color: white; position: absolute; bottom: 15px; width: 100%; font-weight: 800; font-size: 14px; letter-spacing: 1px; }
+
 /* ANIMATIONS */
 .falling-item { position: absolute; top: -10%; animation: fall linear infinite; z-index: 1; pointer-events: none; }
 @keyframes fall { to { transform: translateY(600px); } }
 
-/* SUN (Enhanced with Color Shift Sync) */
+/* SUN */
 .sun-container { position: absolute; top: -60px; left: 50%; transform: translateX(-50%); z-index: 1; pointer-events: none; }
 .sun-core { width: 120px; height: 120px; background: radial-gradient(circle, #fff 10%, #ffdb4d 40%, transparent 70%); border-radius: 50%; box-shadow: 0 0 100px #fbbf24; animation: sunPulse 4s infinite alternate ease-in-out; }
+@keyframes sunPulse { from { transform: scale(1); opacity: 0.9; } to { transform: scale(1.4); opacity: 1; } }
 
-@keyframes sunPulse { 
-    from { transform: scale(1); opacity: 0.9; } 
-    to { transform: scale(1.4); opacity: 1; } 
-}
-
-/* Background Color Shift for Desert */
-@keyframes bgShift {
-    from { background-color: #0ea5e9; } /* Blue */
-    to { background-color: #ffdb4d; } /* Yellow */
-}
+@keyframes bgShift { from { background-color: #0ea5e9; } to { background-color: #ffdb4d; } }
 .desert-bg-animate { animation: bgShift 4s infinite alternate ease-in-out; }
 
 /* DESERT SCENERY */
@@ -74,7 +75,6 @@ input, select{ width:100%; padding:14px; border:1px solid #e2e8f0; border-radius
 .ocean { height: 150px; width: 100%; position: absolute; bottom: 0; left: 0; background: #01579b; opacity: 0.6; z-index: 1; overflow: hidden; }
 .wave { background: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/85486/wave.svg) repeat-x; position: absolute; top: -55px; width: 6400px; height: 198px; animation: wave 7s linear infinite; }
 @keyframes wave { 0% { margin-left: 0; } 100% { margin-left: -1600px; } }
-
 .surfer { position: absolute; bottom: 40px; left: -100px; font-size: 40px; z-index: 4; animation: surfMove 10s linear infinite; }
 @keyframes surfMove {
     0% { left: -50px; transform: translateY(0) rotate(0deg); }
@@ -161,6 +161,16 @@ input, select{ width:100%; padding:14px; border:1px solid #e2e8f0; border-radius
             </div>
         </div>
 
+        <div id="surprise-wrap" class="card" style="border: 2px dashed #e2e8f0;">
+            <h2 style="margin-top:0; color:#c2410c">🎉 Booking Confirmed!</h2>
+            <p>We have a special surprise package for you. Tap to open!</p>
+            <div class="envelope" onclick="openEnvelope()" onmouseover="playBeep()">
+                <div class="envelope-glow"></div>
+                <div class="envelope-flap" id="env-flap"></div>
+                <div class="envelope-text">OPEN SURPRISE</div>
+            </div>
+        </div>
+
         <div id="greeting-card-container">
             <div id="env-container"></div>
             <div class="greet-overlay">
@@ -215,6 +225,11 @@ input, select{ width:100%; padding:14px; border:1px solid #e2e8f0; border-radius
 let bookingData = { name:'', src:'', dest:'', date:'', busType:'', price:'', emotion:'', tid:'' };
 let aiStep = 0; 
 
+// Audio Setup
+const tadaAudio = new Audio('content://media/external/downloads/1000285706'); 
+const hoverAudio = new Audio('content://media/external/downloads/1000285706');
+hoverAudio.volume = 0.2;
+
 const langData = {
     en: { book: "Book Ticket", trips: "My Trips", plan: "Plan Your Journey", pay: "Payment", emo: "Journey Vibe", hist: "Trip History" },
     te: { book: "టికెట్ బుక్", trips: "నా ప్రయాణాలు", plan: "ప్లాన్ చేయండి", pay: "చెల్లింపు", emo: "ప్రయాణ రకం", hist: "ప్రయాణ చరిత్ర" },
@@ -224,13 +239,11 @@ const langData = {
 window.onload = () => {
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('u-date-input').setAttribute('min', today);
-    
     loadHistory();
-    setTimeout(() => {
-        toggleAI();
-        addChat("Welcome to DJGST! Let's get started. What is your **Name**?", "bot");
-    }, 1000);
+    setTimeout(() => { toggleAI(); addChat("Welcome to DJGST! Let's get started. What is your **Name**?", "bot"); }, 1000);
 };
+
+function playBeep() { hoverAudio.play(); }
 
 function toggleAI() { 
     let b = document.getElementById("ai-body"); 
@@ -243,45 +256,26 @@ function handleAI() {
     if(!val) return;
     addChat(val, "user");
     inp.value = "";
-
     setTimeout(() => {
         if(aiStep === 0) {
-            bookingData.name = val;
-            document.getElementById("u-name").value = val;
-            addChat(`Hello **${val}**! Now tell me your route. (Example: **Delhi to Goa**)`, "bot");
-            aiStep = 1;
+            bookingData.name = val; document.getElementById("u-name").value = val;
+            addChat(`Hello **${val}**! Now tell me your route. (Example: **Delhi to Goa**)`, "bot"); aiStep = 1;
         } 
         else if(aiStep === 1) {
             if(val.toLowerCase().includes(" to ")) {
                 const p = val.toLowerCase().split(" to ");
                 document.getElementById("u-src").value = p[0].trim();
                 document.getElementById("u-dest").value = p[1].trim();
-                bookingData.src = p[0].trim();
-                bookingData.dest = p[1].trim();
-                addChat("Route updated! When are you traveling? (**YYYY-MM-DD**)", "bot");
-                aiStep = 2;
-            } else {
-                addChat("I didn't quite catch the route. Please say something like 'Mumbai to Pune'.", "bot");
-            }
+                bookingData.src = p[0].trim(); bookingData.dest = p[1].trim();
+                addChat("Route updated! When are you traveling? (**YYYY-MM-DD**)", "bot"); aiStep = 2;
+            } else { addChat("Please say 'Source to Destination'.", "bot"); }
         }
         else if(aiStep === 2) {
             const match = val.match(/\d{4}-\d{2}-\d{2}/);
             if(match) {
-                const inputDate = new Date(match[0]);
-                const today = new Date();
-                today.setHours(0,0,0,0);
-                
-                if(inputDate < today) {
-                    addChat("Sorry, I can't book for past dates. Please enter a date from today onwards.", "bot");
-                } else {
-                    document.getElementById("u-date-input").value = match[0];
-                    bookingData.date = match[0];
-                    addChat("Got it! Click the red **Search & Book** button to continue.", "bot");
-                    aiStep = 3;
-                }
-            } else {
-                addChat("Please provide a valid date format like 2026-05-20.", "bot");
-            }
+                document.getElementById("u-date-input").value = match[0]; bookingData.date = match[0];
+                addChat("Got it! Click **Search & Book**.", "bot"); aiStep = 3;
+            } else { addChat("Use format 2026-05-20.", "bot"); }
         }
     }, 600);
 }
@@ -289,8 +283,7 @@ function handleAI() {
 function addChat(t, type) {
     const d = document.createElement("div"); d.className = `ai-msg ai-${type}`; d.innerHTML = t;
     const msgBox = document.getElementById("ai-messages");
-    msgBox.appendChild(d);
-    msgBox.scrollTop = msgBox.scrollHeight;
+    msgBox.appendChild(d); msgBox.scrollTop = msgBox.scrollHeight;
 }
 
 function translatePage() {
@@ -320,13 +313,13 @@ function goToPayment() {
     bookingData.price = b.options[b.selectedIndex].getAttribute('data-price');
     bookingData.tid = "DJGST-" + Math.floor(100000 + Math.random() * 900000);
 
-    if(!bookingData.name || !bookingData.src || !bookingData.dest || !bookingData.date) return alert("Please finish AI steps or fill fields manually!");
+    if(!bookingData.name || !bookingData.src || !bookingData.dest || !bookingData.date) return alert("Fill all fields first!");
 
     document.getElementById("loader").style.display="flex";
     setTimeout(()=>{
         document.getElementById("loader").style.display="none";
         document.getElementById("search-card").style.display="none";
-        document.getElementById("pay-summary").innerText = `${bookingData.busType} | Total: ₹${bookingData.price}`;
+        document.getElementById("pay-summary").innerText = `${bookingData.busType} | ₹${bookingData.price}`;
         document.getElementById("payment-card").style.display="block";
     },1000);
 }
@@ -339,7 +332,18 @@ function showEmotionSelector() {
 function selectEmotion(emo) {
     bookingData.emotion = emo;
     document.getElementById("emotion-screen").style.display="none";
-    renderResults();
+    document.getElementById("surprise-wrap").style.display = "block";
+    confetti({ particleCount: 40, origin: { y: 0.8 } });
+}
+
+function openEnvelope() {
+    tadaAudio.play();
+    document.getElementById("env-flap").style.transform = "rotateX(180deg)";
+    document.getElementById("env-flap").style.zIndex = "0";
+    setTimeout(() => {
+        document.getElementById("surprise-wrap").style.display = "none";
+        renderResults();
+    }, 700);
 }
 
 function renderResults() {
@@ -361,33 +365,19 @@ function renderResults() {
     document.getElementById("greet-dest-text").innerText = `${bookingData.src} ➔ ${bookingData.dest}`;
     document.getElementById("greet-main-msg").innerText = t.msg;
 
-    // Reset animations
     cardContainer.classList.remove('desert-bg-animate');
 
-    // 1. DEVOTIONAL
     if (bookingData.emotion === 'pilgrimage' || dest.includes('tirupati') || dest.includes('shirdi') || dest.includes('varanasi') || dest.includes('puri')) {
-        container.innerHTML += `<div class="ritual-bell" style="left:20px">🔔</div>`;
-        container.innerHTML += `<div class="ritual-bell" style="right:20px">🔔</div>`;
-        container.innerHTML += `<div class="floating-diya" style="left:50px">🪔</div>`;
-        container.innerHTML += `<div class="floating-diya" style="right:50px">🪔</div>`;
+        container.innerHTML += `<div class="ritual-bell" style="left:20px">🔔</div><div class="ritual-bell" style="right:20px">🔔</div><div class="floating-diya" style="left:50px">🪔</div><div class="floating-diya" style="right:50px">🪔</div>`;
         for(let i=0; i<15; i++) {
             let s = document.createElement('div'); s.className = 'falling-item'; s.innerHTML = '🌸';
             s.style.left = Math.random()*100+'%'; s.style.animationDuration = (Math.random()*3+3)+'s';
             container.appendChild(s);
         }
     }
-
-    // 2. WATER / OCEAN + SURFER 🏄‍♀️
-    if (dest.includes('goa') || dest.includes('vizag') || dest.includes('kakinada') || dest.includes('yanam') || dest.includes('beach') || dest.includes('pondicherry') || dest.includes('mumbai')) {
-        container.innerHTML += `
-            <div class="ocean">
-                <div class="surfer">🏄‍♀️</div>
-                <div class="wave"></div>
-                <div class="wave"></div>
-            </div>`;
+    if (dest.includes('goa') || dest.includes('vizag') || dest.includes('kakinada') || dest.includes('beach') || dest.includes('mumbai')) {
+        container.innerHTML += `<div class="ocean"><div class="surfer">🏄‍♀️</div><div class="wave"></div><div class="wave"></div></div>`;
     }
-
-    // 3. HILLS
     if (dest.includes('ooty') || dest.includes('hill') || dest.includes('munnar') || dest.includes('shimla')) {
         container.innerHTML += `<div class="laughing-hill-box"><div class="hill-face">⛰️<div class="hill-eyes">👀</div><div class="hill-smile">😊</div></div></div>`;
         for(let i=0; i<30; i++) {
@@ -396,28 +386,17 @@ function renderResults() {
             container.appendChild(s);
         }
     } 
-    
-    // 4. DESERT (Color Shift Active)
     if (dest.includes('jaipur') || dest.includes('dubai') || dest.includes('desert') || dest.includes('rajasthan')) {
-        cardContainer.classList.add('desert-bg-animate'); // Add background shift
-        container.innerHTML += `<div class="desert-sand"></div>`;
-        container.innerHTML += `<div class="desert-plant" style="left:15%">🌵</div>`;
-        container.innerHTML += `<div class="desert-plant" style="right:20%; font-size:32px; bottom:75px">🌵</div>`;
-        
-        let sun = document.createElement("div");
-        sun.className = "sun-container";
-        sun.innerHTML = `<div class="sun-core"></div>`;
-        container.appendChild(sun);
+        cardContainer.classList.add('desert-bg-animate');
+        container.innerHTML += `<div class="desert-sand"></div><div class="desert-plant" style="left:15%">🌵</div><div class="desert-plant" style="right:20%; font-size:32px; bottom:75px">🌵</div>`;
+        let sun = document.createElement("div"); sun.className = "sun-container"; sun.innerHTML = `<div class="sun-core"></div>`; container.appendChild(sun);
     }
-    
-    // 5. Business Style
     if(bookingData.emotion === 'business') {
         let overlay = document.createElement("div");
         overlay.style.cssText = "position:absolute; inset:0; background:url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=400&q=80'); background-size:cover; opacity:0.3;";
         container.appendChild(overlay);
     }
 
-    // FORMAL RECEIPT
     document.getElementById("formal-receipt").style.display = "block";
     document.getElementById("rec-name").innerText = bookingData.name;
     document.getElementById("rec-date").innerText = bookingData.date;
@@ -425,7 +404,6 @@ function renderResults() {
     document.getElementById("rec-class").innerText = bookingData.busType;
     document.getElementById("rec-tid").innerText = "ID: " + bookingData.tid;
     document.getElementById("rec-qr").src = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${bookingData.tid}`;
-
     confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
 }
 
@@ -433,7 +411,7 @@ function saveAndFinish() {
     let list = JSON.parse(localStorage.getItem('djgst_trips') || '[]');
     list.push({...bookingData});
     localStorage.setItem('djgst_trips', JSON.stringify(list));
-    alert("Trip confirmed and saved to history!");
+    alert("Trip saved!");
     location.reload();
 }
 
@@ -441,7 +419,7 @@ function loadHistory() {
     const saved = localStorage.getItem('djgst_trips');
     if(saved) {
         const trips = JSON.parse(saved);
-        document.getElementById("trips-list").innerHTML = trips.map(t => `<div class="card" style="padding:10px; border-left: 5px solid var(--primary)">${t.date}: ${t.src} to ${t.dest} (${t.name})</div>`).join('');
+        document.getElementById("trips-list").innerHTML = trips.map(t => `<div class="card" style="padding:10px; border-left: 5px solid var(--primary)">${t.date}: ${t.src} to ${t.dest}</div>`).join('');
     }
 }
 function downloadReceipt() {
