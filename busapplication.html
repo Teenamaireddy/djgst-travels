@@ -32,6 +32,20 @@ input, select{ width:100%; padding:14px; border:1px solid #e2e8f0; border-radius
 .btn-action{ background:var(--primary); color:white; border:none; padding:16px; border-radius:14px; cursor:pointer; width:100%; font-weight:700; transition: 0.3s; }
 .btn-action:hover{ opacity: 0.9; transform: scale(0.98); }
 
+/* SEAT SELECTION STYLES */
+.bus-layout { background: #f8fafc; padding: 20px; border-radius: 20px; border: 2px solid #e2e8f0; max-width: 280px; margin: 0 auto 20px; }
+.seats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.seat { height: 40px; background: #e2e8f0; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; transition: 0.2s; }
+.seat.selected { background: var(--primary); color: white; transform: scale(1.1); }
+.seat.occupied { background: #cbd5e1; cursor: not-allowed; opacity: 0.4; }
+.aisle { grid-column: 3; pointer-events: none; background: transparent; }
+
+/* PAYMENT APP STYLES */
+.pay-options { display: flex; justify-content: center; gap: 12px; margin: 15px 0; flex-wrap: wrap; }
+.pay-tool { border: 2px solid #f1f5f9; padding: 8px; border-radius: 12px; cursor: pointer; width: 55px; transition: 0.3s; background: white; }
+.pay-tool.active { border-color: var(--primary); background: #fff1f2; transform: translateY(-3px); }
+.pay-tool img { width: 100%; height: auto; border-radius: 4px; }
+
 /* SURPRISE ENVELOPE STYLES */
 #surprise-wrap { display:none; text-align:center; padding:40px 0; perspective: 1000px; }
 .envelope { width: 220px; height: 150px; background: #c2410c; margin: 0 auto; position: relative; cursor: pointer; border-radius: 0 0 10px 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: transform 0.5s; }
@@ -41,37 +55,32 @@ input, select{ width:100%; padding:14px; border:1px solid #e2e8f0; border-radius
 @keyframes pulseGlow { 0% { opacity: 0.2; transform: scale(0.8); } 50% { opacity: 0.5; transform: scale(1.2); } 100% { opacity: 0.2; transform: scale(0.8); } }
 .envelope-text { color: white; position: absolute; bottom: 15px; width: 100%; font-weight: 800; font-size: 14px; letter-spacing: 1px; }
 
-/* ANIMATIONS */
+/* RESTORED ANIMATIONS */
 .falling-item { position: absolute; top: -10%; animation: fall linear infinite; z-index: 1; pointer-events: none; }
 @keyframes fall { to { transform: translateY(600px); } }
 
-/* SUN */
 .sun-container { position: absolute; top: -60px; left: 50%; transform: translateX(-50%); z-index: 1; pointer-events: none; }
 .sun-core { width: 120px; height: 120px; background: radial-gradient(circle, #fff 10%, #ffdb4d 40%, transparent 70%); border-radius: 50%; box-shadow: 0 0 100px #fbbf24; animation: sunPulse 4s infinite alternate ease-in-out; }
 @keyframes sunPulse { from { transform: scale(1); opacity: 0.9; } to { transform: scale(1.4); opacity: 1; } }
 
-@keyframes bgShift { from { background-color: #0ea5e9; } to { background-color: #ffdb4d; } }
 .desert-bg-animate { animation: bgShift 4s infinite alternate ease-in-out; }
+@keyframes bgShift { from { background-color: #0ea5e9; } to { background-color: #ffdb4d; } }
 
-/* DESERT SCENERY */
 .desert-sand { position: absolute; bottom: 0; left: 0; width: 100%; height: 100px; background: linear-gradient(to bottom, #edc9af, #d2a679); border-top-left-radius: 60% 30px; border-top-right-radius: 40% 20px; z-index: 2; }
 .desert-plant { position: absolute; bottom: 85px; font-size: 45px; z-index: 3; filter: drop-shadow(2px 5px 10px rgba(0,0,0,0.3)); animation: plantSway 3s infinite ease-in-out; transform-origin: bottom; }
 @keyframes plantSway { 0%, 100% { transform: rotate(-2deg); } 50% { transform: rotate(2deg); } }
 
-/* LAUGHING HILL */
 .laughing-hill-box { position: absolute; bottom: 25px; left: 50%; transform: translateX(-50%); text-align: center; animation: hillBounce 0.7s infinite alternate ease-in-out; z-index: 2; }
 .hill-face { font-size: 115px; position: relative; display: inline-block; }
 .hill-eyes { position: absolute; top: 52px; left: 50%; transform: translateX(-50%); font-size: 24px; display: flex; gap: 20px; }
 .hill-smile { position: absolute; top: 75px; left: 50%; transform: translateX(-50%); font-size: 34px; }
 @keyframes hillBounce { from { transform: translate(-50%, 0); } to { transform: translate(-50%, -20px); } }
 
-/* DEVOTIONAL */
 .ritual-bell { position: absolute; top: -10px; font-size: 40px; animation: bellSwing 2s infinite ease-in-out; transform-origin: top; z-index: 6; }
 @keyframes bellSwing { 0%, 100% { transform: rotate(-15deg); } 50% { transform: rotate(15deg); } }
 .floating-diya { position: absolute; bottom: 20px; font-size: 30px; animation: diyaGlow 1.5s infinite alternate; filter: drop-shadow(0 0 10px orange); }
 @keyframes diyaGlow { from { opacity: 0.6; transform: translateY(0); } to { opacity: 1; transform: translateY(-5px); } }
 
-/* WATER & SURFER */
 .ocean { height: 150px; width: 100%; position: absolute; bottom: 0; left: 0; background: #01579b; opacity: 0.6; z-index: 1; overflow: hidden; }
 .wave { background: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/85486/wave.svg) repeat-x; position: absolute; top: -55px; width: 6400px; height: 198px; animation: wave 7s linear infinite; }
 @keyframes wave { 0% { margin-left: 0; } 100% { margin-left: -1600px; } }
@@ -139,15 +148,39 @@ input, select{ width:100%; padding:14px; border:1px solid #e2e8f0; border-radius
                 <option value="Luxury AC Sleeper" data-price="1500">Luxury AC Sleeper (₹1500)</option>
             </select>
             <input type="date" id="u-date-input">
-            <button class="btn-action" onclick="goToPayment()" id="txt-btn-search">Search & Book</button>
+            <button class="btn-action" onclick="showSeatSelection()" id="txt-btn-search">Search & Select Seat</button>
+        </div>
+
+        <div id="seat-card" class="card" style="display:none; text-align:center;">
+            <h3><i class="fa fa-chair"></i> Select Your Seat</h3>
+            <div class="bus-layout">
+                <div style="margin-bottom:12px; font-weight:bold; color:#94a3b8; font-size:12px;">FRONT / DRIVER SIDE</div>
+                <div class="seats-grid" id="seats-grid"></div>
+            </div>
+            <p id="seat-selection-txt" style="font-weight:600; color:var(--primary); margin-bottom:15px;">Selected Seat: None</p>
+            <button class="btn-action" onclick="goToPayment()">Confirm Seat & Pay</button>
         </div>
 
         <div id="payment-card" class="card" style="display:none; text-align:center">
             <h3 id="txt-pay-title">Payment Secure</h3>
             <p id="pay-summary"></p>
-            <div style="background:#f8fafc;padding:20px;border-radius:15px;margin:20px auto; width:150px;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=DJGST_PAY" style="width:100%">
+            
+            <div class="pay-options">
+                <div class="pay-tool" onclick="selectPayApp('Paytm', this)"><img src="https://img.icons8.com/color/48/paytm.png"/></div>
+                <div class="pay-tool" onclick="selectPayApp('PhonePe', this)"><img src="https://img.icons8.com/color/48/phonepe.png"/></div>
+                <div class="pay-tool" onclick="selectPayApp('GooglePay', this)"><img src="https://img.icons8.com/color/48/google-pay.png"/></div>
             </div>
+
+            <div style="background:#f8fafc;padding:20px;border-radius:15px;margin:10px auto; width:180px;">
+                <img id="qr-display" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=DJGST_PAY" style="width:100%">
+                <p style="font-size:10px; color:#64748b; margin-top:8px;" id="qr-label">Scan to pay via UPI</p>
+            </div>
+            
+            <div style="margin:15px 0;">
+                <p style="font-size:12px; font-weight:bold; color:#64748b;">OR Pay via Mobile Number</p>
+                <input id="u-mobile-pay" placeholder="Enter Mobile Number / UPI ID" style="text-align:center;">
+            </div>
+
             <button class="btn-action" onclick="showEmotionSelector()">Confirm & Select Vibe</button>
         </div>
 
@@ -192,6 +225,7 @@ input, select{ width:100%; padding:14px; border:1px solid #e2e8f0; border-radius
                 <small id="rec-tid"></small>
             </div>
             <p><strong>Passenger Name:</strong> <span id="rec-name"></span></p>
+            <p><strong>Seat:</strong> <span id="rec-seat"></span></p>
             <p><strong>Travel Date:</strong> <span id="rec-date"></span></p>
             <p><strong>Route:</strong> <span id="rec-route"></span></p>
             <p><strong>Service:</strong> <span id="rec-class"></span></p>
@@ -222,24 +256,24 @@ input, select{ width:100%; padding:14px; border:1px solid #e2e8f0; border-radius
 </div>
 
 <script>
-let bookingData = { name:'', src:'', dest:'', date:'', busType:'', price:'', emotion:'', tid:'' };
+let bookingData = { name:'', src:'', dest:'', date:'', busType:'', price:'', emotion:'', tid:'', seat:'' };
 let aiStep = 0; 
 
-// Audio Setup
-const tadaAudio = new Audio('freesound_community-tada-fanfare-a-6313.mp3'); 
-const hoverAudio = new Audio('freesound_community-tada-fanfare-a-6313.mp3');
+const tadaAudio = new Audio('https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3'); 
+const hoverAudio = new Audio('https://www.soundjay.com/buttons/sounds/button-37.mp3');
 hoverAudio.volume = 0.2;
 
 const langData = {
     en: { book: "Book Ticket", trips: "My Trips", plan: "Plan Your Journey", pay: "Payment", emo: "Journey Vibe", hist: "Trip History" },
     te: { book: "టికెట్ బుక్", trips: "నా ప్రయాణాలు", plan: "ప్లాన్ చేయండి", pay: "చెల్లింపు", emo: "ప్రయాణ రకం", hist: "ప్రయాణ చరిత్ర" },
-    hi: { book: "टिकट बुक", trips: "मेरी यात्राएं", plan: "యोजना बनाएं", pay: "भुगतान", emo: "यात्रा का प्रकार", hist: "यात्रा इतिहास" }
+    hi: { book: "टिकट बुक", trips: "मेरी यात्राएं", plan: "योजना बनाएं", pay: "भुगतान", emo: "यात्रा का प्रकार", hist: "यात्रा इतिहास" }
 };
 
 window.onload = () => {
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('u-date-input').setAttribute('min', today);
     loadHistory();
+    initSeatMap();
     setTimeout(() => { toggleAI(); addChat("Welcome to DJGST! Let's get started. What is your **Name**?", "bot"); }, 1000);
 };
 
@@ -274,7 +308,7 @@ function handleAI() {
             const match = val.match(/\d{4}-\d{2}-\d{2}/);
             if(match) {
                 document.getElementById("u-date-input").value = match[0]; bookingData.date = match[0];
-                addChat("Got it! Click **Search & Book**.", "bot"); aiStep = 3;
+                addChat("Got it! Click **Search & Select Seat**.", "bot"); aiStep = 3;
             } else { addChat("Use format 2026-05-20.", "bot"); }
         }
     }, 600);
@@ -286,24 +320,43 @@ function addChat(t, type) {
     msgBox.appendChild(d); msgBox.scrollTop = msgBox.scrollHeight;
 }
 
-function translatePage() {
-    const l = document.getElementById("lang-select").value;
-    document.getElementById("txt-book").innerText = langData[l].book;
-    document.getElementById("txt-trips").innerText = langData[l].trips;
-    document.getElementById("txt-plan").innerText = langData[l].plan;
-    document.getElementById("txt-pay-title").innerText = langData[l].pay;
-    document.getElementById("txt-emo-title").innerText = langData[l].emo;
-    document.getElementById("txt-history").innerText = langData[l].hist;
+// SEAT SELECTION LOGIC
+function initSeatMap() {
+    const grid = document.getElementById('seats-grid');
+    grid.innerHTML = "";
+    for(let i=1; i<=20; i++) {
+        const s = document.createElement('div');
+        s.className = 'seat';
+        if(Math.random() < 0.2) s.classList.add('occupied');
+        s.innerText = i;
+        s.onclick = () => selectSeat(s, i);
+        grid.appendChild(s);
+    }
 }
 
-function showTab(tab) {
-    document.getElementById("tab-booking").style.display = tab === 'booking' ? 'block' : 'none';
-    document.getElementById("tab-trips").style.display = tab === 'trips' ? 'block' : 'none';
-    document.getElementById("nav-book").classList.toggle('nav-active', tab === 'booking');
-    document.getElementById("nav-trips").classList.toggle('nav-active', tab === 'trips');
+function selectSeat(el, num) {
+    if(el.classList.contains('occupied')) return;
+    document.querySelectorAll('.seat').forEach(s => s.classList.remove('selected'));
+    el.classList.add('selected');
+    bookingData.seat = num;
+    document.getElementById('seat-selection-txt').innerText = "Selected Seat: " + num;
+}
+
+function showSeatSelection() {
+    if(!document.getElementById("u-name").value || !document.getElementById("u-src").value) return alert("Fill all fields first!");
+    document.getElementById("search-card").style.display = "none";
+    document.getElementById("seat-card").style.display = "block";
+}
+
+function selectPayApp(app, el) {
+    document.querySelectorAll('.pay-tool').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('qr-label').innerText = "Scan to pay via " + app;
+    document.getElementById('qr-display').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=DJGST_PAY_${app}`;
 }
 
 function goToPayment() {
+    if(!bookingData.seat) return alert("Please select a seat first!");
     bookingData.name = document.getElementById("u-name").value;
     bookingData.src = document.getElementById("u-src").value;
     bookingData.dest = document.getElementById("u-dest").value;
@@ -313,13 +366,11 @@ function goToPayment() {
     bookingData.price = b.options[b.selectedIndex].getAttribute('data-price');
     bookingData.tid = "DJGST-" + Math.floor(100000 + Math.random() * 900000);
 
-    if(!bookingData.name || !bookingData.src || !bookingData.dest || !bookingData.date) return alert("Fill all fields first!");
-
     document.getElementById("loader").style.display="flex";
     setTimeout(()=>{
         document.getElementById("loader").style.display="none";
-        document.getElementById("search-card").style.display="none";
-        document.getElementById("pay-summary").innerText = `${bookingData.busType} | ₹${bookingData.price}`;
+        document.getElementById("seat-card").style.display="none";
+        document.getElementById("pay-summary").innerText = `${bookingData.busType} | Seat: ${bookingData.seat} | ₹${bookingData.price}`;
         document.getElementById("payment-card").style.display="block";
     },1000);
 }
@@ -367,7 +418,7 @@ function renderResults() {
 
     cardContainer.classList.remove('desert-bg-animate');
 
-    if (bookingData.emotion === 'pilgrimage' || dest.includes('tirupati') || dest.includes('shirdi') || dest.includes('varanasi') || dest.includes('puri')) {
+    if (bookingData.emotion === 'pilgrimage' || dest.includes('tirupati') || dest.includes('shirdi')) {
         container.innerHTML += `<div class="ritual-bell" style="left:20px">🔔</div><div class="ritual-bell" style="right:20px">🔔</div><div class="floating-diya" style="left:50px">🪔</div><div class="floating-diya" style="right:50px">🪔</div>`;
         for(let i=0; i<15; i++) {
             let s = document.createElement('div'); s.className = 'falling-item'; s.innerHTML = '🌸';
@@ -375,10 +426,10 @@ function renderResults() {
             container.appendChild(s);
         }
     }
-    if (dest.includes('goa') || dest.includes('vizag') || dest.includes('kakinada') || dest.includes('beach') || dest.includes('mumbai')) {
+    if (dest.includes('goa') || dest.includes('vizag') || dest.includes('beach')) {
         container.innerHTML += `<div class="ocean"><div class="surfer">🏄‍♀️</div><div class="wave"></div><div class="wave"></div></div>`;
     }
-    if (dest.includes('ooty') || dest.includes('hill') || dest.includes('munnar') || dest.includes('shimla')) {
+    if (dest.includes('ooty') || dest.includes('hill') || dest.includes('shimla')) {
         container.innerHTML += `<div class="laughing-hill-box"><div class="hill-face">⛰️<div class="hill-eyes">👀</div><div class="hill-smile">😊</div></div></div>`;
         for(let i=0; i<30; i++) {
             let s = document.createElement('div'); s.className = 'falling-item'; s.innerHTML = '❄️';
@@ -386,19 +437,15 @@ function renderResults() {
             container.appendChild(s);
         }
     } 
-    if (dest.includes('jaipur') || dest.includes('dubai') || dest.includes('desert') || dest.includes('rajasthan')) {
+    if (dest.includes('jaipur') || dest.includes('desert') || dest.includes('rajasthan')) {
         cardContainer.classList.add('desert-bg-animate');
         container.innerHTML += `<div class="desert-sand"></div><div class="desert-plant" style="left:15%">🌵</div><div class="desert-plant" style="right:20%; font-size:32px; bottom:75px">🌵</div>`;
         let sun = document.createElement("div"); sun.className = "sun-container"; sun.innerHTML = `<div class="sun-core"></div>`; container.appendChild(sun);
     }
-    if(bookingData.emotion === 'business') {
-        let overlay = document.createElement("div");
-        overlay.style.cssText = "position:absolute; inset:0; background:url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=400&q=80'); background-size:cover; opacity:0.3;";
-        container.appendChild(overlay);
-    }
 
     document.getElementById("formal-receipt").style.display = "block";
     document.getElementById("rec-name").innerText = bookingData.name;
+    document.getElementById("rec-seat").innerText = bookingData.seat;
     document.getElementById("rec-date").innerText = bookingData.date;
     document.getElementById("rec-route").innerText = `${bookingData.src} to ${bookingData.dest}`;
     document.getElementById("rec-class").innerText = bookingData.busType;
@@ -419,7 +466,7 @@ function loadHistory() {
     const saved = localStorage.getItem('djgst_trips');
     if(saved) {
         const trips = JSON.parse(saved);
-        document.getElementById("trips-list").innerHTML = trips.map(t => `<div class="card" style="padding:10px; border-left: 5px solid var(--primary)">${t.date}: ${t.src} to ${t.dest}</div>`).join('');
+        document.getElementById("trips-list").innerHTML = trips.map(t => `<div class="card" style="padding:10px; border-left: 5px solid var(--primary)">${t.date}: ${t.src} to ${t.dest} (Seat ${t.seat})</div>`).join('');
     }
 }
 function downloadReceipt() {
@@ -427,7 +474,21 @@ function downloadReceipt() {
         const a = document.createElement("a"); a.href = c.toDataURL(); a.download = `DJGST_${bookingData.tid}.png`; a.click();
     });
 }
+function translatePage() {
+    const l = document.getElementById("lang-select").value;
+    document.getElementById("txt-book").innerText = langData[l].book;
+    document.getElementById("txt-trips").innerText = langData[l].trips;
+    document.getElementById("txt-plan").innerText = langData[l].plan;
+    document.getElementById("txt-pay-title").innerText = langData[l].pay;
+    document.getElementById("txt-emo-title").innerText = langData[l].emo;
+    document.getElementById("txt-history").innerText = langData[l].hist;
+}
+function showTab(tab) {
+    document.getElementById("tab-booking").style.display = tab === 'booking' ? 'block' : 'none';
+    document.getElementById("tab-trips").style.display = tab === 'trips' ? 'block' : 'none';
+    document.getElementById("nav-book").classList.toggle('nav-active', tab === 'booking');
+    document.getElementById("nav-trips").classList.toggle('nav-active', tab === 'trips');
+}
 </script>
 </body>
 </html>
-
