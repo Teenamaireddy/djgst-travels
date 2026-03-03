@@ -421,7 +421,7 @@ function renderResults() {
     if (bookingData.emotion === 'pilgrimage' || dest.includes('tirupati') || dest.includes('shirdi')) {
         container.innerHTML += `<div class="ritual-bell" style="left:20px">🔔</div><div class="ritual-bell" style="right:20px">🔔</div><div class="floating-diya" style="left:50px">🪔</div><div class="floating-diya" style="right:50px">🪔</div>`;
         for(let i=0; i<15; i++) {
-            let s = document.createElement('div'); s.className = 'falling-item'; s.innerHTML = ['🌸','🌹','🏵'];
+            let s = document.createElement('div'); s.className = 'falling-item'; s.innerHTML = '🏵';
             s.style.left = Math.random()*100+'%'; s.style.animationDuration = (Math.random()*3+3)+'s';
             container.appendChild(s);
         }
