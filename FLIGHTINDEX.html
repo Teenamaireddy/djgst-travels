@@ -83,6 +83,59 @@
         .carousel-fade .carousel-item {
             transition-duration: 0.8s;
         }
+        .glow-btn {
+    width:100%;
+    margin:20px;
+  position: relative;
+  padding: 15px 40px;
+  font-size: 18px;
+  color: #ffffff;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.08); /* transparent light shade */
+  backdrop-filter: blur(10px); /* glass effect */
+  cursor: pointer;
+  overflow: hidden;
+  transition: 0.3s ease;
+}
+
+/* Glowing border animation */
+.glow-btn::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: 12px;
+  background: linear-gradient(
+    45deg,
+    #00f0ff,
+    #ff00c8,
+    #00f0ff
+  );
+  background-size: 300% 300%;
+  z-index: -1;
+  animation: glow 4s linear infinite;
+  filter: blur(12px);
+}
+
+/* Hover effect */
+.glow-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.6),
+              0 0 40px rgba(255, 0, 200, 0.4);
+}
+
+/* Animation */
+@keyframes glow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
     </style>
 </head>
 <body>
@@ -152,6 +205,11 @@
             <span class="visually-hidden">Next</span>
         </button>
     </div>
-
+<footer>
+        <a href="bookingtype.html">
+        <button class="glow-btn">
+            Back to home
+        </button></a>
+</footer>
 </body>
 </html>
