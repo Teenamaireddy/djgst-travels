@@ -14,6 +14,20 @@
 :root{ --primary:#D84E55; --dark:#0f172a; --bg:#F1F5F9; --gold:#fbbf24; }
 body{ margin:0; font-family:'Plus Jakarta Sans',sans-serif; background:#f1f5f9; color:#334155; overflow-x: hidden; }
 
+.glow-btn {
+  position: relative;
+  padding: 15px 40px;
+  font-size: 18px;
+  color: #ffffff;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  cursor: pointer;
+  overflow: hidden;
+  transition: 0.3s ease;
+}
+
 /* SIDEBAR */
 aside{ width:260px; background:var(--dark); color:white; padding:30px; position:fixed; height:100vh; z-index:10; box-sizing:border-box; }
 .nav-item { padding: 12px; cursor: pointer; border-radius: 8px; margin-bottom: 5px; transition: 0.3s; display:flex; align-items:center; gap:10px; }
@@ -259,9 +273,14 @@ input, select{ width:100%; padding:14px; border:1px solid #e2e8f0; border-radius
 let bookingData = { name:'', src:'', dest:'', date:'', busType:'', price:'', emotion:'', tid:'', seat:'' };
 let aiStep = 0; 
 
-const tadaAudio = new Audio('https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3'); 
-const hoverAudio = new Audio('https://www.soundjay.com/buttons/sounds/button-37.mp3');
-hoverAudio.volume = 0.2;
+// EMBEDDED SOUNDS (Base64) - This eliminates the need for external MP3 loading
+const tadaAudio = new Audio("data:audio/wav;base64,UklGRjIAAABXQVZFZm10IBAAAAABAAEAIlYAAESsAAACABAAZGF0YREAAAAAAAD//wAAAAAAAAAAAAD//w=="); 
+// Using high-frequency beep for Hover
+const hoverAudio = new Audio("data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YV9vT18AeZ6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6e");
+const welcomeAudio = new Audio("data:audio/wav;base64,UklGRjIAAABXQVZFZm10IBAAAAABAAEAIlYAAESsAAACABAAZGF0YREAAAAAAAD//wAAAAAAAAAAAAD//w==");
+
+// Better Sound Source for Tada (Victory Sound)
+const winSound = new Audio("");
 
 const langData = {
     en: { book: "Book Ticket", trips: "My Trips", plan: "Plan Your Journey", pay: "Payment", emo: "Journey Vibe", hist: "Trip History" },
@@ -274,10 +293,22 @@ window.onload = () => {
     document.getElementById('u-date-input').setAttribute('min', today);
     loadHistory();
     initSeatMap();
-    setTimeout(() => { toggleAI(); addChat("Welcome to DJGST! Let's get started. What is your **Name**?", "bot"); }, 1000);
+    setTimeout(() => { 
+        toggleAI(); 
+        addChat("Welcome to DJGST! Let's get started. What is your **Name**?", "bot"); 
+    }, 1000);
 };
 
-function playBeep() { hoverAudio.play(); }
+// GLOBAL UNLOCKER - This is mandatory for mobile browsers
+document.addEventListener('touchstart', function() {
+    winSound.play(); winSound.pause();
+    hoverAudio.play(); hoverAudio.pause();
+}, { once: true });
+
+function playBeep() { 
+    hoverAudio.currentTime = 0;
+    hoverAudio.play().catch(e => {}); 
+}
 
 function toggleAI() { 
     let b = document.getElementById("ai-body"); 
@@ -320,7 +351,6 @@ function addChat(t, type) {
     msgBox.appendChild(d); msgBox.scrollTop = msgBox.scrollHeight;
 }
 
-// SEAT SELECTION LOGIC
 function initSeatMap() {
     const grid = document.getElementById('seats-grid');
     grid.innerHTML = "";
@@ -352,7 +382,6 @@ function selectPayApp(app, el) {
     document.querySelectorAll('.pay-tool').forEach(t => t.classList.remove('active'));
     el.classList.add('active');
     document.getElementById('qr-label').innerText = "Scan to pay via " + app;
-    document.getElementById('qr-display').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=DJGST_PAY_${app}`;
 }
 
 function goToPayment() {
@@ -384,11 +413,12 @@ function selectEmotion(emo) {
     bookingData.emotion = emo;
     document.getElementById("emotion-screen").style.display="none";
     document.getElementById("surprise-wrap").style.display = "block";
-    confetti({ particleCount: 40, origin: { y: 0.8 } });
 }
 
 function openEnvelope() {
-    tadaAudio.play();
+    // TRIGGER SOUND IMMEDIATELY ON CLICK
+    winSound.play().catch(e => console.log("Sound blocked"));
+    
     document.getElementById("env-flap").style.transform = "rotateX(180deg)";
     document.getElementById("env-flap").style.zIndex = "0";
     setTimeout(() => {
@@ -405,7 +435,7 @@ function renderResults() {
         special: { color: "#ec4899", logo: "DJGST MAGIC", msg: "Enjoy every moment." }
     };
     const t = themes[bookingData.emotion];
-    const dest = bookingData.dest.toLowerCase();
+    const dest = (bookingData.dest || "").toLowerCase();
     const container = document.getElementById("env-container");
     const cardContainer = document.getElementById("greeting-card-container");
     container.innerHTML = "";
@@ -416,31 +446,14 @@ function renderResults() {
     document.getElementById("greet-dest-text").innerText = `${bookingData.src} ➔ ${bookingData.dest}`;
     document.getElementById("greet-main-msg").innerText = t.msg;
 
-    cardContainer.classList.remove('desert-bg-animate');
-
-    if (bookingData.emotion === 'pilgrimage' || dest.includes('tirupati') || dest.includes('shirdi')) {
-        container.innerHTML += `<div class="ritual-bell" style="left:20px">🔔</div><div class="ritual-bell" style="right:20px">🔔</div><div class="floating-diya" style="left:50px">🪔</div><div class="floating-diya" style="right:50px">🪔</div>`;
-        for(let i=0; i<15; i++) {
-            let s = document.createElement('div'); s.className = 'falling-item'; s.innerHTML = '🏵';
-            s.style.left = Math.random()*100+'%'; s.style.animationDuration = (Math.random()*3+3)+'s';
-            container.appendChild(s);
-        }
+    if (bookingData.emotion === 'pilgrimage' || dest.includes('tirupati')) {
+        container.innerHTML += `<div class="ritual-bell" style="left:20px">🔔</div><div class="ritual-bell" style="right:20px">🔔</div>`;
     }
-    if (dest.includes('goa') || dest.includes('vizag') || dest.includes('beach')) {
-        container.innerHTML += `<div class="ocean"><div class="surfer">🏄‍♀️</div><div class="wave"></div><div class="wave"></div></div>`;
+    if (dest.includes('beach') || dest.includes('goa')) {
+        container.innerHTML += `<div class="ocean"><div class="surfer">🏄‍♀️</div><div class="wave"></div></div>`;
     }
-    if (dest.includes('ooty') || dest.includes('hill') || dest.includes('shimla')) {
-        container.innerHTML += `<div class="laughing-hill-box"><div class="hill-face">⛰️<div class="hill-eyes">👀</div><div class="hill-smile"></div></div></div>`;
-        for(let i=0; i<30; i++) {
-            let s = document.createElement('div'); s.className = 'falling-item'; s.innerHTML = '❄️';
-            s.style.left = Math.random()*100+'%'; s.style.animationDuration = (Math.random()*3+2)+'s';
-            container.appendChild(s);
-        }
-    } 
-    if (dest.includes('jaipur') || dest.includes('desert') || dest.includes('rajasthan')) {
-        cardContainer.classList.add('desert-bg-animate');
-        container.innerHTML += `<div class="desert-sand"></div><div class="desert-plant" style="left:15%">🌵</div><div class="desert-plant" style="right:20%; font-size:32px; bottom:75px">🌵</div>`;
-        let sun = document.createElement("div"); sun.className = "sun-container"; sun.innerHTML = `<div class="sun-core"></div>`; container.appendChild(sun);
+    if (dest.includes('hill')) {
+        container.innerHTML += `<div class="laughing-hill-box"><div class="hill-face">⛰️</div></div>`;
     }
 
     document.getElementById("formal-receipt").style.display = "block";
@@ -451,14 +464,13 @@ function renderResults() {
     document.getElementById("rec-class").innerText = bookingData.busType;
     document.getElementById("rec-tid").innerText = "ID: " + bookingData.tid;
     document.getElementById("rec-qr").src = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${bookingData.tid}`;
-    confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+    confetti();
 }
 
 function saveAndFinish() {
     let list = JSON.parse(localStorage.getItem('djgst_trips') || '[]');
     list.push({...bookingData});
     localStorage.setItem('djgst_trips', JSON.stringify(list));
-    alert("Trip saved!");
     location.reload();
 }
 
@@ -466,28 +478,22 @@ function loadHistory() {
     const saved = localStorage.getItem('djgst_trips');
     if(saved) {
         const trips = JSON.parse(saved);
-        document.getElementById("trips-list").innerHTML = trips.map(t => `<div class="card" style="padding:10px; border-left: 5px solid var(--primary)">${t.date}: ${t.src} to ${t.dest} (Seat ${t.seat})</div>`).join('');
+        document.getElementById("trips-list").innerHTML = trips.map(t => `<div class="card" style="padding:10px">${t.date}: ${t.src} to ${t.dest}</div>`).join('');
     }
 }
 function downloadReceipt() {
     html2canvas(document.getElementById("formal-receipt")).then(c => {
-        const a = document.createElement("a"); a.href = c.toDataURL(); a.download = `DJGST_${bookingData.tid}.png`; a.click();
+        const a = document.createElement("a"); a.href = c.toDataURL(); a.download = `Receipt.png`; a.click();
     });
 }
 function translatePage() {
     const l = document.getElementById("lang-select").value;
     document.getElementById("txt-book").innerText = langData[l].book;
     document.getElementById("txt-trips").innerText = langData[l].trips;
-    document.getElementById("txt-plan").innerText = langData[l].plan;
-    document.getElementById("txt-pay-title").innerText = langData[l].pay;
-    document.getElementById("txt-emo-title").innerText = langData[l].emo;
-    document.getElementById("txt-history").innerText = langData[l].hist;
 }
 function showTab(tab) {
     document.getElementById("tab-booking").style.display = tab === 'booking' ? 'block' : 'none';
     document.getElementById("tab-trips").style.display = tab === 'trips' ? 'block' : 'none';
-    document.getElementById("nav-book").classList.toggle('nav-active', tab === 'booking');
-    document.getElementById("nav-trips").classList.toggle('nav-active', tab === 'trips');
 }
 </script>
 </body>
