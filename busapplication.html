@@ -128,6 +128,34 @@ input, select{ width:100%; padding:14px; border:1px solid #e2e8f0; border-radius
 #ai-input{ border:none; padding:10px; outline:none; background:#f8fafc; border-radius:8px; flex:1; }
 
 #loader{ position:fixed; inset:0; background:rgba(255,255,255,.9); z-index:2000; display:none; flex-direction:column; align-items:center; justify-content:center; }
+
+/* Styling for the heart elements */
+.floating-heart {
+    position: absolute;
+    bottom: -50px; /* Start below the card */
+    user-select: none;
+    pointer-events: none;
+    z-index: 6;
+    animation: floatUpFade var(--duration) ease-in forwards;
+}
+
+@keyframes floatUpFade {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 0;
+    }
+    10% { 
+        opacity: 1; /* Quickly become visible */
+    }
+    90% { 
+        opacity: 0.8; 
+    }
+    100% {
+        /* Move up and disappear */
+        transform: translateY(-600px) rotate(var(--rotate));
+        opacity: 0; 
+    }
+}
 </style>
 </head>
 <body>
@@ -275,7 +303,7 @@ input, select{ width:100%; padding:14px; border:1px solid #e2e8f0; border-radius
 <script>
 let bookingData = { name:'', src:'', dest:'', date:'', busType:'', price:'', emotion:'', tid:'', seat:'' };
 let aiStep = 0; 
-
+let heartInterval = null;
 // Initializing Audio
 const tadaAudio = new Audio('freesound_community-tada-fanfare-a-6313.mp3'); 
 const hoverAudio = new Audio('https://www.soundjay.com/buttons/sounds/button-37.mp3');
@@ -474,6 +502,34 @@ function renderResults() {
         container.innerHTML += `<div class="desert-sand"></div><div class="desert-plant" style="left:15%">🌵</div><div class="desert-plant" style="right:20%; font-size:32px; bottom:75px">🌵</div>`;
         let sun = document.createElement("div"); sun.className = "sun-container"; sun.innerHTML = `<div class="sun-core"></div>`; container.appendChild(sun);
     }
+  if (bookingData.emotion === 'special') {
+    const heartColors = ['❤️', '💖', '💝', '💕', '💜', '💛'];
+    
+    // Safety: Clear any existing timer before starting a new one
+    if(heartInterval) clearInterval(heartInterval);
+
+    heartInterval = setInterval(() => {
+        let h = document.createElement('div');
+        h.className = 'floating-heart';
+        
+        // Randomly pick a heart emoji from the array
+        h.innerHTML = heartColors[Math.floor(Math.random() * heartColors.length)];
+        
+        // Random horizontal position
+        h.style.left = Math.random() * 100 + '%';
+        
+        // Custom properties for the CSS animation
+        h.style.setProperty('--duration', (Math.random() * 3 + 2) + 's');
+        h.style.setProperty('--rotate', (Math.random() * 360 - 180) + 'deg');
+        h.style.fontSize = (Math.random() * 15 + 15) + 'px';
+        
+        // Add it to the container
+        document.getElementById("env-container").appendChild(h);
+
+        // Remove the element from the DOM after 5 seconds to keep it clean
+        setTimeout(() => h.remove(), 5000);
+    }, 200); // Create a new heart every 200 milliseconds
+  }
 
     document.getElementById("formal-receipt").style.display = "block";
     document.getElementById("rec-name").innerText = bookingData.name;
@@ -492,6 +548,10 @@ function saveAndFinish() {
     localStorage.setItem('djgst_trips', JSON.stringify(list));
     alert("Trip saved!");
     location.reload();
+  if(heartInterval) {
+        clearInterval(heartInterval);
+        heartInterval = null;
+  }
 }
 
 function loadHistory() {
