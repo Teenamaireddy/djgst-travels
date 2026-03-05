@@ -276,12 +276,12 @@ input, select{ width:100%; padding:14px; border:1px solid #e2e8f0; border-radius
 let bookingData = { name:'', src:'', dest:'', date:'', busType:'', price:'', emotion:'', tid:'', seat:'' };
 let aiStep = 0; 
 
-// Initializing Audio - Using GitHub hosted source for better reliability
-const tadaAudio = new Audio('https://raw.githubusercontent.com/rafaelreis-hotmart/Audio-Samples/master/win.mp3'); 
+// Initializing Audio
+const tadaAudio = new Audio('freesound_community-tada-fanfare-a-6313.mp3'); 
 const hoverAudio = new Audio('https://www.soundjay.com/buttons/sounds/button-37.mp3');
 const welcomeAudio = new Audio('https://www.soundjay.com/buttons/sounds/button-30.mp3');
 hoverAudio.volume = 0.2;
-tadaAudio.volume = 0.6;
+tadaAudio.volume = 0.7;
 
 const langData = {
     en: { book: "Book Ticket", trips: "My Trips", plan: "Plan Your Journey", pay: "Payment", emo: "Journey Vibe", hist: "Trip History" },
@@ -296,19 +296,14 @@ window.onload = () => {
     initSeatMap();
     setTimeout(() => { 
         toggleAI(); 
-        // Welcome audio usually blocked by browser, handled by the "Unlock" click listener below
-        welcomeAudio.play().catch(e => console.log("Audio waiting for user click..."));
         addChat("Welcome to DJGST! Let's get started. What is your **Name**?", "bot"); 
     }, 1000);
 };
 
-// CRITICAL: Browser Unlocker. 
-// Browsers block sound until the user clicks ANYTHING. 
-// This hidden listener "primes" the sound engine the first time you click the page.
+// Browser Sound Unlocker - Essential for modern browsers
 document.addEventListener('click', () => {
     tadaAudio.play().then(() => { tadaAudio.pause(); tadaAudio.currentTime = 0; }).catch(e=>{});
     welcomeAudio.play().then(() => { welcomeAudio.pause(); welcomeAudio.currentTime = 0; }).catch(e=>{});
-    hoverAudio.play().then(() => { hoverAudio.pause(); hoverAudio.currentTime = 0; }).catch(e=>{});
 }, { once: true });
 
 
@@ -355,7 +350,6 @@ function addChat(t, type) {
     msgBox.appendChild(d); msgBox.scrollTop = msgBox.scrollHeight;
 }
 
-// SEAT SELECTION LOGIC
 function initSeatMap() {
     const grid = document.getElementById('seats-grid');
     grid.innerHTML = "";
@@ -423,9 +417,9 @@ function selectEmotion(emo) {
 }
 
 function openEnvelope() {
-    // Sound triggered by direct user click is highly likely to work
+    // FIX: Triggering Tada Sound on click
     tadaAudio.currentTime = 0;
-    tadaAudio.play().catch(e => console.error("Sound play failed:", e));
+    tadaAudio.play().catch(e => console.log("Audio play blocked by browser. Click anywhere once more."));
     
     document.getElementById("env-flap").style.transform = "rotateX(180deg)";
     document.getElementById("env-flap").style.zIndex = "0";
@@ -530,4 +524,3 @@ function showTab(tab) {
 </script>
 </body>
 </html>
-
