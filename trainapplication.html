@@ -138,6 +138,142 @@
         
         .tbs { background: var(--accent); color: white; transition: 0.3s; }
         .tbs:hover { background: white; color: var(--accent); box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.2); }
+     /* ============================= */
+/* 📱 MOBILE RESPONSIVE FIXES */
+/* ============================= */
+
+@media (max-width: 1024px) {
+    :root {
+        --sidebar-width: 220px;
+    }
+}
+
+/* 📱 Tablets & Small Laptops */
+@media (max-width: 900px) {
+    body {
+        flex-direction: column;
+        height: auto;
+        overflow: auto;
+    }
+
+    aside {
+        position: fixed;
+        left: -100%;
+        top: 0;
+        height: 100%;
+        width: 240px;
+        transition: 0.3s ease;
+    }
+
+    aside.active {
+        left: 0;
+    }
+
+    main {
+        width: 100%;
+        height: auto;
+    }
+
+    header {
+        padding: 12px 15px;
+    }
+
+    .container {
+        padding: 15px;
+    }
+
+    .train-card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .train-actions {
+        width: 100%;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .train-actions button {
+        flex: 1;
+    }
+}
+
+/* 📱 Mobile Phones */
+@media (max-width: 600px) {
+
+    .stepper {
+        overflow-x: auto;
+        gap: 20px;
+    }
+
+    .step {
+        min-width: 70px;
+        font-size: 9px;
+    }
+
+    .glass-card {
+        padding: 15px;
+        border-radius: 18px;
+    }
+
+    .btn-prime {
+        width: 100%;
+    }
+
+    .checkout-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .coach-container {
+        padding: 15px;
+        gap: 8px;
+    }
+
+    .berth {
+        width: 42px;
+        height: 35px;
+        font-size: 9px;
+    }
+
+    .passenger-form {
+        grid-template-columns: 1fr !important;
+    }
+
+    .meal-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .final-ticket {
+        width: 100%;
+        margin: 15px 0;
+    }
+
+    header h3 {
+        font-size: 15px;
+    }
+
+    #userDisplay {
+        display: none; /* hide long name on small screens */
+    }
+}
+
+/* 📱 Extra Small Devices */
+@media (max-width: 400px) {
+
+    .meal-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .berth {
+        width: 38px;
+        height: 32px;
+        font-size: 8px;
+    }
+
+}
+    
     </style>
 </head>
 <body onload="setupMinDate()">
@@ -162,7 +298,13 @@
 
     <main>
         <header>
-            <div><h3 id="headerTitle" style="font-size: 18px; font-weight: 800; color: var(--primary);">BOOKING</h3></div>
+            <div style="display:flex;align-items:center;">
+                <button onclick="toggleSidebar()" 
+                    style="background:none;border:none;font-size:18px;margin-right:10px;cursor:pointer;">
+                    <i class="fa fa-bars"></i>
+                </button>
+                <h3 id="headerTitle" style="font-size: 18px; font-weight: 800; color: var(--primary);">BOOKING</h3>
+            </div>
             <div style="display:flex; align-items:center; gap:12px;">
                 <span style="font-size:12px; font-weight:700;" id="userDisplay">Aman Sharma</span>
                 <div id="userInitial" style="width:32px; height:32px; background:var(--accent); color:white; border-radius:50%; display:grid; place-items:center; font-size:12px; font-weight:bold;">AS</div>
@@ -468,6 +610,9 @@ Thank you for choosing RailNexus!
         }
 
         function addFood(itemName) { alert(itemName + " was added to your seat for " + state.passengerName + "!"); }
+    function toggleSidebar() {
+        document.getElementById("sidebar").classList.toggle("active");
+    }
     </script>
 </body>
 </html>
