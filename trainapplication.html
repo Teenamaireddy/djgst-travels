@@ -432,23 +432,28 @@
 
         if(document.getElementById("notifCheck").checked) {
 
-            emailjs.send("service_4i6v25i", "template_f2skhj8", {
-                passenger_name: state.passengerName,
-                passenger_email: state.passengerEmail,
-                train_name: state.train,
-                journey_date: state.date,
-                source: state.src,
-                destination: state.dest,
-                seats: state.seats.join(', '),
-                total_amount: state.seats.length * state.price,
-                pnr_number: state.pnr
-            })
-            .then(function(response) {
-                console.log("Email sent successfully!", response.status);
-            })
-            .catch(function(error) {
-                console.error("Email failed:", error);
-            });
+            emailjs.send(
+    "service_4i6v25i",
+    "template_f2skhj8",
+    {
+        passenger_name: state.passengerName,
+        passenger_email: state.passengerEmail,
+        train_name: state.train,
+        journey_date: state.date,
+        source: state.src,
+        destination: state.dest,
+        seats: state.seats.join(', '),
+        total_amount: state.seats.length * state.price,
+        pnr_number: state.pnr
+    },
+    "sElB4A1jKsdpQyvww"
+)
+.then(function(response) {
+    console.log("Email sent successfully!", response.status);
+})
+.catch(function(error) {
+    console.error("Email failed:", error);
+});
         }
 
         // ==========================
