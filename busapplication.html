@@ -500,13 +500,40 @@ function renderResults() {
         container.innerHTML += `<div class="ocean"><div class="surfer">🏄‍♀️</div><div class="wave"></div><div class="wave"></div></div>`;
     }
     if (dest.includes('ooty') || dest.includes('hill') || dest.includes('shimla')) {
-        container.innerHTML += `<div class="laughing-hill-box"><div class="hill-face">⛰️<div class="hill-eyes">👀</div><div class="hill-smile"></div></div></div>`;
-        for(let i=0; i<30; i++) {
-            let s = document.createElement('div'); s.className = 'falling-item'; s.innerHTML = '❄️';
-            s.style.left = Math.random()*100+'%'; s.style.animationDuration = (Math.random()*3+2)+'s';
-            container.appendChild(s);
-        }
-    } 
+
+    // SET BEAUTIFUL HILL BACKGROUND
+    cardContainer.style.background = `
+        linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)),
+        url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=500')
+    `;
+
+    cardContainer.style.backgroundSize = "cover";
+    cardContainer.style.backgroundPosition = "center";
+    cardContainer.style.backgroundRepeat = "no-repeat";
+
+    // Existing hill animation
+    container.innerHTML += `
+        <div class="laughing-hill-box">
+            <div class="hill-face">
+                ⛰️
+                <div class="hill-eyes">👀</div>
+                <div class="hill-smile"></div>
+            </div>
+        </div>
+    `;
+
+    // Snow animation
+    for(let i=0; i<30; i++) {
+        let s = document.createElement('div');
+        s.className = 'falling-item';
+        s.innerHTML = '❄️';
+
+        s.style.left = Math.random()*100+'%';
+        s.style.animationDuration = (Math.random()*3+2)+'s';
+
+        container.appendChild(s);
+    }
+    }
     if (dest.includes('jaipur') || dest.includes('desert') || dest.includes('rajasthan')) {
         cardContainer.classList.add('desert-bg-animate');
         container.innerHTML += `<div class="desert-sand"></div><div class="desert-plant" style="left:15%">🌵</div><div class="desert-plant" style="right:20%; font-size:32px; bottom:75px">🌵</div>`;
