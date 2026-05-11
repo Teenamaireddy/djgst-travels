@@ -500,7 +500,7 @@ function renderResults() {
         container.innerHTML += `<div class="ocean"><div class="surfer">🏄‍♀️</div><div class="wave"></div><div class="wave"></div></div>`;
     }
     if (dest.includes('ooty') || dest.includes('hill') || dest.includes('shimla')) {
-        container.innerHTML += `<div class="laughing-hill-box" style="background-image:url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=500');"><div class="hill-face">⛰️<div class="hill-eyes">👀</div><div class="hill-smile"></div></div></div>`;
+        container.innerHTML += `<div class="laughing-hill-box" style="background: url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=500')"><div class="hill-face">⛰️<div class="hill-eyes">👀</div><div class="hill-smile"></div></div></div>`;
         for(let i=0; i<30; i++) {
             let s = document.createElement('div'); s.className = 'falling-item'; s.innerHTML = '❄️';
             s.style.left = Math.random()*100+'%'; s.style.animationDuration = (Math.random()*3+2)+'s';
