@@ -433,7 +433,7 @@
         if(document.getElementById("notifCheck").checked) {
 
             emailjs.send(
-    "service_4i6v25i",
+    "service_8nhlneq",
     "template_f2skhj8",
     {
         passenger_name: state.passengerName,
@@ -446,7 +446,7 @@
         total_amount: state.seats.length * state.price,
         pnr_number: state.pnr
     },
-    "sElB4A1jKsdpQyvww"
+    "ZkLuknXYdn1AMqZ30"
 )
 .then(function(response) {
     console.log("Email sent successfully!", response.status);
