@@ -490,8 +490,28 @@ function renderResults() {
     cardContainer.classList.remove('desert-bg-animate');
 
     if (bookingData.emotion === 'pilgrimage' || dest.includes('tirupati') || dest.includes('shirdi')) {
-        container.innerHTML += `<div class="ritual-bell" style="left:20px">🔔</div><div class="ritual-bell" style="right:20px">🔔</div><div class="floating-diya" style="left:50px">🪔</div><div class="floating-diya" style="right:50px">🪔</div>`;
-        for(let i=0; i<15; i++) {
+        container.innerHTML += `
+    <div class="ritual-bell" style="left:20px">🔔</div>
+    <div class="ritual-bell" style="right:20px">🔔</div>
+
+    <div class="floating-diya" style="left:50px">🪔</div>
+    <div class="floating-diya" style="right:50px">🪔</div>
+
+    <!-- Temple Emoji -->
+    <div style="
+        position:absolute;
+        top:110px;
+        left:50%;
+        transform:translateX(-50%);
+        font-size:90px;
+        z-index:4;
+        animation: hillBounce 1.5s infinite alternate ease-in-out;
+        filter: drop-shadow(0 0 15px rgba(255,255,255,0.5));
+    ">
+        🛕
+    </div>
+`;
+          for(let i=0; i<15; i++) {
             let s = document.createElement('div'); s.className = 'falling-item'; s.innerHTML = '🌸';
             s.style.left = Math.random()*100+'%'; s.style.animationDuration = (Math.random()*3+3)+'s';
             container.appendChild(s);
