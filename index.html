@@ -133,7 +133,14 @@
     }
   </style>
 </head>
-
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("service-worker.js")
+      .then(() => console.log("Service Worker Registered"));
+  });
+}
+</script>
 <body>
 <section class="seo-content">
   <h2>About DJGST Travels</h2>
