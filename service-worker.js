@@ -1,8 +1,8 @@
 const CACHE_NAME = "djgst-cache-v1";
 
 const urlsToCache = [
-  "./",
-  "./index.html"
+  "https://teenamaireddy.github.io/djgst-travels/",
+  "https://teenamaireddy.github.io/djgst-travels/index.html"
 ];
 
 self.addEventListener("install", event => {
