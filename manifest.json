@@ -1,7 +1,7 @@
 {
-  "name": "My Website",
-  "short_name": "MyApp",
-  "start_url": "/",
+  "name": "DJGST",
+  "short_name": "DJGST",
+  "start_url": "https://teenamaireddy.github.io/djgst-travels/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#000000",
