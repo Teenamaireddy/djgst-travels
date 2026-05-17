@@ -1,0 +1,9 @@
+*{
+  -webkit-tap-highlight-color: transparent;
+}
+
+*:focus,
+*:active{
+  outline:none !important;
+  box-shadow:none !important;
+}
