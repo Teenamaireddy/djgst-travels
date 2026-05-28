@@ -19,7 +19,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloludflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
 <style>
@@ -313,7 +313,18 @@ input, select{ width:100%; padding:14px; border:1px solid #e2e8f0; border-radius
 
 
 <script>
-let bookingData = { name:'', src:'', dest:'', date:'', busType:'', price:'', emotion:'', tid:'', seat:'' };
+let bookingData = { 
+    name:'', 
+    src:'', 
+    dest:'', 
+    date:'', 
+    busType:'', 
+    basePrice:0,
+    totalPrice:0,
+    emotion:'', 
+    tid:'', 
+    seats:[]
+};
 let aiStep = 0; 
 let heartInterval = null;
 // Initializing Audio
@@ -404,12 +415,50 @@ function initSeatMap() {
 }
 
 function selectSeat(el, num) {
+
     if(el.classList.contains('occupied')) return;
-    document.querySelectorAll('.seat').forEach(s => s.classList.remove('selected'));
-    el.classList.add('selected');
-    bookingData.seat = num;
-    document.getElementById('seat-selection-txt').innerText = "Selected Seat: " + num;
+
+    const seatIndex = bookingData.seats.indexOf(num);
+
+    // REMOVE seat if already selected
+    if(seatIndex > -1) {
+        bookingData.seats.splice(seatIndex, 1);
+        el.classList.remove('selected');
+    } 
+    
+    // ADD new seat
+    else {
+        bookingData.seats.push(num);
+        el.classList.add('selected');
+    }
+
+    // Calculate price
+    let bus = document.getElementById("u-bus-type");
+    let basePrice = parseInt(
+        bus.options[bus.selectedIndex].getAttribute('data-price')
+    );
+
+    bookingData.basePrice = basePrice;
+    bookingData.totalPrice = basePrice * bookingData.seats.length;
+
+    // Update text
+    if(bookingData.seats.length > 0) {
+
+        document.getElementById('seat-selection-txt').innerHTML =
+            `
+            Selected Seats: ${bookingData.seats.join(", ")}
+            <br>
+            Total Price: ₹${bookingData.totalPrice}
+            `;
+    } 
+    
+    else {
+
+        document.getElementById('seat-selection-txt').innerText =
+            "Selected Seat: None";
+    }
 }
+    
 
 function showSeatSelection() {
     if(!document.getElementById("u-name").value || !document.getElementById("u-src").value) return alert("Fill all fields first!");
@@ -425,21 +474,27 @@ function selectPayApp(app, el) {
 }
 
 function goToPayment() {
-    if(!bookingData.seat) return alert("Please select a seat first!");
+    if(bookingData.seats.length === 0)
+    return alert("Please select at least one seat!");
     bookingData.name = document.getElementById("u-name").value;
     bookingData.src = document.getElementById("u-src").value;
     bookingData.dest = document.getElementById("u-dest").value;
     bookingData.date = document.getElementById("u-date-input").value;
     let b = document.getElementById("u-bus-type");
     bookingData.busType = b.value;
-    bookingData.price = b.options[b.selectedIndex].getAttribute('data-price');
+    bookingData.basePrice = parseInt(
+    b.options[b.selectedIndex].getAttribute('data-price')
+);
+
+bookingData.totalPrice =
+    bookingData.basePrice * bookingData.seats.length;
     bookingData.tid = "DJGST-" + Math.floor(100000 + Math.random() * 900000);
 
     document.getElementById("loader").style.display="flex";
     setTimeout(()=>{
         document.getElementById("loader").style.display="none";
         document.getElementById("seat-card").style.display="none";
-        document.getElementById("pay-summary").innerText = `${bookingData.busType} | Seat: ${bookingData.seat} | ₹${bookingData.price}`;
+        document.getElementById("pay-summary").innerText =`${bookingData.busType} | Seats: ${bookingData.seats.join(", ")} | Total: ₹${bookingData.totalPrice}`;
         document.getElementById("payment-card").style.display="block";
     },1000);
 }
@@ -592,7 +647,7 @@ function renderResults() {
 
     document.getElementById("formal-receipt").style.display = "block";
     document.getElementById("rec-name").innerText = bookingData.name;
-    document.getElementById("rec-seat").innerText = bookingData.seat;
+    document.getElementById("rec-seat").innerText = bookingData.seats.join(", ");
     document.getElementById("rec-date").innerText = bookingData.date;
     document.getElementById("rec-route").innerText = `${bookingData.src} to ${bookingData.dest}`;
     document.getElementById("rec-class").innerText = bookingData.busType;
