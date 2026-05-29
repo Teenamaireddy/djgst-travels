@@ -19,7 +19,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
-<script src="https://cdnjs.cloludflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
 <style>
@@ -285,6 +285,7 @@ input, select{ width:100%; padding:14px; border:1px solid #e2e8f0; border-radius
             <p><strong>Travel Date:</strong> <span id="rec-date"></span></p>
             <p><strong>Route:</strong> <span id="rec-route"></span></p>
             <p><strong>Service:</strong> <span id="rec-class"></span></p>
+          <p><strong>Total Paid:</strong> ₹<span id="rec-price"></span></p>
             <div style="text-align:center; margin-top:20px;">
                 <img id="rec-qr" style="width:100px; border:1px solid #eee; padding:5px">
                 <button class="btn-action" onclick="downloadReceipt()" style="margin-top:15px; background:#64748b">📥 Save Receipt Image</button>
@@ -651,30 +652,359 @@ function renderResults() {
     document.getElementById("rec-date").innerText = bookingData.date;
     document.getElementById("rec-route").innerText = `${bookingData.src} to ${bookingData.dest}`;
     document.getElementById("rec-class").innerText = bookingData.busType;
+    document.getElementById("rec-price").innerText = bookingData.totalPrice;
     document.getElementById("rec-tid").innerText = "ID: " + bookingData.tid;
     document.getElementById("rec-qr").src = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${bookingData.tid}`;
     confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
 }
-
 function saveAndFinish() {
-    let list = JSON.parse(localStorage.getItem('djgst_trips') || '[]');
-    list.push({...bookingData});
-    localStorage.setItem('djgst_trips', JSON.stringify(list));
-    alert("Trip saved!");
-    location.reload();
-  if(heartInterval) {
-        clearInterval(heartInterval);
-        heartInterval = null;
-  }
-}
 
-function loadHistory() {
-    const saved = localStorage.getItem('djgst_trips');
-    if(saved) {
-        const trips = JSON.parse(saved);
-        document.getElementById("trips-list").innerHTML = trips.map(t => `<div class="card" style="padding:10px; border-left: 5px solid var(--primary)">${t.date}: ${t.src} to ${t.dest} (Seat ${t.seat})</div>`).join('');
+    try {
+
+        let list = [];
+
+        try {
+
+            list = JSON.parse(
+                localStorage.getItem('djgst_trips')
+            ) || [];
+
+        } catch(e) {
+
+            list = [];
+
+        }
+
+        // New booking object
+        const newTrip = {
+
+            name: bookingData.name || "Unknown",
+
+            src: bookingData.src || "Unknown",
+
+            dest: bookingData.dest || "Unknown",
+
+            date: bookingData.date || "Not Selected",
+
+            busType: bookingData.busType || "Standard",
+
+            seats: Array.isArray(bookingData.seats)
+                ? bookingData.seats
+                : [],
+
+            totalPrice: bookingData.totalPrice || 0,
+
+            tid: bookingData.tid || (
+                "DJGST-" +
+                Math.floor(100000 + Math.random() * 900000)
+            ),
+
+            emotion: bookingData.emotion || "normal",
+
+            bookedAt: new Date().toLocaleString()
+
+        };
+
+        // Save booking
+        list.push(newTrip);
+
+        localStorage.setItem(
+            'djgst_trips',
+            JSON.stringify(list)
+        );
+
+        console.log("Trip Saved:", newTrip);
+
+        // Stop hearts animation
+        if (heartInterval) {
+
+            clearInterval(heartInterval);
+
+            heartInterval = null;
+        }
+
+        // Refresh history silently
+        loadHistory();
+
+        // Show success message
+        alert("✅ Booking Completed Successfully!");
+
+        // RESET UI
+        resetBookingUI();
+
+    } catch(err) {
+
+        console.error(err);
+
+        alert("❌ Failed to save booking.");
+
     }
 }
+  
+  function resetBookingUI() {
+
+    // Hide completed booking sections
+    document.getElementById("greeting-card-container").style.display = "none";
+
+    document.getElementById("formal-receipt").style.display = "none";
+
+    document.getElementById("surprise-wrap").style.display = "none";
+
+    document.getElementById("emotion-screen").style.display = "none";
+
+    document.getElementById("payment-card").style.display = "none";
+
+    document.getElementById("seat-card").style.display = "none";
+
+    // Show booking form again
+    document.getElementById("search-card").style.display = "block";
+
+    // Clear inputs
+    document.getElementById("u-name").value = "";
+
+    document.getElementById("u-src").value = "";
+
+    document.getElementById("u-dest").value = "";
+
+    document.getElementById("u-date-input").value = "";
+
+    document.getElementById("u-mobile-pay").value = "";
+
+    // Reset seat text
+    document.getElementById(
+        "seat-selection-txt"
+    ).innerText = "Selected Seat: None";
+
+    // Remove selected seats visually
+    document.querySelectorAll(".seat").forEach(seat => {
+
+        seat.classList.remove("selected");
+
+    });
+
+    // Reset booking object
+    bookingData = {
+
+        name:'',
+
+        src:'',
+
+        dest:'',
+
+        date:'',
+
+        busType:'',
+
+        basePrice:0,
+
+        totalPrice:0,
+
+        emotion:'',
+
+        tid:'',
+
+        seats:[]
+
+    };
+
+    // Clear animations container
+    document.getElementById("env-container").innerHTML = "";
+
+    // Recreate fresh seat map
+    initSeatMap();
+
+    // Go back to booking tab
+    showTab('booking');
+}
+
+
+
+function loadHistory() {
+
+    const tripsList =
+        document.getElementById("trips-list");
+
+    if(!tripsList) return;
+
+    let trips = [];
+
+    try {
+
+        trips =
+            JSON.parse(
+                localStorage.getItem('djgst_trips')
+            ) || [];
+
+        // If corrupted
+        if(!Array.isArray(trips)) {
+            trips = [];
+        }
+
+    } catch(err) {
+
+        console.error("LocalStorage Parse Error:", err);
+
+        trips = [];
+    }
+    if(trips.length === 0) {
+
+        tripsList.innerHTML = `
+
+            <div style="
+                text-align:center;
+                padding:40px;
+                color:#64748b;
+            ">
+
+                <i class="fa fa-ticket"
+                   style="
+                     font-size:45px;
+                     margin-bottom:10px;
+                     color:#cbd5e1;
+                   ">
+                </i>
+
+                <h4>No Trips Found</h4>
+
+                <p>
+                    Your booked tickets will appear here.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+    }
+
+    // Latest booking first
+    trips.reverse();
+
+    // Render bookings
+    tripsList.innerHTML = trips.map((t, index) => {
+
+        const seats =
+            Array.isArray(t.seats)
+            ? t.seats.join(", ")
+            : "N/A";
+
+        return `
+
+        <div class="card"
+             style="
+                padding:18px;
+                border-left:5px solid var(--primary);
+                margin-bottom:15px;
+                animation:fadeIn .4s ease;
+             ">
+
+            <div style="
+                display:flex;
+                justify-content:space-between;
+                align-items:center;
+                margin-bottom:10px;
+            ">
+
+                <strong style="
+                    color:var(--primary);
+                    font-size:18px;
+                ">
+                    ${t.src} ➔ ${t.dest}
+                </strong>
+
+                <button
+                    onclick="deleteTrip(${trips.length - 1 - index})"
+                    style="
+                        border:none;
+                        background:#fee2e2;
+                        color:#dc2626;
+                        padding:6px 10px;
+                        border-radius:8px;
+                        cursor:pointer;
+                        font-size:12px;
+                    ">
+                    Delete
+                </button>
+
+            </div>
+
+            <div style="
+                display:grid;
+                grid-template-columns:1fr 1fr;
+                gap:10px;
+                font-size:14px;
+                color:#475569;
+            ">
+
+                <div>
+                    <strong>Passenger:</strong><br>
+                    ${t.name || "N/A"}
+                </div>
+
+                <div>
+                    <strong>Date:</strong><br>
+                    ${t.date || "N/A"}
+                </div>
+
+                <div>
+                    <strong>Seats:</strong><br>
+                    ${seats}
+                </div>
+
+                <div>
+                    <strong>Bus:</strong><br>
+                    ${t.busType || "N/A"}
+                </div>
+
+                <div>
+                    <strong>Total Paid:</strong><br>
+                    ₹${t.totalPrice || 0}
+                </div>
+
+                <div>
+                    <strong>Ticket ID:</strong><br>
+                    ${t.tid || "N/A"}
+                </div>
+
+            </div>
+
+            <div style="
+                margin-top:15px;
+                font-size:12px;
+                color:#94a3b8;
+            ">
+                Booked on:
+                ${t.bookedAt || "Unknown"}
+            </div>
+
+        </div>
+
+        `;
+
+    }).join('');
+}
+
+
+
+// DELETE SINGLE TRIP
+function deleteTrip(index) {
+
+    let trips =
+        JSON.parse(
+            localStorage.getItem('djgst_trips')
+        ) || [];
+
+    trips.splice(index, 1);
+
+    localStorage.setItem(
+        'djgst_trips',
+        JSON.stringify(trips)
+    );
+
+    loadHistory();
+}
+  
+  
 function downloadReceipt() {
     html2canvas(document.getElementById("formal-receipt")).then(c => {
         const a = document.createElement("a"); a.href = c.toDataURL(); a.download = `DJGST_${bookingData.tid}.png`; a.click();
