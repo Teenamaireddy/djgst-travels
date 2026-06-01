@@ -636,7 +636,8 @@ function renderResults() {
         // Custom properties for the CSS animation
         h.style.setProperty('--duration', (Math.random() * 3 + 2) + 's');
         h.style.setProperty('--rotate', (Math.random() * 360 - 180) + 'deg');
-        h.style.fontSize = (Math.random() * 15 + 15) + 'px';
+        h.style.fontSize = (Math.random() *
+      15 + 15) + 'px';
         
         // Add it to the container
         document.getElementById("env-container").appendChild(h);
@@ -730,7 +731,7 @@ function saveAndFinish() {
         alert("✅ Booking Completed Successfully!");
 
         // RESET UI
-        resetBookingUI();
+      resetBookingUI();
 
     } catch(err) {
 
@@ -740,83 +741,118 @@ function saveAndFinish() {
 
     }
 }
-  
   function resetBookingUI() {
 
-    // Hide completed booking sections
+    // Stop heart animation
+    if (heartInterval) {
+        clearInterval(heartInterval);
+        heartInterval = null;
+    }
+
+    // Hide all booking result screens
     document.getElementById("greeting-card-container").style.display = "none";
-
     document.getElementById("formal-receipt").style.display = "none";
-
     document.getElementById("surprise-wrap").style.display = "none";
-
     document.getElementById("emotion-screen").style.display = "none";
-
     document.getElementById("payment-card").style.display = "none";
-
     document.getElementById("seat-card").style.display = "none";
 
-    // Show booking form again
+    // Show booking screen again
     document.getElementById("search-card").style.display = "block";
 
-    // Clear inputs
+    // Clear text inputs
     document.getElementById("u-name").value = "";
-
     document.getElementById("u-src").value = "";
-
     document.getElementById("u-dest").value = "";
-
     document.getElementById("u-date-input").value = "";
-
     document.getElementById("u-mobile-pay").value = "";
 
     // Reset seat text
-    document.getElementById(
-        "seat-selection-txt"
-    ).innerText = "Selected Seat: None";
+    document.getElementById("seat-selection-txt").innerText =
+        "Selected Seat: None";
 
-    // Remove selected seats visually
+    // Remove seat selection UI
     document.querySelectorAll(".seat").forEach(seat => {
-
         seat.classList.remove("selected");
-
     });
+
+    // Reset payment app selection
+    document.querySelectorAll(".pay-tool").forEach(tool => {
+        tool.classList.remove("active");
+    });
+
+    // Reset QR section
+    document.getElementById("qr-label").innerText =
+        "Scan to pay via UPI";
+
+    document.getElementById("qr-display").src =
+        "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=DJGST_PAY";
+
+    // Reset envelope
+    const flap = document.getElementById("env-flap");
+
+    flap.style.transform = "rotateX(0deg)";
+    flap.style.zIndex = "2";
+
+    // Clear animation container
+    document.getElementById("env-container").innerHTML = "";
+
+    // Reset greeting card
+    const card = document.getElementById("greeting-card-container");
+
+    card.style.background = "";
+    card.style.backgroundSize = "";
+    card.style.backgroundPosition = "";
+    card.style.backgroundRepeat = "";
+
+    card.classList.remove("desert-bg-animate");
+
+    // Reset greeting text
+    document.getElementById("greet-logo").innerText = "";
+    document.getElementById("greet-dest-text").innerText = "";
+    document.getElementById("greet-main-msg").innerText = "";
+
+    // Reset receipt data
+    document.getElementById("rec-name").innerText = "";
+    document.getElementById("rec-seat").innerText = "";
+    document.getElementById("rec-date").innerText = "";
+    document.getElementById("rec-route").innerText = "";
+    document.getElementById("rec-class").innerText = "";
+    document.getElementById("rec-price").innerText = "";
+    document.getElementById("rec-tid").innerText = "";
+    document.getElementById("rec-qr").src = "";
+
+    // Reset AI assistant flow
+    aiStep = 0;
+
+    const msgBox = document.getElementById("ai-messages");
+    msgBox.innerHTML = "";
+
+    addChat(
+        "Welcome to DJGST! Let's get started. What is your <b>Name</b>?",
+        "bot"
+    );
 
     // Reset booking object
     bookingData = {
-
         name:'',
-
         src:'',
-
         dest:'',
-
         date:'',
-
         busType:'',
-
         basePrice:0,
-
         totalPrice:0,
-
         emotion:'',
-
         tid:'',
-
         seats:[]
-
     };
 
-    // Clear animations container
-    document.getElementById("env-container").innerHTML = "";
-
-    // Recreate fresh seat map
+    // Create fresh seat map
     initSeatMap();
 
-    // Go back to booking tab
+    // Return to booking page
     showTab('booking');
 }
-
 
 
 function loadHistory() {
