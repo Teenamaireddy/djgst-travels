@@ -5,19 +5,20 @@ import {
   addDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-window.saveBookingToFirebase = async function(data){
+window.saveBookingToFirebase = async function(booking){
 
-  try{
+  try {
 
     await addDoc(
       collection(db, "bookings"),
-      data
+      booking
     );
 
-    console.log("Booking Saved");
+    alert("✅ Saved to Firestore");
 
-  }catch(err){
+  } catch(err) {
 
+    alert("❌ Firestore Error: " + err.message);
     console.error(err);
 
   }
