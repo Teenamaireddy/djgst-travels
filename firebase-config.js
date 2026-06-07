@@ -13,8 +13,6 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-alert("Firebase connected successfully!");
-
 const auth = getAuth(app);
 const db = getFirestore(app);
 
