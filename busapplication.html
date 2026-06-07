@@ -709,8 +709,6 @@ function saveAndFinish() {
         // Save booking
 localStorage.setItem('djgst_trips',JSON.stringify(list));
 
-alert("Reached Firebase Step");
-
 saveBookingToFirebase(newTrip);
 
         console.log("Trip Saved:", newTrip);
@@ -727,6 +725,7 @@ saveBookingToFirebase(newTrip);
         loadHistory();
 
         // Show success message
+          alert("Reached Firebase Step");
         alert("✅ Booking Completed Successfully!");
 
         // RESET UI
