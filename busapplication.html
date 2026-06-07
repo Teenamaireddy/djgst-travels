@@ -522,6 +522,11 @@ bookingData.totalPrice =
 
 function showEmotionSelector() {
 
+    const payInput =
+        document.getElementById("u-mobile-pay")
+        .value
+        .trim();
+
     if(!selectedPaymentApp){
 
         alert("Please select a payment app.");
@@ -529,11 +534,17 @@ function showEmotionSelector() {
         return;
     }
 
-    document.getElementById("payment-card").style.display = "none";
+    if(!payInput){
 
-    document.getElementById("emotion-screen").style.display = "block";
+        alert("Please enter Mobile Number or UPI ID.");
+
+        return;
+    }
+
+    document.getElementById("payment-card").style.display="none";
+
+    document.getElementById("emotion-screen").style.display="block";
 }
-
 function selectEmotion(emo) {
     bookingData.emotion = emo;
     document.getElementById("emotion-screen").style.display="none";
