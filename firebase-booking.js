@@ -48,3 +48,12 @@ window.getBookingsFromFirebase = async function(){
   return bookings;
 
 }
+
+
+export async function deleteBookingFromFirebase(docId){
+
+    await deleteDoc(
+        doc(db, "bookings", docId)
+    );
+
+}
