@@ -25,3 +25,21 @@ window.saveBookingToFirebase = async function(booking){
   }
 
 }
+
+window.getBookingsFromFirebase = async function(){
+
+  const bookings = [];
+
+  const querySnapshot = await getDocs(
+    collection(db, "bookings")
+  );
+
+  querySnapshot.forEach((doc) => {
+
+    bookings.push(doc.data());
+
+  });
+
+  return bookings;
+
+}
