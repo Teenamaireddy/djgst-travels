@@ -328,6 +328,7 @@ let bookingData = {
 };
 let aiStep = 0; 
 let heartInterval = null;
+let selectedPaymentApp = "";
 // Initializing Audio
 const tadaAudio = new Audio('freesound_community-tada-fanfare-a-6313.mp3'); 
 const hoverAudio = new Audio('https://www.soundjay.com/buttons/sounds/button-37.mp3');
@@ -462,16 +463,35 @@ function selectSeat(el, num) {
     
 
 function showSeatSelection() {
-    if(!document.getElementById("u-name").value || !document.getElementById("u-src").value) return alert("Fill all fields first!");
+
+    if(
+        !document.getElementById("u-name").value ||
+        !document.getElementById("u-src").value ||
+        !document.getElementById("u-dest").value ||
+        !document.getElementById("u-date-input").value
+    ){
+        alert("Please fill all fields including travel date.");
+        return;
+    }
+
     document.getElementById("search-card").style.display = "none";
     document.getElementById("seat-card").style.display = "block";
 }
 
 function selectPayApp(app, el) {
-    document.querySelectorAll('.pay-tool').forEach(t => t.classList.remove('active'));
+
+    selectedPaymentApp = app;
+
+    document.querySelectorAll('.pay-tool')
+        .forEach(t => t.classList.remove('active'));
+
     el.classList.add('active');
-    document.getElementById('qr-label').innerText = "Scan to pay via " + app;
-    document.getElementById('qr-display').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=DJGST_PAY_${app}`;
+
+    document.getElementById('qr-label').innerText =
+        "Scan to pay via " + app;
+
+    document.getElementById('qr-display').src =
+        `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=DJGST_PAY_${app}`;
 }
 
 function goToPayment() {
@@ -501,8 +521,17 @@ bookingData.totalPrice =
 }
 
 function showEmotionSelector() {
-    document.getElementById("payment-card").style.display="none";
-    document.getElementById("emotion-screen").style.display="block";
+
+    if(!selectedPaymentApp){
+
+        alert("Please select a payment app.");
+
+        return;
+    }
+
+    document.getElementById("payment-card").style.display = "none";
+
+    document.getElementById("emotion-screen").style.display = "block";
 }
 
 function selectEmotion(emo) {
