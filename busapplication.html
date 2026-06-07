@@ -864,10 +864,7 @@ async function loadHistory() {
 
     try {
 
-        trips =
-            JSON.parse(
-                localStorage.getItem('djgst_trips')
-            ) || [];
+        trips = await getBookingsFromFirebase();
 
         // If corrupted
         if(!Array.isArray(trips)) {
