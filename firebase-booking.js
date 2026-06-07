@@ -36,7 +36,10 @@ window.getBookingsFromFirebase = async function(){
 
   querySnapshot.forEach((doc) => {
 
-    bookings.push(doc.data());
+    bookings.push({
+    id: doc.id,
+    ...doc.data()
+});
 
   });
 
