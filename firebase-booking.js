@@ -1,14 +1,4 @@
-import { db } from "./firebase-config.js";
-
-import {
-    collection,
-    addDoc,
-    getDocs,
-    deleteDoc,
-    doc
-} from "firebase/firestore";
-
-window.saveBookingToFirebase = async function(booking){
+export async function saveBookingToFirebase(booking){
 
   try {
 
@@ -25,10 +15,9 @@ window.saveBookingToFirebase = async function(booking){
     console.error(err);
 
   }
-
 }
 
-window.getBookingsFromFirebase = async function(){
+export async function getBookingsFromFirebase(){
 
   const bookings = [];
 
@@ -39,27 +28,22 @@ window.getBookingsFromFirebase = async function(){
   querySnapshot.forEach((doc) => {
 
     bookings.push({
-    id: doc.id,
-    ...doc.data()
-});
+      id: doc.id,
+      ...doc.data()
+    });
 
   });
 
   return bookings;
-
 }
-
 
 export async function deleteBookingFromFirebase(docId){
 
-    await deleteDoc(
-        doc(db, "bookings", docId)
-    );
-
+  await deleteDoc(
+    doc(db, "bookings", docId)
+  );
 }
 
 window.saveBookingToFirebase = saveBookingToFirebase;
 window.getBookingsFromFirebase = getBookingsFromFirebase;
 window.deleteBookingFromFirebase = deleteBookingFromFirebase;
-
-
