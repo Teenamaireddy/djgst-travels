@@ -57,3 +57,9 @@ export async function deleteBookingFromFirebase(docId){
     );
 
 }
+
+window.saveBookingToFirebase = saveBookingToFirebase;
+window.getBookingsFromFirebase = getBookingsFromFirebase;
+window.deleteBookingFromFirebase = deleteBookingFromFirebase;
+
+
