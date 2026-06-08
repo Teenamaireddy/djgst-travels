@@ -774,9 +774,9 @@ saveBookingToFirebase(newTrip);
 
     } catch(err) {
 
-        console.error(err);
+    console.error("FULL ERROR:", err);
 
-        alert("❌ Failed to save booking.");
+    alert("ERROR: " + err.message);
 
     }
 }
