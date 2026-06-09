@@ -9,6 +9,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 console.log("Booking file loaded");
+alert("db = " + db);
 console.log("db =", db);
 console.log("addDoc =", addDoc);
 
