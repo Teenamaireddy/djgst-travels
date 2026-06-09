@@ -1,3 +1,6 @@
+console.log("Booking file loaded");
+console.log("addDoc =", addDoc);
+
 import { db } from "./firebase-config.js";
 
 import {
@@ -7,6 +10,7 @@ import {
   deleteDoc,
   doc
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+
 
 
 export async function saveBookingToFirebase(booking){
