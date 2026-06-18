@@ -23,11 +23,11 @@ export async function saveBookingToFirebase(booking){
       booking
     );
 
-    alert("✅ Saved to Firestore");
+    alert("✅ Booking Saved successfully");
 
   } catch(err) {
 
-    alert("❌ Firestore Error: " + err.message);
+    alert("❌ Failed to save booking history");
     console.error(err);
 
   }
