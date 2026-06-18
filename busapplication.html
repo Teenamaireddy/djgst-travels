@@ -368,6 +368,18 @@ function toggleAI() {
 }
 
 function handleAI() {
+      const msg = val.toLowerCase().trim();
+
+if (
+    msg.includes("thanks") ||
+    msg.includes("thank you") ||
+    msg.includes("thx")
+) {
+    addChat("You're most welcome, and Happy Journey 😉", "bot");
+    return;
+}
+
+      
     const inp = document.getElementById("ai-input");
     const val = inp.value.trim();
     if(!val) return;
