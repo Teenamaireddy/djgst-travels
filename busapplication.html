@@ -369,7 +369,7 @@ function toggleAI() {
 
 function handleAI() {
       const inp = document.getElementById("ai-input");
-const val = inp.value.trim();
+      const val = inp.value.trim();
       const msg = val.toLowerCase().trim();
 
 if (
@@ -382,9 +382,6 @@ if (
     return;
 }
 
-      
-    const inp = document.getElementById("ai-input");
-    const val = inp.value.trim();
     if(!val) return;
     addChat(val, "user");
     inp.value = "";
