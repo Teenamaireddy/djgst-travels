@@ -373,12 +373,16 @@ function handleAI() {
       const msg = val.toLowerCase().trim();
 
 if (
+    msg.includes("thank") ||
     msg.includes("thanks") ||
-    msg.includes("thank you") ||
     msg.includes("thx") ||
     msg.includes("tq")
 ) {
-    addChat("😊 You're most welcome! Happy Journey and have a wonderful trip with DJGST Travels 🚌✨", "bot");
+    addChat(
+        "😊 You're most welcome! Happy Journey and have a wonderful trip with DJGST Travels 🚌✨",
+        "bot"
+    );
+    inp.value = "";
     return;
 }
 
@@ -401,34 +405,33 @@ if (
         }
         else if(aiStep === 2) {
 
-    const match = val.match(/^\d{4}-\d{2}-\d{2}$/);
+            const match = val.match(/^\d{4}-\d{2}-\d{2}$/);
 
-    if(!match){
-        addChat("Please use YYYY-MM-DD format.", "bot");
-        return;
-    }
+            if(!match){
+                addChat("Please use YYYY-MM-DD format.", "bot");
+                return;
+            }
 
-    const selectedDate = new Date(match[0]);
+            const selectedDate = new Date(match[0]);
 
-    const today = new Date();
-    today.setHours(0,0,0,0);
+            const today = new Date();
+            today.setHours(0,0,0,0);
 
-    if(selectedDate < today){
-        addChat("❌ Past dates are not allowed.", "bot");
-        return;
-    }
+            if(selectedDate < today){
+                addChat("❌ Past dates are not allowed.", "bot");
+                return;
+            }
 
-    document.getElementById("u-date-input").value = match[0];
-    bookingData.date = match[0];
+            document.getElementById("u-date-input").value = match[0];
+            bookingData.date = match[0];
 
-    addChat("Click on 'search and select seat' button ", "bot");
+            addChat("Click on 'Search & Select Seat' button.", "bot");
 
-    aiStep = 3;
-}
+            aiStep = 3;
+        }
 
-}, 500);
-
-}   // ← ADD THIS
+    }, 500);
+}   
 
 function addChat(t, type) {
     const d = document.createElement("div"); d.className = `ai-msg ai-${type}`; d.innerHTML = t;
