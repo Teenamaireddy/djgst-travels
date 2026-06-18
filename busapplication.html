@@ -388,36 +388,20 @@ function handleAI() {
             } else { addChat("Please say 'Source to Destination'.", "bot"); }
         }
         else if(aiStep === 2) {
-
-    const match = val.match(/^\d{4}-\d{2}-\d{2}$/);
-
-    if(!match){
-        addChat("Please use YYYY-MM-DD format.", "bot");
-        return;
-    }
-
-    const selectedDate = new Date(match[0]);
-
-    const today = new Date();
-    today.setHours(0,0,0,0);
-
-    if(selectedDate < today){
-        addChat(
-            "❌ Past dates are not allowed. Please enter today's date or a future date.",
-            "bot"
-        );
-        return;
-    }
-
-    document.getElementById("u-date-input").value = match[0];
-    bookingData.date = match[0];
-
-    addChat(
-        "✅ Date accepted! Click **Search & Select Seat**.",
-        "bot"
-    );
-
-    aiStep = 3;
+            const match = val.match(/\d{4}-\d{2}-\d{2}/);
+              if(match) {
+                    document.getElementById("u-date-input").value = match[0];
+                    bookingData.date = match[0];
+                    addChat("Got it! Click **Search & Select Seat**.", "bot");
+                    aiStep = 3;
+              }
+              else {
+                    addChat("Use format 2026-05-20.", "bot");
+              }
+              document.getElementById("u-date-input").value = match[0];
+              bookingData.date = match[0];
+              addChat("✅ Date accepted! Click **Search & Select Seat**.","bot");
+              aiStep = 3;
         }
 
 function addChat(t, type) {
