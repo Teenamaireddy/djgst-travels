@@ -368,70 +368,124 @@ function toggleAI() {
 }
 
 function handleAI() {
-      const inp = document.getElementById("ai-input");
-      const val = inp.value.trim();
-      const msg = val.toLowerCase().trim();
 
-if (
-    msg.includes("thank") ||
-    msg.includes("thanks") ||
-    msg.includes("thx") ||
-    msg.includes("tq")
-) {
-    addChat(
-        "😊 You're most welcome! Happy Journey and have a wonderful trip with DJGST Travels 🚌✨",
-        "bot"
-    );
-    inp.value = "";
-    return;
-}
+    const inp = document.getElementById("ai-input");
+    const val = inp.value.trim();
 
-    if(!val) return;
+    if (!val) return;
+
+    const msg = val.toLowerCase();
+
+    // THANK YOU RESPONSE
+    if (
+        msg.includes("thank") ||
+        msg.includes("thanks") ||
+        msg.includes("thank you") ||
+        msg.includes("thx") ||
+        msg.includes("tq")
+    ) {
+
+        addChat(val, "user");
+        inp.value = "";
+
+        setTimeout(() => {
+            addChat(
+                "😊 You're most welcome, and Happy Journey 😉",
+                "bot"
+            );
+        }, 500);
+
+        return;
+    }
+
     addChat(val, "user");
     inp.value = "";
+
     setTimeout(() => {
-        if(aiStep === 0) {
-            bookingData.name = val; document.getElementById("u-name").value = val;
-            addChat(`Hello **${val}**! Now tell me your route. (Example: **Delhi to Goa**)`, "bot"); aiStep = 1;
-        } 
-        else if(aiStep === 1) {
-            if(val.toLowerCase().includes(" to ")) {
+
+        if (aiStep === 0) {
+
+            bookingData.name = val;
+            document.getElementById("u-name").value = val;
+
+            addChat(
+                `Hello **${val}**! Now tell me your route. (Example: **Delhi to Goa**)`,
+                "bot"
+            );
+
+            aiStep = 1;
+        }
+
+        else if (aiStep === 1) {
+
+            if (val.toLowerCase().includes(" to ")) {
+
                 const p = val.toLowerCase().split(" to ");
+
                 document.getElementById("u-src").value = p[0].trim();
                 document.getElementById("u-dest").value = p[1].trim();
-                bookingData.src = p[0].trim(); bookingData.dest = p[1].trim();
-                addChat("Route updated! When are you traveling? (**YYYY-MM-DD**)", "bot"); aiStep = 2;
-            } else { addChat("Please say 'Source to Destination'.", "bot"); }
+
+                bookingData.src = p[0].trim();
+                bookingData.dest = p[1].trim();
+
+                addChat(
+                    "Route updated! When are you traveling? (**YYYY-MM-DD**)",
+                    "bot"
+                );
+
+                aiStep = 2;
+
+            } else {
+
+                addChat(
+                    "Please say 'Source to Destination'.",
+                    "bot"
+                );
+            }
         }
-        else if(aiStep === 2) {
+
+        else if (aiStep === 2) {
 
             const match = val.match(/^\d{4}-\d{2}-\d{2}$/);
 
-            if(!match){
-                addChat("Please use YYYY-MM-DD format.", "bot");
+            if (!match) {
+
+                addChat(
+                    "Please use YYYY-MM-DD format.",
+                    "bot"
+                );
+
                 return;
             }
 
             const selectedDate = new Date(match[0]);
 
             const today = new Date();
-            today.setHours(0,0,0,0);
+            today.setHours(0, 0, 0, 0);
 
-            if(selectedDate < today){
-                addChat("❌ Past dates are not allowed.", "bot");
+            if (selectedDate < today) {
+
+                addChat(
+                    "❌ Past dates are not allowed. Please enter today or a future date.",
+                    "bot"
+                );
+
                 return;
             }
 
             document.getElementById("u-date-input").value = match[0];
             bookingData.date = match[0];
 
-            addChat("Click on 'Search & Select Seat' button.", "bot");
+            addChat(
+                "✅ Date accepted! Click on 'Search & Select Seat' button.",
+                "bot"
+            );
 
             aiStep = 3;
         }
 
     }, 500);
-}   
+}
 
 function addChat(t, type) {
     const d = document.createElement("div"); d.className = `ai-msg ai-${type}`; d.innerHTML = t;
