@@ -409,12 +409,15 @@ function handleAI() {
     document.getElementById("u-date-input").value = match[0];
     bookingData.date = match[0];
 
-    addChat("✅ Date accepted!", "bot");
+    addChat("Click on 'search and select seat' button ", "bot");
 
     aiStep = 3;
 }
 
 }, 500);
+      if(inp == "thanks"){
+            addChat("You're Welcome, Happy Journey 😉", "bot");
+      } 
 
 }   // ← ADD THIS
 
