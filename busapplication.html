@@ -368,6 +368,8 @@ function toggleAI() {
 }
 
 function handleAI() {
+      const inp = document.getElementById("ai-input");
+const val = inp.value.trim();
       const msg = val.toLowerCase().trim();
 
 if (
@@ -376,7 +378,7 @@ if (
     msg.includes("thx") ||
     msg.includes("tq")
 ) {
-    addChat("You're most welcome, and Happy Journey 😉", "bot");
+    addChat("😊 You're most welcome! Happy Journey and have a wonderful trip with DJGST Travels 🚌✨", "bot");
     return;
 }
 
