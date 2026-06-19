@@ -818,7 +818,7 @@ function renderResults() {
     document.getElementById("rec-qr").src = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${bookingData.tid}`;
     confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
 }
-function saveAndFinish() {
+async function saveAndFinish() {
 
     try {
 
