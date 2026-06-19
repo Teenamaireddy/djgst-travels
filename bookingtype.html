@@ -12,6 +12,17 @@
 
   gtag('config', 'G-X9EHE5FE8K');
 </script>
+      <script type="module">
+import { auth } from "./firebase-config.js";
+import { onAuthStateChanged }
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+onAuthStateChanged(auth, (user) => {
+    if (!user) {
+        window.location.href = "login.html";
+    }
+});
+      </script>
   <meta name="description" content="Book bus, train and flight tickets easily with DJGST Travels. Secure payment and instant booking confirmation.">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
