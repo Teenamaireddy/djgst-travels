@@ -355,23 +355,15 @@ window.onload = () => {
 };
 async function loadBookedSeats() {
 
-    const bookings = await getBookingsFromFirebase();
+    const selectedDate =
+document.getElementById("u-date-input").value;
 
-    bookedSeats = [];
+const bookings =
+await getBookingsFromFirebase();
 
-    bookings.forEach(booking => {
-
-        if (Array.isArray(booking.seats)) {
-
-            booking.seats.forEach(seat => {
-                bookedSeats.push(seat);
-            });
-
-        }
-
-    });
-
-    initSeatMap();
+bookedSeats = bookings
+  .filter(b => b.date === selectedDate)
+  .map(b => b.seat);
 }
 // Browser Sound Unlocker - Essential for modern browsers
 document.addEventListener('click', () => {
