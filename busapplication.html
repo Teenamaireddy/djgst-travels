@@ -346,11 +346,22 @@ const langData = {
 window.onload = () => {
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('u-date-input').setAttribute('min', today);
+
     loadHistory();
-    loadBookedSeats();
-    setTimeout(() => { 
-        toggleAI(); 
-        addChat("Welcome to DJGST! Let's get started. What is your **Name**?", "bot"); 
+    initSeatMap();
+
+    // NEW CODE
+    document.getElementById('u-date-input')
+    .addEventListener('change', async () => {
+
+        await loadBookedSeats();
+        initSeatMap();
+
+    });
+
+    setTimeout(() => {
+        toggleAI();
+        addChat("Welcome to DJGST! Let's get started. What is your **Name**?", "bot");
     }, 1000);
 };
 async function loadBookedSeats() {
@@ -364,6 +375,17 @@ await getBookingsFromFirebase();
 bookedSeats = bookings
   .filter(b => b.date === selectedDate)
   .map(b => b.seat);
+
+      if(bookedSeats.length >= 40){
+
+   const nextDate =
+   await findNextAvailableDate();
+
+   alert(
+     `Bus is full.\nTry ${nextDate}`
+   );
+
+      }
 }
 // Browser Sound Unlocker - Essential for modern browsers
 document.addEventListener('click', () => {
@@ -372,8 +394,52 @@ document.addEventListener('click', () => {
 }, { once: true });
 
 
+async function findNextAvailableDate() {
+
+   const bookings =
+   await getBookingsFromFirebase();
+
+   const maxSeats = 40;
+
+   const seatCountByDate = {};
+
+   bookings.forEach(b => {
+
+      if(!seatCountByDate[b.date]){
+         seatCountByDate[b.date] = 0;
+      }
+
+      seatCountByDate[b.date]++;
+
+   });
+
+   for(let i = 1; i <= 30; i++){
+
+      const date = new Date();
+
+      date.setDate(date.getDate() + i);
+
+      const formatted =
+      date.toISOString().split("T")[0];
+
+      if(
+         !seatCountByDate[formatted] ||
+         seatCountByDate[formatted] < maxSeats
+      ){
+         return formatted;
+      }
+
+   }
+
+   return null;
+}
+
+      
+      
 function playBeep() { hoverAudio.play().catch(e => {}); }
 
+
+      
 function toggleAI() { 
     let b = document.getElementById("ai-body"); 
     b.style.display = (b.style.display === "flex") ? "none" : "flex"; 
