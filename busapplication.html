@@ -351,14 +351,25 @@ window.onload = () => {
     initSeatMap();
 
     // NEW CODE
-    document.getElementById('u-date-input')
-    .addEventListener('change', async () => {
+    document.getElementById("u-src")
+.addEventListener("change", refreshSeats);
 
-        await loadBookedSeats();
-        initSeatMap();
+document.getElementById("u-dest")
+.addEventListener("change", refreshSeats);
 
-    });
+document.getElementById("u-bus-type")
+.addEventListener("change", refreshSeats);
 
+document.getElementById("u-date-input")
+.addEventListener("change", refreshSeats);
+
+async function refreshSeats() {
+
+    await loadBookedSeats();
+
+    initSeatMap();
+
+}
     setTimeout(() => {
         toggleAI();
         addChat("Welcome to DJGST! Let's get started. What is your **Name**?", "bot");
@@ -367,25 +378,41 @@ window.onload = () => {
 async function loadBookedSeats() {
 
     const selectedDate =
-document.getElementById("u-date-input").value;
+        document.getElementById("u-date-input").value;
 
-const bookings =
-await getBookingsFromFirebase();
+    const selectedSrc =
+        document.getElementById("u-src").value.trim();
 
-bookedSeats = bookings
-  .filter(b => b.date === selectedDate)
-  .map(b => b.seat);
+    const selectedDest =
+        document.getElementById("u-dest").value.trim();
 
-      if(bookedSeats.length >= 40){
+    const selectedBus =
+        document.getElementById("u-bus-type").value;
 
-   const nextDate =
-   await findNextAvailableDate();
+    const bookings =
+        await getBookingsFromFirebase();
 
-   alert(
-     `Bus is full.\nTry ${nextDate}`
-   );
+    bookedSeats = [];
 
-      }
+    bookings.forEach(b => {
+
+        if (
+            b.date === selectedDate &&
+            b.src === selectedSrc &&
+            b.dest === selectedDest &&
+            b.busType === selectedBus
+        ) {
+
+            if (Array.isArray(b.seats)) {
+                bookedSeats.push(...b.seats);
+            }
+
+        }
+
+    });
+
+    console.log("Occupied Seats:", bookedSeats);
+
 }
 // Browser Sound Unlocker - Essential for modern browsers
 document.addEventListener('click', () => {
@@ -640,7 +667,7 @@ function selectSeat(el, num) {
 }
     
 
-function showSeatSelection() {
+async function showSeatSelection() {
 
     if(
         !document.getElementById("u-name").value ||
@@ -652,8 +679,12 @@ function showSeatSelection() {
         return;
     }
 
-    document.getElementById("search-card").style.display = "none";
-    document.getElementById("seat-card").style.display = "block";
+    await loadBookedSeats();
+
+initSeatMap();
+
+document.getElementById("search-card").style.display = "none";
+document.getElementById("seat-card").style.display = "block";
 }
 
 function selectPayApp(app, el) {
