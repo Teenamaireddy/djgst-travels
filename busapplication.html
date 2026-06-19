@@ -870,7 +870,9 @@ function saveAndFinish() {
           list.push(newTrip);
 localStorage.setItem('djgst_trips',JSON.stringify(list));
 
-saveBookingToFirebase(newTrip);
+await saveBookingToFirebase(newTrip);
+
+await loadBookedSeats();
 
         console.log("Trip Saved:", newTrip);
 
