@@ -209,33 +209,6 @@
     }
 }
 
-        
-        function validateLogin() {
-            const email = document.getElementById("loginEmail").value.trim();
-            const password = document.getElementById("loginPassword").value.trim();
-
-            if (email !== "" && password !== "") {
-                alert("your login successful!!...");
-                window.location.href = "bookingtype.html"; 
-            } else {
-                alert("Hold on! Please enter your email and password first.");
-            }
-        }
-
-        
-        function validateSignup() {
-            const name = document.getElementById("regName").value.trim();
-            const email = document.getElementById("regEmail").value.trim();
-            const password = document.getElementById("regPassword").value.trim();
-
-            if (name !== "" && email !== "" && password !== "") {
-                alert("Account created successfully! Switching to Login...");
-                toggleCard();
-            } else {
-                alert("All fields are required to create an account.");
-            }
-        }
-
         function toggleCard() {
             const card = document.getElementById('cardInner');
             card.classList.toggle('flipped');
