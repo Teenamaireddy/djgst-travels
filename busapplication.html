@@ -347,13 +347,32 @@ window.onload = () => {
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('u-date-input').setAttribute('min', today);
     loadHistory();
-    initSeatMap();
+    loadBookedSeats();
     setTimeout(() => { 
         toggleAI(); 
         addChat("Welcome to DJGST! Let's get started. What is your **Name**?", "bot"); 
     }, 1000);
 };
+async function loadBookedSeats() {
 
+    const bookings = await getBookingsFromFirebase();
+
+    bookedSeats = [];
+
+    bookings.forEach(booking => {
+
+        if (Array.isArray(booking.seats)) {
+
+            booking.seats.forEach(seat => {
+                bookedSeats.push(seat);
+            });
+
+        }
+
+    });
+
+    initSeatMap();
+}
 // Browser Sound Unlocker - Essential for modern browsers
 document.addEventListener('click', () => {
     tadaAudio.play().then(() => { tadaAudio.pause(); tadaAudio.currentTime = 0; }).catch(e=>{});
