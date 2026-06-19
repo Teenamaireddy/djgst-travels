@@ -1039,7 +1039,9 @@ async function loadHistory() {
     }
 
     // Latest booking first
-    trips.reverse();
+    trips.sort((a, b) => {
+    return new Date(b.bookedAt) - new Date(a.bookedAt);
+});
 
     // Render bookings
     tripsList.innerHTML = trips.map((t, index) => {
