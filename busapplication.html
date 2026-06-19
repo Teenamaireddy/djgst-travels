@@ -329,6 +329,7 @@ let bookingData = {
 let aiStep = 0; 
 let heartInterval = null;
 let selectedPaymentApp = "";
+      let bookedSeats = [];
 // Initializing Audio
 const tadaAudio = new Audio('freesound_community-tada-fanfare-a-6313.mp3'); 
 const hoverAudio = new Audio('https://www.soundjay.com/buttons/sounds/button-37.mp3');
@@ -494,18 +495,28 @@ function addChat(t, type) {
 }
 
 function initSeatMap() {
+
     const grid = document.getElementById('seats-grid');
+
     grid.innerHTML = "";
-    for(let i=1; i<=20; i++) {
+
+    for(let i = 1; i <= 20; i++) {
+
         const s = document.createElement('div');
+
         s.className = 'seat';
-        if(Math.random() < 0.2) s.classList.add('occupied');
+
+        if(bookedSeats.includes(i)) {
+            s.classList.add('occupied');
+        }
+
         s.innerText = i;
+
         s.onclick = () => selectSeat(s, i);
+
         grid.appendChild(s);
     }
 }
-
 function selectSeat(el, num) {
 
     if(el.classList.contains('occupied')) return;
