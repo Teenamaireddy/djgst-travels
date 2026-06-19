@@ -389,8 +389,9 @@ async function loadBookedSeats() {
     const selectedBus =
         document.getElementById("u-bus-type").value;
 
-    const bookings =
-        await getBookingsFromFirebase();
+    const bookings = await getBookingsFromFirebase();
+
+alert(JSON.stringify(bookings));
 
     bookedSeats = [];
 
