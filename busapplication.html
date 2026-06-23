@@ -685,27 +685,17 @@ function selectSeat(el, num) {
     
 
 async function showSeatSelection() {
-alert("1");
 
-await loadBookedSeats();
-
-alert("2");
-    if (
-    b.date === selectedDate &&
-    b.src?.trim() === selectedSrc.trim() &&
-    b.dest?.trim() === selectedDest.trim() &&
-    b.busType?.trim() === selectedBus.trim()
-){
-        alert("Please fill all fields including travel date.");
-        return;
-    }
+    alert("1");
 
     await loadBookedSeats();
 
-initSeatMap();
+    alert("2");
 
-document.getElementById("search-card").style.display = "none";
-document.getElementById("seat-card").style.display = "block";
+    initSeatMap();
+
+    document.getElementById("search-card").style.display = "none";
+    document.getElementById("seat-card").style.display = "block";
 }
 
 function selectPayApp(app, el) {
