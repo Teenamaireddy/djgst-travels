@@ -390,25 +390,6 @@ async function loadBookedSeats() {
         document.getElementById("u-bus-type").value;
 
     const bookings = await getBookingsFromFirebase();
-alert(JSON.stringify(bookings, null, 2));
-bookings.forEach(b => {
-
-    console.log("------------");
-
-    console.log("Booking Date:", b.date);
-    console.log("Selected Date:", selectedDate);
-
-    console.log("Booking Src:", b.src);
-    console.log("Selected Src:", selectedSrc);
-
-    console.log("Booking Dest:", b.dest);
-    console.log("Selected Dest:", selectedDest);
-
-    console.log("Booking Bus:", b.busType);
-    console.log("Selected Bus:", selectedBus);
-
-});
-
     bookedSeats = [];
 
     bookings.forEach(b => {
@@ -427,7 +408,6 @@ bookings.forEach(b => {
         }
 
     });
-    alert("Occupied Seats = " + JSON.stringify(bookedSeats));
     console.log("Occupied Seats:", bookedSeats);
 
 }
@@ -686,11 +666,7 @@ function selectSeat(el, num) {
 
 async function showSeatSelection() {
 
-    alert("1");
-
     await loadBookedSeats();
-
-    alert("2");
 
     initSeatMap();
 
