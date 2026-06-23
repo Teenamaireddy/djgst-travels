@@ -685,7 +685,11 @@ function selectSeat(el, num) {
     
 
 async function showSeatSelection() {
-alert("Search button clicked");
+alert("1");
+
+await loadBookedSeats();
+
+alert("2");
     if (
     b.date === selectedDate &&
     b.src?.trim() === selectedSrc.trim() &&
