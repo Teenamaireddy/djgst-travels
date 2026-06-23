@@ -414,11 +414,11 @@ bookings.forEach(b => {
     bookings.forEach(b => {
 
         if (
-            b.date === selectedDate &&
-            b.src === selectedSrc &&
-            b.dest === selectedDest &&
-            b.busType === selectedBus
-        ) {
+    b.date?.trim() === selectedDate.trim() &&
+    b.src?.trim().toLowerCase() === selectedSrc.trim().toLowerCase() &&
+    b.dest?.trim().toLowerCase() === selectedDest.trim().toLowerCase() &&
+    b.busType?.trim() === selectedBus.trim()
+) {
 
             if (Array.isArray(b.seats)) {
                 bookedSeats.push(...b.seats);
@@ -427,7 +427,7 @@ bookings.forEach(b => {
         }
 
     });
-
+    alert("Occupied Seats = " + JSON.stringify(bookedSeats));
     console.log("Occupied Seats:", bookedSeats);
 
 }
