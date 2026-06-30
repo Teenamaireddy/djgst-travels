@@ -1,1 +1,44 @@
 
+#djgst-ai-button{
+
+position:fixed;
+
+bottom:25px;
+
+right:25px;
+
+width:70px;
+
+height:70px;
+
+border-radius:50%;
+
+background:linear-gradient(135deg,#00E5FF,#0099FF);
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+font-size:34px;
+
+cursor:pointer;
+
+box-shadow:0 0 20px rgba(0,229,255,.5);
+
+transition:.3s;
+
+z-index:99999;
+
+}
+
+#djgst-ai-button:hover{
+
+transform:scale(1.1);
+
+box-shadow:0 0 35px rgba(0,229,255,.9);
+
+}
+
+
