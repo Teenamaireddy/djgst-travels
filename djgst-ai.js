@@ -76,4 +76,3 @@ closeBtn.onclick = () => {
 windowAI.style.display = "none";
 
 };
-
