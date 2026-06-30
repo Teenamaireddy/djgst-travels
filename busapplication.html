@@ -129,16 +129,6 @@ input, select{ width:100%; padding:14px; border:1px solid #e2e8f0; border-radius
 /* RECEIPT */
 #formal-receipt { display:none; max-width:420px; margin:20px auto; background: white; padding:30px; border-radius:15px; border: 1px solid #e2e8f0; color: #1e293b; text-align:left; }
 
-/* AI */
-#ai-assistant{ position:fixed; bottom:20px; right:20px; width:330px; z-index:999; }
-#ai-header{ background:var(--dark); color:white; padding:15px; border-radius:15px 15px 0 0; cursor:pointer; display:flex; justify-content:space-between; }
-#ai-body{ background:white; border-radius:0 0 15px 15px; display:none; flex-direction:column; height:400px; border:1px solid #eee; }
-#ai-messages{ flex:1; padding:15px; overflow-y:auto; font-size:13px; display:flex; flex-direction:column; gap:10px; }
-.ai-msg{ padding:12px; border-radius:15px; max-width:85%; }
-.ai-user{ background:#f1f5f9; align-self:flex-end; }
-.ai-bot{ background:var(--dark); color:white; align-self:flex-start; }
-#ai-input-area{ display:flex; padding:10px; border-top:1px solid #eee; }
-#ai-input{ border:none; padding:10px; outline:none; background:#f8fafc; border-radius:8px; flex:1; }
 
 #loader{ position:fixed; inset:0; background:rgba(255,255,255,.9); z-index:2000; display:none; flex-direction:column; align-items:center; justify-content:center; }
 
@@ -302,17 +292,6 @@ input, select{ width:100%; padding:14px; border:1px solid #e2e8f0; border-radius
     </div>
 </main>
 
-<div id="ai-assistant">
-    <div id="ai-header" onclick="toggleAI()"><span>🤖 Book with AI</span><i class="fa fa-message"></i></div>
-    <div id="ai-body">
-        <div id="ai-messages"></div>
-        <div id="ai-input-area">
-            <input id="ai-input" placeholder="Type your response...">
-            <button onclick="handleAI()" style="background:var(--primary);color:white;border:none;padding:10px;border-radius:8px">➤</button>
-        </div>
-    </div>
-</div>
-
 
 <script>
 let bookingData = { 
@@ -327,7 +306,6 @@ let bookingData = {
     tid:'', 
     seats:[]
 };
-let aiStep = 0; 
 let heartInterval = null;
 let selectedPaymentApp = "";
       let bookedSeats = [];
@@ -371,10 +349,6 @@ async function refreshSeats() {
     initSeatMap();
 
 }
-    setTimeout(() => {
-        toggleAI();
-        addChat("Welcome to DJGST! Let's get started. What is your **Name**?", "bot");
-    }, 1000);
 };
 async function loadBookedSeats() {
 
@@ -462,139 +436,6 @@ async function findNextAvailableDate() {
       
       
 function playBeep() { hoverAudio.play().catch(e => {}); }
-
-
-      
-function toggleAI() { 
-    let b = document.getElementById("ai-body"); 
-    b.style.display = (b.style.display === "flex") ? "none" : "flex"; 
-}
-
-function handleAI() {
-
-    const inp = document.getElementById("ai-input");
-    const val = inp.value.trim();
-
-    if (!val) return;
-
-    const msg = val.toLowerCase();
-
-    // THANK YOU RESPONSE
-    if (
-        msg.includes("thank") ||
-        msg.includes("thanks") ||
-        msg.includes("thank you") ||
-        msg.includes("thx") ||
-        msg.includes("tq")
-    ) {
-
-        addChat(val, "user");
-        inp.value = "";
-
-        setTimeout(() => {
-            addChat(
-                "😊 You're most welcome, and Happy Journey 😉",
-                "bot"
-            );
-        }, 500);
-
-        return;
-    }
-
-    addChat(val, "user");
-    inp.value = "";
-
-    setTimeout(() => {
-
-        if (aiStep === 0) {
-
-            bookingData.name = val;
-            document.getElementById("u-name").value = val;
-
-            addChat(
-                `Hello **${val}**! Now tell me your route. (Example: **Delhi to Goa**)`,
-                "bot"
-            );
-
-            aiStep = 1;
-        }
-
-        else if (aiStep === 1) {
-
-            if (val.toLowerCase().includes(" to ")) {
-
-                const p = val.toLowerCase().split(" to ");
-
-                document.getElementById("u-src").value = p[0].trim();
-                document.getElementById("u-dest").value = p[1].trim();
-
-                bookingData.src = p[0].trim();
-                bookingData.dest = p[1].trim();
-
-                addChat(
-                    "Route updated! When are you traveling? (**YYYY-MM-DD**)",
-                    "bot"
-                );
-
-                aiStep = 2;
-
-            } else {
-
-                addChat(
-                    "Please say 'Source to Destination'.",
-                    "bot"
-                );
-            }
-        }
-
-        else if (aiStep === 2) {
-
-            const match = val.match(/^\d{4}-\d{2}-\d{2}$/);
-
-            if (!match) {
-
-                addChat(
-                    "Please use YYYY-MM-DD format.",
-                    "bot"
-                );
-
-                return;
-            }
-
-            const selectedDate = new Date(match[0]);
-
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-
-            if (selectedDate < today) {
-
-                addChat(
-                    "❌ Past dates are not allowed. Please enter today or a future date.",
-                    "bot"
-                );
-
-                return;
-            }
-
-            document.getElementById("u-date-input").value = match[0];
-            bookingData.date = match[0];
-
-            addChat(
-                "✅ Date accepted! Click on 'Search & Select Seat' button.",
-                "bot"
-            );
-
-            aiStep = 3;
-        }
-
-    }, 500);
-}
-
-function addChat(t, type) {
-    const d = document.createElement("div"); d.className = `ai-msg ai-${type}`; d.innerHTML = t;
-    const msgBox = document.getElementById("ai-messages");
-    msgBox.appendChild(d); msgBox.scrollTop = msgBox.scrollHeight;
-}
 
 function initSeatMap() {
 
@@ -1059,17 +900,6 @@ await loadBookedSeats();
     document.getElementById("rec-tid").innerText = "";
     document.getElementById("rec-qr").src = "";
 
-    // Reset AI assistant flow
-    aiStep = 0;
-
-    const msgBox = document.getElementById("ai-messages");
-    msgBox.innerHTML = "";
-
-    addChat(
-        "Welcome to DJGST! Let's get started. What is your <b>Name</b>?",
-        "bot"
-    );
-
     // Reset booking object
     bookingData = {
         name:'',
@@ -1090,7 +920,6 @@ await loadBookedSeats();
     // Return to booking page
     showTab('booking');
 }
-
 
 async function loadHistory() {
 
