@@ -52,4 +52,8 @@ async function enableNotifications() {
     }
 }
 
+
 enableNotifications();
+import "./djgst-ai.js";
+
+
