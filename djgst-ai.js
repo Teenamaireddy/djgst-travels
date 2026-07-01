@@ -1,4 +1,16 @@
-const aiHTML = `
+const blockedPages = [
+  "index.html",
+  "login.html",
+  "amenities.html",
+  "blog.html"
+];
+
+const currentPage = window.location.pathname.split("/").pop();
+
+if (blockedPages.includes(currentPage)) {
+  // Don't load DJGST AI on these pages
+} else {
+  const aiHTML = `
 <div id="djgst-ai-button">
 🤖
 </div>
@@ -76,3 +88,5 @@ closeBtn.onclick = () => {
 windowAI.style.display = "none";
 
 };
+
+}
