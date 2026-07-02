@@ -1,15 +1,15 @@
-const blockedPages = [
-  "index.html",
-  "login.html",
-  "amenities.html",
-  "blog.html"
+const allowedPages = [
+  "busapplication.html",
+  "trainapplication.html",
+  "flight_ticket_booking.html"
 ];
 
 const currentPage = window.location.pathname.split("/").pop();
 
-if (blockedPages.includes(currentPage)) {
-  // Don't load DJGST AI on these pages
+if (!allowedPages.includes(currentPage)) {
+  // Don't load DJGST AI on this page
 } else {
+
   const aiHTML = `
 <div id="djgst-ai-button">
 🤖
@@ -88,5 +88,6 @@ closeBtn.onclick = () => {
 windowAI.style.display = "none";
 
 };
+
 
 }
