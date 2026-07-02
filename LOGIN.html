@@ -50,31 +50,32 @@
         .flipped {
             transform: rotateY(180deg);
         }
-        .flip-card-front, .flip-card-back {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
-            border-radius: 15px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            padding: 30px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-            overflow: hidden;
-            box-sizing: border-box;
+        .flip-card-front,
+        .flip-card-back {
+                position: absolute;
+                inset: 0;
+                backface-visibility: hidden;
+                border-radius: 15px;
+                overflow: hidden;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 30px;
+                box-sizing: border-box;
+                box-shadow: 0 8px 20px rgba(0,0,0,0.3);
         }
 
         .flip-card-front video,
         .flip-card-back video {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            z-index: -1;
-            filter: brightness(0.5);
+                position: absolute;
+                inset: 0;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;          /* Fill the card */
+                object-position: center;    /* Keep the center visible */
+                border-radius: 15px;
+                z-index: -1;
+                filter: brightness(0.45);
         }
 
         
@@ -162,7 +163,7 @@
         <div class="flip-card-inner" id="cardInner">
             
             <div class="flip-card-front">
-                <video autoplay muted loop playsinline>
+                <video autoplay loop playsinline>
                     <source src="Videos/Travels_video1.mp4" type="video/mp4">
                 </video>
 
@@ -178,7 +179,7 @@
             </div>
 
             <div class="flip-card-back">
-                <video autoplay muted loop playsinline>
+                <video autoplay loop playsinline>
                     <source src="Videos/Travels_video2.mp4" type="video/mp4">
                 </video>
 
