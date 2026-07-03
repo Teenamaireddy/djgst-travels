@@ -131,7 +131,7 @@ function botReply(message){
 
     login: "login.html",
 
-    blog: "blog.html",
+    blog: "blog/index.html",
 
     amenities: "amenities.html"
 
