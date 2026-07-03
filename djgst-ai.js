@@ -118,10 +118,45 @@ function addMessage(text, type){
 }
 
 
-function botReply(message){
+let aiMemory = {
+
+name: "",
+
+lastPage: "",
+
+language: "English"
+
+};
+
+
 function botReply(message){
 
 const msg = message.toLowerCase();
+  // Remember user's name
+
+if(
+msg.startsWith("my name is ") ||
+msg.startsWith("i am ")
+){
+
+let name = message
+.replace(/my name is/i,"")
+.replace(/i am/i,"")
+.trim();
+
+aiMemory.name = name;
+
+addMessage(
+
+"😊 Nice to meet you <b>"+name+"</b>! I'll remember your name during this visit.",
+
+"bot"
+
+);
+
+return;
+
+}
 
 const pages = {
 
@@ -162,7 +197,11 @@ msg.includes("travel by bus")
 
 ){
 
-addMessage("🚌 Opening Bus Booking...","bot");
+let greet = aiMemory.name
+? "🚌 Sure " + aiMemory.name + ", opening Bus Booking..."
+: "🚌 Opening Bus Booking...";
+
+addMessage(greet,"bot");
 
 setTimeout(()=>{
 window.location.href=pages.bus;
