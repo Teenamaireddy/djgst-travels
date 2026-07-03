@@ -96,3 +96,89 @@ windowAI.classList.remove("show");
 
 
 }
+const input = document.getElementById("djgst-ai-input");
+const sendBtn = document.getElementById("djgst-ai-send");
+const messages = document.getElementById("djgst-ai-messages");
+
+function addMessage(text, type){
+
+    const div = document.createElement("div");
+
+    div.className =
+        type === "bot"
+        ? "ai-bot-message"
+        : "ai-user-message";
+
+    div.innerHTML = text;
+
+    messages.appendChild(div);
+
+    messages.scrollTop = messages.scrollHeight;
+
+}
+
+function botReply(msg){
+
+    const m = msg.toLowerCase();
+
+    if(m.includes("hello") || m.includes("hi")){
+
+        addMessage("👋 Hello! Welcome to DJGST Travels.", "bot");
+
+    }
+
+    else if(m.includes("bus")){
+
+        addMessage("🚌 I can help you book buses.", "bot");
+
+    }
+
+    else if(m.includes("train")){
+
+        addMessage("🚆 I can help you book trains.", "bot");
+
+    }
+
+    else if(m.includes("flight")){
+
+        addMessage("✈️ I can help you book flights.", "bot");
+
+    }
+
+    else{
+
+        addMessage("🤖 I'm still learning. More abilities coming soon!", "bot");
+
+    }
+
+}
+
+function sendMessage(){
+
+    const text = input.value.trim();
+
+    if(text==="") return;
+
+    addMessage(text,"user");
+
+    input.value="";
+
+    setTimeout(()=>{
+
+        botReply(text);
+
+    },500);
+
+}
+
+sendBtn.onclick = sendMessage;
+
+input.addEventListener("keypress",(e)=>{
+
+    if(e.key==="Enter"){
+
+        sendMessage();
+
+    }
+
+});
