@@ -116,23 +116,7 @@ function addMessage(text, type){
     messages.scrollTop = messages.scrollHeight;
 
 }
-const pages = {
 
-    home: "index.html",
-
-    bus: "busapplication.html",
-
-    train: "trainapplication.html",
-
-    flight: "flight_ticket_booking.html",
-
-    login: "login.html",
-
-    blog: "blog.html",
-
-    amenities: "amenities.html"
-
-};
 
 function botReply(message){
   const pages = {
