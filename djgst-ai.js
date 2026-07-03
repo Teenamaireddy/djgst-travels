@@ -204,10 +204,20 @@ let greet = aiMemory.name
 
 addMessage(greet,"bot");
 
+if(currentPage==="busapplication.html"){
+
+addMessage("😊 You're already on the Bus Booking page.","bot");
+
+}
+else{
+
 setTimeout(()=>{
+
 window.location.href=pages.bus;
+
 },800);
 
+}
 }
 
 
@@ -223,10 +233,20 @@ msg.includes("travel by train")
 
 addMessage("🚆 Opening Train Booking...","bot");
 
+if(currentPage==="trainapplication.html"){
+
+addMessage("😊 You're already on the train Booking page.","bot");
+
+}
+else{
+
 setTimeout(()=>{
+
 window.location.href=pages.train;
+
 },800);
 
+}
 }
 
 
@@ -242,9 +262,20 @@ msg.includes("book flight")
 
 addMessage("✈ Opening Flight Booking...","bot");
 
+if(currentPage==="flight_ticket_booking.html"){
+
+addMessage("😊 You're already on the flight Booking page.","bot");
+
+}
+else{
+
 setTimeout(()=>{
+
 window.location.href=pages.flight;
+
 },800);
+
+}
 
 }
 
