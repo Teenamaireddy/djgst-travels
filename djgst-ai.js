@@ -84,13 +84,13 @@ document.getElementById("djgst-ai-close");
 
 button.onclick = () => {
 
-windowAI.style.display = "flex";
+windowAI.classList.add("show");
 
 };
 
 closeBtn.onclick = () => {
 
-windowAI.style.display = "none";
+windowAI.classList.remove("show");
 
 };
 
