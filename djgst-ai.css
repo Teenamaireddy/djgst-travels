@@ -167,3 +167,45 @@ border-radius:10px;
 cursor:pointer;
 
 }
+#djgst-ai-avatar{
+
+width:58px;
+
+height:58px;
+
+border-radius:50%;
+
+object-fit:cover;
+
+pointer-events:none;
+
+user-select:none;
+
+}
+#djgst-ai-button{
+
+animation:aiFloat 3s ease-in-out infinite;
+
+}
+
+@keyframes aiFloat{
+
+0%{
+
+transform:translateY(0px);
+
+}
+
+50%{
+
+transform:translateY(-8px);
+
+}
+
+100%{
+
+transform:translateY(0px);
+
+}
+
+}
