@@ -235,3 +235,20 @@ visibility:visible;
 pointer-events:auto;
 
 }
+.ai-user-message{
+
+background:#00B8D4;
+
+color:white;
+
+padding:12px;
+
+margin-bottom:10px;
+
+border-radius:15px;
+
+margin-left:auto;
+
+max-width:80%;
+
+}
