@@ -12,7 +12,12 @@ if (!allowedPages.includes(currentPage)) {
 
   const aiHTML = `
 <div id="djgst-ai-button">
-🤖
+
+<img
+src="ai_face.png"
+id="djgst-ai-avatar"
+alt="DJGST AI">
+
 </div>
 
 <div id="djgst-ai-window">
