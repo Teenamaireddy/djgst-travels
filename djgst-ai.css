@@ -209,3 +209,26 @@ transform:translateY(0px);
 }
 
 }
+#djgst-ai-window{
+
+opacity:0;
+
+transform:translateY(30px) scale(.9);
+
+transition:.35s;
+
+pointer-events:none;
+
+}
+
+#djgst-ai-window.show{
+
+display:flex;
+
+opacity:1;
+
+transform:translateY(0) scale(1);
+
+pointer-events:auto;
+
+}
