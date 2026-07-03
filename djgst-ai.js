@@ -116,43 +116,143 @@ function addMessage(text, type){
     messages.scrollTop = messages.scrollHeight;
 
 }
+const pages = {
 
-function botReply(msg){
+    home: "index.html",
 
-    const m = msg.toLowerCase();
+    bus: "busapplication.html",
 
-    if(m.includes("hello") || m.includes("hi")){
+    train: "trainapplication.html",
 
-        addMessage("👋 Hello! Welcome to DJGST Travels.", "bot");
+    flight: "flight_ticket_booking.html",
+
+    login: "login.html",
+
+    blog: "blog.html",
+
+    amenities: "amenities.html"
+
+};
+
+function botReply(message){
+  const pages = {
+
+    home: "index.html",
+
+    bus: "busapplication.html",
+
+    train: "trainapplication.html",
+
+    flight: "flight_ticket_booking.html",
+
+    login: "login.html",
+
+    blog: "blog.html",
+
+    amenities: "amenities.html"
+
+};
+
+    const msg = message.toLowerCase();
+
+    // HOME
+    if(msg.includes("home")){
+
+        addMessage("🏠 Opening Home Page...", "bot");
+
+        setTimeout(()=>{
+
+            window.location.href = pages.home;
+
+        },1000);
 
     }
 
-    else if(m.includes("bus")){
+    // BUS
+    else if(msg.includes("bus")){
 
-        addMessage("🚌 I can help you book buses.", "bot");
+        addMessage("🚌 Opening Bus Booking...", "bot");
+
+        setTimeout(()=>{
+
+            window.location.href = pages.bus;
+
+        },1000);
 
     }
 
-    else if(m.includes("train")){
+    // TRAIN
+    else if(msg.includes("train")){
 
-        addMessage("🚆 I can help you book trains.", "bot");
+        addMessage("🚆 Opening Train Booking...", "bot");
+
+        setTimeout(()=>{
+
+            window.location.href = pages.train;
+
+        },1000);
 
     }
 
-    else if(m.includes("flight")){
+    // FLIGHT
+    else if(msg.includes("flight")){
 
-        addMessage("✈️ I can help you book flights.", "bot");
+        addMessage("✈️ Opening Flight Booking...", "bot");
+
+        setTimeout(()=>{
+
+            window.location.href = pages.flight;
+
+        },1000);
+
+    }
+
+    // LOGIN
+    else if(msg.includes("login")){
+
+        addMessage("🔐 Opening Login Page...", "bot");
+
+        setTimeout(()=>{
+
+            window.location.href = pages.login;
+
+        },1000);
+
+    }
+
+    // BLOG
+    else if(msg.includes("blog")){
+
+        addMessage("📖 Opening Blog...", "bot");
+
+        setTimeout(()=>{
+
+            window.location.href = pages.blog;
+
+        },1000);
+
+    }
+
+    // AMENITIES
+    else if(msg.includes("amenities")){
+
+        addMessage("🛋 Opening Amenities...", "bot");
+
+        setTimeout(()=>{
+
+            window.location.href = pages.amenities;
+
+        },1000);
 
     }
 
     else{
 
-        addMessage("🤖 I'm still learning. More abilities coming soon!", "bot");
+        addMessage("🤔 I don't know that yet, but I'm learning every day!", "bot");
 
     }
 
 }
-
 function sendMessage(){
 
     const text = input.value.trim();
