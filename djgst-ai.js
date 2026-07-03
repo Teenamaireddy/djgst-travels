@@ -182,3 +182,55 @@ input.addEventListener("keypress",(e)=>{
     }
 
 });
+const sendBtn = document.getElementById("djgst-ai-send");
+const input = document.getElementById("djgst-ai-input");
+const messages = document.getElementById("djgst-ai-messages");
+
+function addMessage(text, type) {
+
+    const msg = document.createElement("div");
+
+    msg.className =
+        type === "user"
+        ? "ai-user-message"
+        : "ai-bot-message";
+
+    msg.innerHTML = text;
+
+    messages.appendChild(msg);
+
+    messages.scrollTop = messages.scrollHeight;
+}
+
+sendBtn.onclick = sendMessage;
+
+input.addEventListener("keydown", function(e){
+
+    if(e.key === "Enter"){
+
+        sendMessage();
+
+    }
+
+});
+
+function sendMessage(){
+
+    const text = input.value.trim();
+
+    if(text === "") return;
+
+    addMessage(text,"user");
+
+    input.value="";
+
+    setTimeout(()=>{
+
+        addMessage(
+            "🤖 I'm still learning. Soon I'll answer everything about DJGST Travels!",
+            "bot"
+        );
+
+    },600);
+
+}
