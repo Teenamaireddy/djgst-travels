@@ -119,124 +119,157 @@ function addMessage(text, type){
 
 
 function botReply(message){
-  const pages = {
+function botReply(message){
 
-    home: "index.html",
+const msg = message.toLowerCase();
 
-    bus: "busapplication.html",
+const pages = {
 
-    train: "trainapplication.html",
-
-    flight: "flight_ticket_booking.html",
-
-    login: "login.html",
-
-    blog: "blog/index.html",
-
-    amenities: "amenities.html"
+home:"index.html",
+bus:"busapplication.html",
+train:"trainapplication.html",
+flight:"flight_ticket_booking.html",
+login:"login.html",
+blog:"blog/index.html",
+amenities:"amenities.html"
 
 };
 
-    const msg = message.toLowerCase();
 
-    // HOME
-    if(msg.includes("home")){
+// HOME
+if(
+msg.includes("home") ||
+msg.includes("main page") ||
+msg.includes("homepage")
+){
 
-        addMessage("🏠 Opening Home Page...", "bot");
+addMessage("🏠 Taking you to Home...","bot");
 
-        setTimeout(()=>{
-
-            window.location.href = pages.home;
-
-        },1000);
-
-    }
-
-    // BUS
-    else if(msg.includes("bus")){
-
-        addMessage("🚌 Opening Bus Booking...", "bot");
-
-        setTimeout(()=>{
-
-            window.location.href = pages.bus;
-
-        },1000);
-
-    }
-
-    // TRAIN
-    else if(msg.includes("train")){
-
-        addMessage("🚆 Opening Train Booking...", "bot");
-
-        setTimeout(()=>{
-
-            window.location.href = pages.train;
-
-        },1000);
-
-    }
-
-    // FLIGHT
-    else if(msg.includes("flight")){
-
-        addMessage("✈️ Opening Flight Booking...", "bot");
-
-        setTimeout(()=>{
-
-            window.location.href = pages.flight;
-
-        },1000);
-
-    }
-
-    // LOGIN
-    else if(msg.includes("login")){
-
-        addMessage("🔐 Opening Login Page...", "bot");
-
-        setTimeout(()=>{
-
-            window.location.href = pages.login;
-
-        },1000);
-
-    }
-
-    // BLOG
-    else if(msg.includes("blog")){
-
-        addMessage("📖 Opening Blog...", "bot");
-
-        setTimeout(()=>{
-
-            window.location.href = pages.blog;
-
-        },1000);
-
-    }
-
-    // AMENITIES
-    else if(msg.includes("amenities")){
-
-        addMessage("🛋 Opening Amenities...", "bot");
-
-        setTimeout(()=>{
-
-            window.location.href = pages.amenities;
-
-        },1000);
-
-    }
-
-    else{
-
-        addMessage("🤔 I don't know that yet, but I'm learning every day!", "bot");
-
-    }
+setTimeout(()=>{
+window.location.href=pages.home;
+},800);
 
 }
+
+
+// BUS
+else if(
+
+msg.includes("bus") ||
+msg.includes("book bus") ||
+msg.includes("bus booking") ||
+msg.includes("travel by bus")
+
+){
+
+addMessage("🚌 Opening Bus Booking...","bot");
+
+setTimeout(()=>{
+window.location.href=pages.bus;
+},800);
+
+}
+
+
+// TRAIN
+else if(
+
+msg.includes("train") ||
+msg.includes("book train") ||
+msg.includes("train booking") ||
+msg.includes("travel by train")
+
+){
+
+addMessage("🚆 Opening Train Booking...","bot");
+
+setTimeout(()=>{
+window.location.href=pages.train;
+},800);
+
+}
+
+
+// FLIGHT
+else if(
+
+msg.includes("flight") ||
+msg.includes("plane") ||
+msg.includes("air") ||
+msg.includes("book flight")
+
+){
+
+addMessage("✈ Opening Flight Booking...","bot");
+
+setTimeout(()=>{
+window.location.href=pages.flight;
+},800);
+
+}
+
+
+// LOGIN
+else if(
+
+msg.includes("login") ||
+msg.includes("sign in") ||
+msg.includes("log in")
+
+){
+
+addMessage("🔐 Opening Login...","bot");
+
+setTimeout(()=>{
+window.location.href=pages.login;
+},800);
+
+}
+
+
+// BLOG
+else if(
+
+msg.includes("blog") ||
+msg.includes("news") ||
+msg.includes("articles")
+
+){
+
+addMessage("📖 Opening Blog...","bot");
+
+setTimeout(()=>{
+window.location.href=pages.blog;
+},800);
+
+}
+
+
+// AMENITIES
+else if(
+
+msg.includes("amenities") ||
+msg.includes("facilities") ||
+msg.includes("features")
+
+){
+
+addMessage("🛋 Opening Amenities...","bot");
+
+setTimeout(()=>{
+window.location.href=pages.amenities;
+},800);
+
+}
+
+else{
+
+addMessage("😊 Sorry, I couldn't understand that yet. Try asking me to open Bus, Train, Flight, Home, Blog, Amenities or Login.","bot");
+
+}
+
+}
+  
 function sendMessage(){
 
     const text = input.value.trim();
