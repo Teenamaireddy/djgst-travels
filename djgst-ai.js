@@ -1,3 +1,4 @@
+const AI_DEVELOPER_MODE = true;
 const allowedPages = [
   "busapplication.html",
   "trainapplication.html",
@@ -6,9 +7,10 @@ const allowedPages = [
 
 const currentPage = window.location.pathname.split("/").pop();
 
-if (!allowedPages.includes(currentPage)) {
-  // Don't load DJGST AI on this page
-} else {
+if (!AI_DEVELOPER_MODE || !allowedPages.includes(currentPage)) {
+
+}
+else {
 
   const aiHTML = `
 <div id="djgst-ai-button">
