@@ -1,4 +1,4 @@
-const AI_DEVELOPER_MODE = false;
+const AI_DEVELOPER_MODE = true;
 const allowedPages = [
   "busapplication.html",
   "trainapplication.html",
