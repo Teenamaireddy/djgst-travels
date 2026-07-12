@@ -75,9 +75,7 @@ placeholder="Ask anything..."
 `;
 
 document.body.insertAdjacentHTML("beforeend", aiHTML);
-const input = document.getElementById("djgst-ai-input");
-const sendBtn = document.getElementById("djgst-ai-send");
-const messages = document.getElementById("djgst-ai-messages");
+
 
 const button = document.getElementById("djgst-ai-button");
 
@@ -101,7 +99,9 @@ windowAI.classList.remove("show");
 
 
 }
-
+const input = document.getElementById("djgst-ai-input");
+const sendBtn = document.getElementById("djgst-ai-send");
+const messages = document.getElementById("djgst-ai-messages");
 
 function addMessage(text, type){
 
