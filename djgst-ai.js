@@ -1,3 +1,4 @@
+import djgstAI from "./ai/core/ai.js";
 import intentEngine from "./ai/core/intent-engine.js";
 import entityEngine from "./ai/core/entity-engine.js";
 
@@ -362,10 +363,14 @@ function sendMessage(){
 
     input.value="";
 
-    setTimeout(()=>{
+    setTimeout(async () => {
 
-        botReply(text);
+    const result = await djgstAI.process(text);
 
+    console.log("🤖 AI Core Result:", result);
+
+    // Temporary
+    botReply(text);
     },500);
 
 }
