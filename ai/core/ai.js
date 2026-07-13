@@ -4,6 +4,11 @@
  * Main Coordinator
  * =====================================
  */
+import intentEngine from "./intent-engine.js";
+import entityEngine from "./entity-engine.js";
+import memoryStore from "../memory/memory-store.js";
+
+
 
 class DJGSTAI {
 
@@ -13,24 +18,27 @@ class DJGSTAI {
 
     async process(userMessage) {
 
-        console.log("User:", userMessage);
+    console.log("👤 User:", userMessage);
 
-        // Step 1
-        console.log("➡ Sending message to Intent Engine");
+    // Step 1 - Detect Intent
+    const intent = intentEngine.detect(userMessage);
+    console.log("🎯 Intent:", intent);
 
-        // Later:
-        // const intent = IntentEngine.detect(userMessage);
+    // Step 2 - Extract Entities
+    const entities = entityEngine.extract(userMessage);
+    console.log("📦 Entities:", entities);
 
-        // Step 2
-        console.log("➡ Sending data to Memory Engine");
+    // Step 3 - Save Entities to Memory
+    Object.entries(entities).forEach(([key, value]) => {
+        if (value !== null) {
+            memoryStore.save(key, value);
+        }
+    });
 
-        // Step 3
-        console.log("➡ Sending task to Action Engine");
+    console.log("🧠 Memory:", memoryStore.getAll());
 
-        // Step 4
-        console.log("➡ Generating Response");
-
-        return "DJGST AI is alive 🚀";
+    // Temporary response
+    return "Processing completed...";
     }
 
 }
