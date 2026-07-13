@@ -1,3 +1,6 @@
+import intentEngine from "./ai/core/intent-engine.js";
+import entityEngine from "./ai/core/entity-engine.js";
+
 const AI_DEVELOPER_MODE = true;
 const allowedPages = [
   "busapplication.html",
