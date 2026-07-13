@@ -38,7 +38,28 @@ class DJGSTAI {
     console.log("🧠 Memory:", memoryStore.getAll());
 
     // Temporary response
-    return "Processing completed...";
+    let reply = "😊 I'm still learning how to help with that.";
+
+if (intent === "book_ticket") {
+
+    if (entities.transport) {
+
+        reply = `🚌 Great! I can help you book a ${entities.transport}.`;
+
+    } else {
+
+        reply = "🚌 Sure! Which transport would you like to book? Bus, Train or Flight?";
+
+    }
+
+}
+
+return {
+    intent,
+    entities,
+    memory: memoryStore.getAll(),
+    reply
+};
     }
 
 }
