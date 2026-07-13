@@ -108,6 +108,12 @@ const messages = document.getElementById("djgst-ai-messages");
 
 function addMessage(text, type){
 
+  const intent = intentEngine.detect(text);
+const entities = entityEngine.extract(text);
+
+console.log("Intent:", intent);
+console.log("Entities:", entities);
+
     const div = document.createElement("div");
 
     div.className =
