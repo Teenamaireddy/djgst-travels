@@ -4,7 +4,6 @@
  * Main Coordinator
  * =====================================
  */
-import djgstAI from "./ai/core/ai.js";
 import intentEngine from "./intent-engine.js";
 import entityEngine from "./entity-engine.js";
 import memoryStore from "../memory/memory-store.js";
