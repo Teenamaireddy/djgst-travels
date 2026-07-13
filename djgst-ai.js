@@ -367,11 +367,9 @@ function sendMessage(){
 
     const result = await djgstAI.process(text);
 
-    console.log("🤖 AI Core Result:", result);
+console.log("🤖 AI Core Result:", result);
 
-    // Temporary
-    botReply(text);
-    },500);
+addMessage(result.reply, "bot");
 
 }
 
