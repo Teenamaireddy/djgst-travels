@@ -7,6 +7,7 @@
 import intentEngine from "./intent-engine.js";
 import entityEngine from "./entity-engine.js";
 import memoryStore from "../memory/memory-store.js";
+import slotEngine from "../slot/slot-engine.js";
 
 
 
@@ -36,11 +37,46 @@ class DJGSTAI {
     });
 
     console.log("🧠 Memory:", memoryStore.getAll());
+        // Step 4 - Check Required Slots
+
+const slotResult = slotEngine.check(
+    intent.intent,
+    memoryStore.getAll()
+);
+
+console.log("🧩 Slot Result:", slotResult);
 
     // Temporary response
     let reply = "😊 I'm still learning how to help with that.";
 
-if (intent.intent === "book_ticket") {
+if (!slotResult.complete) {
+
+    switch (slotResult.missing) {
+
+        case "transport":
+            reply = "🚌 Which transport would you like to book? Bus, Train or Flight?";
+            break;
+
+        case "from":
+            reply = "📍 Where are you travelling from?";
+            break;
+
+        case "to":
+            reply = "📍 Where are you travelling to?";
+            break;
+
+        case "date":
+            reply = "📅 What date would you like to travel?";
+            break;
+
+    }
+
+}
+        
+if (
+    intent.intent === "book_ticket" &&
+    slotResult.complete
+) {
     if (entities.transport) {
 
         reply = `🚌 Great! I can help you book a ${entities.transport}.`;
