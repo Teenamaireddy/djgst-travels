@@ -6,9 +6,8 @@
  */
 import intentEngine from "./intent-engine.js";
 import entityEngine from "./entity-engine.js";
-import slotEngine from "./slot-engine.js";
+import slotEngine from "../slots/slot-engine.js";
 import memoryStore from "../memory/memory-store.js";
-
 class DJGSTAI {
 
     constructor() {
