@@ -1,4 +1,7 @@
 import djgstAI from "./ai/core/ai.js";
+import intentEngine from "./ai/core/intent-engine.js";
+import entityEngine from "./ai/core/entity-engine.js";
+import slotEngine from "./ai/core/slot-engine.js";
 
 const AI_DEVELOPER_MODE = true;
 const allowedPages = [
