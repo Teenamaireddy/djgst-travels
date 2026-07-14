@@ -1,6 +1,4 @@
 import djgstAI from "./ai/core/ai.js";
-import intentEngine from "./ai/core/intent-engine.js";
-import entityEngine from "./ai/core/entity-engine.js";
 
 const AI_DEVELOPER_MODE = true;
 const allowedPages = [
@@ -108,12 +106,6 @@ const sendBtn = document.getElementById("djgst-ai-send");
 const messages = document.getElementById("djgst-ai-messages");
 
 function addMessage(text, type){
-
-  const intent = intentEngine.detect(text);
-const entities = entityEngine.extract(text);
-
-console.log("Intent:", intent);
-console.log("Entities:", entities);
 
     const div = document.createElement("div");
 
