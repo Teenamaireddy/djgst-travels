@@ -40,8 +40,7 @@ class DJGSTAI {
     // Temporary response
     let reply = "😊 I'm still learning how to help with that.";
 
-if (intent === "book_ticket") {
-
+if (intent.intent === "book_ticket") {
     if (entities.transport) {
 
         reply = `🚌 Great! I can help you book a ${entities.transport}.`;
