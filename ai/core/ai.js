@@ -19,8 +19,18 @@ class DJGSTAI {
     console.log("👤 User:", userMessage);
 
     // Step 1 - Detect Intent
-    const intent = intentEngine.detect(userMessage);
-    console.log("🎯 Intent:", intent);
+    let intent = intentEngine.detect(userMessage);
+
+if (
+    intent.intent === "unknown" &&
+    memoryStore.get("intent")
+) {
+    intent.intent = memoryStore.get("intent");
+}
+        console.log("🎯 Intent:", intent);
+        if (intent.intent !== "unknown") {
+        memoryStore.save("intent", intent.intent);
+        }
 
     // Step 2 - Extract Entities
     const entities = entityEngine.extract(userMessage);
