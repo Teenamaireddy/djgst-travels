@@ -22,27 +22,50 @@ class EntityEngine {
 
     };
 
-    // Detect Bus
+    // -------------------------
+    // Detect Transport
+    // -------------------------
+
     if (text.includes("bus")) {
 
         entities.transport = "Bus";
 
     }
 
-    // Detect Train
     else if (text.includes("train")) {
 
         entities.transport = "Train";
 
     }
 
-    // Detect Flight
     else if (
         text.includes("flight") ||
         text.includes("plane")
     ) {
 
         entities.transport = "Flight";
+
+    }
+
+    // -------------------------
+    // Detect From & To Cities
+    // -------------------------
+
+    for (const city of cities) {
+
+        const cityName = city.toLowerCase();
+
+        if (text.includes("from " + cityName)) {
+
+            entities.from = city;
+
+        }
+
+        if (text.includes("to " + cityName)) {
+
+            entities.to = city;
+
+        }
 
     }
 
