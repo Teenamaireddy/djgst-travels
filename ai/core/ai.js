@@ -74,16 +74,18 @@ if (
     intent.intent === "book_ticket" &&
     slotResult.complete
 ) {
-    if (entities.transport) {
 
-        reply = `🚌 Great! I can help you book a ${entities.transport}.`;
+    const memory = memoryStore.getAll();
 
-    } else {
+    reply =
+`✅ Perfect!
 
-        reply = "🚌 Sure! Which transport would you like to book? Bus, Train or Flight?";
+🚌 Transport : ${memory.transport}
+📍 From : ${memory.from}
+📍 To : ${memory.to}
+📅 Date : ${memory.date}
 
-    }
-
+Searching available ${memory.transport.toLowerCase()} tickets...`;
 }
 
 return {
