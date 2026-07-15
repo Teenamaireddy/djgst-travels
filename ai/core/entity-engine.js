@@ -11,27 +11,20 @@ class EntityEngine {
     extract(userMessage) {
 
     const text = userMessage.toLowerCase();
-    const today = new Date();
+    // -------------------------
+// Detect Date
+// -------------------------
 
-const tomorrow = new Date();
-tomorrow.setDate(today.getDate() + 1);
+const parsedDate = parseDate(text);
 
-const dayAfterTomorrow = new Date();
-dayAfterTomorrow.setDate(today.getDate() + 2);
+if (parsedDate) {
 
-        
+    entities.date = parsedDate;
 
-    const entities = {
+}
 
-        transport: null,
-        from: null,
-        to: null,
-        date: null,
-        adults: null,
-        children: null
+// Exact date (YYYY-MM-DD)
 
-    };
-        // Exact date (YYYY-MM-DD)
 const dateRegex = /\d{4}-\d{2}-\d{2}/;
 const dateMatch = text.match(dateRegex);
 
@@ -40,31 +33,6 @@ if (dateMatch) {
     entities.date = dateMatch[0];
 
 }
-
-// Tomorrow
-else if (text.includes("tomorrow")) {
-
-    entities.date =
-        tomorrow.toISOString().split("T")[0];
-
-}
-
-// Today
-else if (text.includes("today")) {
-
-    entities.date =
-        today.toISOString().split("T")[0];
-
-}
-
-// Day after tomorrow
-else if (text.includes("day after tomorrow")) {
-
-    entities.date =
-        dayAfterTomorrow.toISOString().split("T")[0];
-
-}
-
         
 
     // -------------------------
