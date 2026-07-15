@@ -317,9 +317,41 @@ document.querySelectorAll('.animate-heading').forEach(heading => {
   });
 });
 
-function navigateToPlayStore() {
-  const playStoreURL = "https://play.google.com/store"; 
-  window.open(playStoreURL, '_blank');
+let deferredPrompt;
+
+window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+
+    document.getElementById("qr-result").innerText =
+        "Tap here to install the app";
+});
+
+async function navigateToPlayStore() {
+
+    if (deferredPrompt) {
+
+        deferredPrompt.prompt();
+
+        const { outcome } = await deferredPrompt.userChoice;
+
+        if (outcome === "accepted") {
+            document.getElementById("qr-result").innerText =
+                "Installing DJGST Travels...";
+        } else {
+            document.getElementById("qr-result").innerText =
+                "Installation cancelled.";
+        }
+
+        deferredPrompt = null;
+
+    } else {
+
+        document.getElementById("qr-result").innerText =
+            "App is already installed or your browser doesn't support installation.";
+
+    }
+
 }
 
 function applyOffer(btn) {
