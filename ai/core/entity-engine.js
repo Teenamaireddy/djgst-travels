@@ -3,6 +3,7 @@
  * DJGST AI Entity Extraction Engine
  * =====================================
  */
+import cities from "../data/cities.js";
 
 class EntityEngine {
 
