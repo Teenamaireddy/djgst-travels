@@ -21,6 +21,12 @@ class EntityEngine {
         children: null
 
     };
+        const dateRegex = /\d{4}-\d{2}-\d{2}/;
+        const dateMatch = text.match(dateRegex);
+
+if (dateMatch) {
+    entities.date = dateMatch[0];
+}
 
     // -------------------------
     // Detect Transport
