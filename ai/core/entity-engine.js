@@ -3,6 +3,7 @@
  * DJGST AI Entity Extraction Engine
  * =====================================
  */
+import parsePassengers from "../utils/passenger-parser.js";
 import parseDate from "../utils/date-parser.js";
 import cities from "../data/cities.js";
 
@@ -33,7 +34,24 @@ if (dateMatch) {
     entities.date = dateMatch[0];
 
 }
-        
+
+        // -------------------------
+// Detect Passengers
+// -------------------------
+
+const passengerData = parsePassengers(text);
+
+if (passengerData.adults !== null) {
+
+    entities.adults = passengerData.adults;
+
+}
+
+if (passengerData.children !== null) {
+
+    entities.children = passengerData.children;
+
+}
 
     // -------------------------
     // Detect Transport
