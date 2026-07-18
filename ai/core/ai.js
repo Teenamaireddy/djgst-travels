@@ -87,7 +87,9 @@ if (
 
     const memory = memoryStore.getAll();
 
-    reply =
+    if (memory.transport === "Bus") {
+
+        reply =
 `✅ Perfect!
 
 🚌 Transport : ${memory.transport}
@@ -95,7 +97,34 @@ if (
 📍 To : ${memory.to}
 📅 Date : ${memory.date}
 
-Searching available ${memory.transport.toLowerCase()} tickets...`;
+Searching available bus tickets...`;
+
+    }
+
+    else if (memory.transport === "Train") {
+
+        reply = "🚆 Opening Train Booking...";
+
+        setTimeout(() => {
+
+            window.location.href = "trainapplication.html";
+
+        }, 1500);
+
+    }
+
+    else if (memory.transport === "Flight") {
+
+        reply = "✈️ Opening Flight Booking...";
+
+        setTimeout(() => {
+
+            window.location.href = "flight_ticket_booking.html";
+
+        }, 1500);
+
+    }
+
 }
 
 return {
