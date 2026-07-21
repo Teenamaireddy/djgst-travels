@@ -17,6 +17,16 @@ class DJGSTAI {
     async process(userMessage) {
 
     console.log("👤 User:", userMessage);
+        // User accepted previous date
+if (
+    userMessage.trim().toLowerCase() === "yes" &&
+    memoryStore.get("date")
+) {
+
+    userMessage +=
+        " " + memoryStore.get("date");
+
+}
 
     // Step 1 - Detect Intent
     let intent = intentEngine.detect(userMessage);
