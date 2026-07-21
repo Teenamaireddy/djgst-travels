@@ -97,7 +97,7 @@ if (!slotResult.complete) {
     switch (slotResult.missing) {
 
         case "transport":
-            reply = "🚌 Which transport would you like to book? Bus, Train or Flight?";
+            reply = "Which transport would you like to book? Bus, Train or Flight?";
             break;
 
         case "from":
@@ -139,7 +139,12 @@ Searching available bus tickets...`;
 
     else if (memory.transport === "Train") {
 
-        reply = "🚆 Opening Train Booking...";
+        reply = reply =
+`🚆 Great!
+
+Opening Train Booking...
+
+⏳ Redirecting...`;
 
         setTimeout(() => {
 
@@ -151,7 +156,12 @@ Searching available bus tickets...`;
 
     else if (memory.transport === "Flight") {
 
-        reply = "✈️ Opening Flight Booking...";
+        reply = reply =
+`✈️ Great!
+
+Opening Flight Booking...
+
+⏳ Redirecting...`;
 
         setTimeout(() => {
 
