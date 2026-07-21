@@ -34,6 +34,32 @@ if (
 
     // Step 2 - Extract Entities
     const entities = entityEngine.extract(userMessage);
+        // User didn't mention a new date,
+// but memory already has one.
+if (
+    !entities.date &&
+    memoryStore.get("date")
+) {
+
+    return {
+
+        intent,
+        entities,
+        memory: memoryStore.getAll(),
+
+        reply:
+`📅 I found your previous travel date (${memoryStore.get("date")}).
+
+Would you like to use it?
+
+Reply:
+✅ Yes
+or
+📅 Enter a new date.`
+
+    };
+
+}
     console.log("📦 Entities:", entities);
 
     // Step 3 - Save Entities to Memory
