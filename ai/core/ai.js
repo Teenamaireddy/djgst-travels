@@ -125,15 +125,18 @@ if (
 
     if (memory.transport === "Bus") {
 
-        reply =
-`✅ Perfect!
+    reply =
+`🚌 Great!
 
-🚌 Transport : ${memory.transport}
-📍 From : ${memory.from}
-📍 To : ${memory.to}
-📅 Date : ${memory.date}
+Opening Bus Booking...
 
-Searching available bus tickets...`;
+⏳ Redirecting...`;
+
+    setTimeout(() => {
+
+        window.location.href = "busapplication.html";
+
+    }, 1500);
 
     }
 
