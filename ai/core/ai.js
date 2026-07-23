@@ -134,7 +134,14 @@ Opening Bus Booking...
 
     setTimeout(() => {
 
-        window.location.href = "busapplication.html";
+        const params = new URLSearchParams({
+    from: memory.from,
+    to: memory.to,
+    date: memory.date
+});
+
+window.location.href =
+    "busapplication.html?" + params.toString();;
 
     }, 1500);
 
