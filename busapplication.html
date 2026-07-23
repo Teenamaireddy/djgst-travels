@@ -325,31 +325,25 @@ const langData = {
 };
 
 window.onload = () => {
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById('u-date-input').setAttribute('min', today);
+    // ===============================
+// AI Auto Fill
+// ===============================
+const params = new URLSearchParams(window.location.search);
 
-    loadHistory();
-    initSeatMap();
+const from = params.get("from");
+const to = params.get("to");
+const date = params.get("date");
 
-    // NEW CODE
-    document.getElementById("u-src")
-.addEventListener("change", refreshSeats);
+if (from) {
+    document.getElementById("u-src").value = from;
+}
 
-document.getElementById("u-dest")
-.addEventListener("change", refreshSeats);
+if (to) {
+    document.getElementById("u-dest").value = to;
+}
 
-document.getElementById("u-bus-type")
-.addEventListener("change", refreshSeats);
-
-document.getElementById("u-date-input")
-.addEventListener("change", refreshSeats);
-
-async function refreshSeats() {
-
-    await loadBookedSeats();
-
-    initSeatMap();
-
+if (date) {
+    document.getElementById("u-date-input").value = date;
 }
 };
 async function loadBookedSeats() {
