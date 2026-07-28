@@ -4,6 +4,7 @@
  * Main Coordinator
  * =====================================
  */
+import actionRegistry from "../actions/action-registry.js";
 import busSearch from "../services/bus-search.js";
 import intentEngine from "./intent-engine.js";
 import entityEngine from "./entity-engine.js";
@@ -83,10 +84,12 @@ or
     console.log("🧠 Memory:", memoryStore.getAll());
         // Step 4 - Check Required Slots
 
-const slotResult = slotEngine.check(
+const action = actionRegistry.execute(
     intent.intent,
     memoryStore.getAll()
 );
+
+console.log("⚡ Action:", action);
 
 console.log("🧩 Slot Result:", slotResult);
 
