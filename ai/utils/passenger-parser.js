@@ -1,5 +1,7 @@
 function parsePassengers(text) {
 
+    text = text.toLowerCase();
+
     const passengers = {
 
         adults: null,
@@ -7,9 +9,11 @@ function parsePassengers(text) {
 
     };
 
+    // -------------------------
     // Adults
+    // -------------------------
 
-    const adultMatch = text.match(/(\d+)\s*adults?/);
+    const adultMatch = text.match(/(\d+)\s*(adult|adults|person|persons|people|passengers?)/);
 
     if (adultMatch) {
 
@@ -17,15 +21,29 @@ function parsePassengers(text) {
 
     }
 
+    // -------------------------
     // Children
+    // -------------------------
 
-    const childMatch = text.match(/(\d+)\s*children|(\d+)\s*child/);
+    const childMatch = text.match(/(\d+)\s*(child|children|kid|kids)/);
 
     if (childMatch) {
 
-        passengers.children = parseInt(
-            childMatch[1] || childMatch[2]
-        );
+        passengers.children = parseInt(childMatch[1]);
+
+    }
+
+    // -------------------------
+    // Just me
+    // -------------------------
+
+    if (
+        text.includes("just me") ||
+        text.includes("only me") ||
+        text === "me"
+    ) {
+
+        passengers.adults = 1;
 
     }
 
