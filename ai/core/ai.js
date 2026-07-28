@@ -4,6 +4,7 @@
  * Main Coordinator
  * =====================================
  */
+import busSearch from "../services/bus-search.js";
 import intentEngine from "./intent-engine.js";
 import entityEngine from "./entity-engine.js";
 import slotEngine from "../slots/slot-engine.js";
@@ -123,29 +124,43 @@ if (
 
     const memory = memoryStore.getAll();
 
+if (
+    intent.intent === "book_ticket" &&
+    slotResult.complete
+) {
+
+    const memory = memoryStore.getAll();
+
+    // NEW
+    const result = busSearch.search(memory);
+
     if (memory.transport === "Bus") {
 
-    reply =
-`🚌 Great!
+        reply =
+`🔍 Searching available ${result.transport} buses...
 
-Opening Bus Booking...
+📍 From: ${result.from}
+📍 To: ${result.to}
+📅 Date: ${result.date}
 
-⏳ Redirecting...`;
+⏳ Opening Bus Booking...`;
 
-    setTimeout(() => {
+        setTimeout(() => {
 
-        const params = new URLSearchParams({
-    from: memory.from,
-    to: memory.to,
-    date: memory.date
-});
+            const params = new URLSearchParams({
+                from: memory.from,
+                to: memory.to,
+                date: memory.date
+            });
 
-window.location.href =
-    "busapplication.html?" + params.toString();;
+            window.location.href =
+                "busapplication.html?" + params.toString();
 
-    }, 1500);
+        }, 1500);
 
     }
+
+}
 
     else if (memory.transport === "Train") {
 
