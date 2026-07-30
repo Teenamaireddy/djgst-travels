@@ -83,6 +83,10 @@ or
 
     console.log("🧠 Memory:", memoryStore.getAll());
         // Step 4 - Check Required Slots
+const slotResult = slotEngine.check(
+    intent.intent,
+    memoryStore.getAll()
+);
 
 const action = actionRegistry.execute(
     intent.intent,
@@ -127,12 +131,7 @@ if (
 
     const memory = memoryStore.getAll();
 
-if (
-    intent.intent === "book_ticket" &&
-    slotResult.complete
-) {
 
-    const memory = memoryStore.getAll();
 
     // NEW
     const result = busSearch.search(memory);
@@ -163,7 +162,6 @@ if (
 
     }
 
-}
 
     else if (memory.transport === "Train") {
 
