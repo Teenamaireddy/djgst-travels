@@ -17,7 +17,6 @@ class DJGSTAI {
     }
 
     
-    }
 
 async process(userMessage) {
 
@@ -211,6 +210,7 @@ return {
 };
 
 
+}
 }
 
 const djgstAI = new DJGSTAI();
