@@ -21,7 +21,6 @@ class DJGSTAI {
 
 async process(userMessage) {
 
-    try {
 
     console.log("👤 User:", userMessage);
         // User accepted previous date
@@ -211,18 +210,6 @@ return {
     reply
 };
 
-    } catch (error) {
-
-        console.error(error);
-
-        return {
-            intent: { intent: "error" },
-            entities: {},
-            memory: memoryStore.getAll(),
-            reply: "❌ Error: " + error.message
-        };
-
-    }
 
 }
 
