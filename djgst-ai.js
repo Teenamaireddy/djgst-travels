@@ -365,6 +365,8 @@ function sendMessage(){
     console.log("🤖 AI Core Result:", result);
 
     addMessage(result.reply, "bot");
+      // Perform AI Actions
+performAIAction(result);
 
 }, 500);
 
@@ -386,5 +388,35 @@ if(input){
         }
 
     });
+
+}
+
+function performAIAction(result) {
+
+    if (currentPage !== "busapplication.html") return;
+
+    const memory = result.memory;
+
+    // Autofill form
+    if (memory.from)
+        document.getElementById("u-src").value = memory.from;
+
+    if (memory.to)
+        document.getElementById("u-dest").value = memory.to;
+
+    if (memory.date)
+        document.getElementById("u-date-input").value = memory.date;
+
+    // Click Search button
+    if (
+    memory.from &&
+    memory.to &&
+    memory.date &&
+    typeof showSeatSelection === "function"
+) {
+
+    showSeatSelection();
+
+    }
 
 }
