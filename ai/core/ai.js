@@ -152,16 +152,27 @@ if (
 
         setTimeout(() => {
 
-            const params = new URLSearchParams({
-                from: memory.from,
-                to: memory.to,
-                date: memory.date
-            });
+    const currentPage =
+        window.location.pathname.split("/").pop();
 
-            window.location.href =
-                "busapplication.html?" + params.toString();
+    if (currentPage === "busapplication.html") {
 
-        }, 1500);
+        // Already on bus page.
+        // Let performAIAction() handle everything.
+        return;
+
+    }
+
+    const params = new URLSearchParams({
+        from: memory.from,
+        to: memory.to,
+        date: memory.date
+    });
+
+    window.location.href =
+        "busapplication.html?" + params.toString();
+
+}, 1500);
 
     }
 
