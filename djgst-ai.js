@@ -391,7 +391,7 @@ if(input){
 
 }
 
-function performAIAction(result) {
+async function performAIAction(result) {
 
     if (currentPage !== "busapplication.html") return;
 
@@ -415,7 +415,7 @@ function performAIAction(result) {
     typeof showSeatSelection === "function"
 ) {
 
-    showSeatSelection();
+   await showSeatSelection();
 
     }
 
