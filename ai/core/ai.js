@@ -4,6 +4,7 @@
  * Main Coordinator
  * =====================================
  */
+import searchBuses from "./bus-search.js";
 import actionRegistry from "../actions/action-registry.js";
 import busSearch from "../services/bus-search.js";
 import intentEngine from "./intent-engine.js";
