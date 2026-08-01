@@ -1,24 +1,50 @@
-class BusSearch {
+import buses from "../data/buses.js";
 
-    search(memory) {
+function search(memory) {
 
-        // We'll connect Firebase later.
-        // For now, return what AI is searching for.
+    let results = buses.filter(bus =>
 
-        return {
+        bus.from.toLowerCase() === memory.from.toLowerCase() &&
+        bus.to.toLowerCase() === memory.to.toLowerCase()
 
-            from: memory.from,
+    );
 
-            to: memory.to,
+    // AC filter
+    if (memory.ac === true) {
 
-            date: memory.date,
-
-            transport: memory.transport
-
-        };
+        results = results.filter(bus =>
+            bus.type.toLowerCase().includes("ac")
+        );
 
     }
 
+    // Sleeper filter
+    if (memory.sleeper === true) {
+
+        results = results.filter(bus =>
+            bus.type.toLowerCase().includes("sleeper")
+        );
+
+    }
+
+    // Luxury filter
+    if (memory.luxury === true) {
+
+        results = results.filter(bus =>
+            bus.type.toLowerCase().includes("luxury")
+        );
+
+    }
+
+    // Cheapest first
+    if (memory.cheapest) {
+
+        results.sort((a, b) => a.price - b.price);
+
+    }
+
+    return results;
+
 }
 
-export default new BusSearch();
+export default { search };
