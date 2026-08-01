@@ -137,18 +137,41 @@ if (
 
 
 
-    // NEW
     const result = busSearch.search(memory);
+
+if (result.length === 0) {
+
     reply =
-`
-Memory:
+`😔 Sorry!
 
-${JSON.stringify(memory, null, 2)}
+No buses found.
 
-Search Result:
+📍 ${memory.from} ➜ ${memory.to}`;
 
-${JSON.stringify(result, null, 2)}
+}
+else {
+
+    reply =
+`🚌 I found ${result.length} buses.
+
 `;
+
+    result.forEach((bus, index) => {
+
+        reply +=
+`${index + 1}. ${bus.name}
+🛏 ${bus.type}
+🕒 ${bus.departure}
+💰 ₹${bus.price}
+
+`;
+
+    });
+
+    reply +=
+"Reply with the bus number to continue booking.";
+
+}
 
     if (memory.transport === "Bus") {
 
