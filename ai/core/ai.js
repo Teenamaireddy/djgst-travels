@@ -139,6 +139,16 @@ if (
 
     // NEW
     const result = busSearch.search(memory);
+    reply =
+`
+Memory:
+
+${JSON.stringify(memory, null, 2)}
+
+Search Result:
+
+${JSON.stringify(result, null, 2)}
+`;
 
     if (memory.transport === "Bus") {
 
