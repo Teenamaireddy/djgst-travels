@@ -4,6 +4,7 @@ import entityEngine from "./ai/core/entity-engine.js";
 import slotEngine from "./ai/slots/slot-engine.js";
 import selectRecommendedSeat from "./ai/actions/select-seat.js";
 
+
 const AI_DEVELOPER_MODE = true;
 const allowedPages = [
   "busapplication.html",
@@ -398,7 +399,6 @@ async function performAIAction(result) {
 
     const memory = result.memory;
 
-    // Autofill form
     if (memory.from)
         document.getElementById("u-src").value = memory.from;
 
@@ -408,15 +408,18 @@ async function performAIAction(result) {
     if (memory.date)
         document.getElementById("u-date-input").value = memory.date;
 
-    // Click Search button
     if (
-    memory.from &&
-    memory.to &&
-    memory.date &&
-    typeof showSeatSelection === "function"
-) {
+        memory.selectedBus &&
+        typeof showSeatSelection === "function"
+    ) {
 
-      const recommendedSeat = 1; // Temporary
+        await showSeatSelection();
+
+        const recommendedSeat = 1;
+
+        selectRecommendedSeat(recommendedSeat);
+
+        return;
 
     }
 
