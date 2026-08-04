@@ -399,6 +399,7 @@ async function performAIAction(result) {
 
     const memory = result.memory;
 
+    // Autofill booking form
     if (memory.from)
         document.getElementById("u-src").value = memory.from;
 
@@ -408,6 +409,8 @@ async function performAIAction(result) {
     if (memory.date)
         document.getElementById("u-date-input").value = memory.date;
 
+
+    // User has selected a bus
     if (
         memory.selectedBus &&
         typeof showSeatSelection === "function"
@@ -415,12 +418,23 @@ async function performAIAction(result) {
 
         await showSeatSelection();
 
-        const recommendedSeat = 1;
-
-        selectRecommendedSeat(recommendedSeat);
+        // Temporary recommended seat
+        selectRecommendedSeat(1);
 
         return;
+    }
 
+
+    // User has only searched for buses
+    if (
+        memory.from &&
+        memory.to &&
+        memory.date &&
+        !memory.selectedBus
+    ) {
+
+        // Wait for user to select a bus.
+        return;
     }
 
 }
