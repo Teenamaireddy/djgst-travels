@@ -1,4 +1,3 @@
-
 /**
  * =====================================
  * DJGST AI Memory Engine
@@ -9,7 +8,27 @@ class MemoryStore {
 
     constructor() {
 
-        this.memory = {};
+        this.memory = {
+            intent: null,
+
+            transport: null,
+
+            from: null,
+
+            to: null,
+
+            date: null,
+
+            adults: null,
+
+            children: null,
+
+            selectedBus: null,
+
+            selectedSeat: null,
+
+            bookingStage: "start"
+        };
 
     }
 
@@ -27,13 +46,41 @@ class MemoryStore {
 
     getAll() {
 
-        return this.memory;
+        return { ...this.memory };
+
+    }
+
+    remove(key) {
+
+        delete this.memory[key];
 
     }
 
     clear() {
 
-        this.memory = {};
+        this.memory = {
+
+            intent: null,
+
+            transport: null,
+
+            from: null,
+
+            to: null,
+
+            date: null,
+
+            adults: null,
+
+            children: null,
+
+            selectedBus: null,
+
+            selectedSeat: null,
+
+            bookingStage: "start"
+
+        };
 
     }
 
