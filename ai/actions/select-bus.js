@@ -5,11 +5,17 @@ function selectBus(number) {
 
     const bus = buses[number - 1];
 
-    if (!bus) return null;
+    if (!bus) {
 
-    memoryStore.save({
-        selectedBus: bus
-    });
+        return null;
+
+    }
+
+    // Save selected bus
+    memoryStore.save("selectedBus", bus);
+
+    // Move AI to seat selection stage
+    memoryStore.save("bookingStage", "seat_selection");
 
     return bus;
 
