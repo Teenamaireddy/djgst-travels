@@ -1,15 +1,17 @@
 import buses from "../data/buses.js";
+import memoryStore from "../memory/memory-store.js";
 
-function selectBus(number, memory) {
+function selectBus(number) {
 
-    const results = buses.filter(bus =>
+    const bus = buses[number - 1];
 
-        bus.from === memory.from &&
-        bus.to === memory.to
+    if (!bus) return null;
 
-    );
+    memoryStore.save({
+        selectedBus: bus
+    });
 
-    return results[number - 1];
+    return bus;
 
 }
 
