@@ -4,6 +4,7 @@
  * Main Coordinator
  * =====================================
  */
+import selectBus from "../actions/select-bus.js";
 import searchBuses from "./bus-search.js";
 import actionRegistry from "../actions/action-registry.js";
 import busSearch from "../services/bus-search.js";
@@ -17,8 +18,9 @@ class DJGSTAI {
         console.log("🧠 DJGST AI Initialized");
     }
 
-    
 
+    
+    
 async process(userMessage) {
 
 
@@ -84,6 +86,31 @@ or
             memoryStore.save(key, value);
         }
     });
+
+    if (/^[1-9]$/.test(userMessage.trim())) {
+
+    const selectedBus =
+    selectBus(
+        Number(userMessage),
+        memoryStore.getAll()
+    );
+    return {
+
+    intent,
+
+    entities,
+
+    memory: memoryStore.getAll(),
+
+    reply:
+`✅ ${selectedBus.name} selected.
+
+💺 Opening seat selection...`
+
+};
+}
+
+
 
     console.log("🧠 Memory:", memoryStore.getAll());
         // Step 4 - Check Required Slots
