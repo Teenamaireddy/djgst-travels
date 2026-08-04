@@ -416,10 +416,7 @@ async function performAIAction(result) {
     typeof showSeatSelection === "function"
 ) {
 
-   await showSeatSelection();
       const recommendedSeat = 1; // Temporary
-
-selectRecommendedSeat(recommendedSeat);
 
     }
 
