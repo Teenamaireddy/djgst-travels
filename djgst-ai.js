@@ -399,42 +399,60 @@ async function performAIAction(result) {
 
     const memory = result.memory;
 
+    // -------------------------
     // Autofill booking form
-    if (memory.from)
+    // -------------------------
+
+    if (memory.from) {
+
         document.getElementById("u-src").value = memory.from;
 
-    if (memory.to)
+    }
+
+    if (memory.to) {
+
         document.getElementById("u-dest").value = memory.to;
 
-    if (memory.date)
+    }
+
+    if (memory.date) {
+
         document.getElementById("u-date-input").value = memory.date;
 
+    }
 
-    // User has selected a bus
+    // -------------------------
+    // Search stage
+    // -------------------------
+
     if (
+        memory.bookingStage === "bus_selection"
+    ) {
+
+        // Booking details are filled.
+        // AI is waiting for the user to choose a bus.
+
+        return;
+
+    }
+
+    // -------------------------
+    // Seat Selection Stage
+    // -------------------------
+
+    if (
+        memory.bookingStage === "seat_selection" &&
         memory.selectedBus &&
         typeof showSeatSelection === "function"
     ) {
 
         await showSeatSelection();
 
-        // Temporary recommended seat
+        // Highlight recommended seat
         selectRecommendedSeat(1);
 
         return;
-    }
 
-
-    // User has only searched for buses
-    if (
-        memory.from &&
-        memory.to &&
-        memory.date &&
-        !memory.selectedBus
-    ) {
-
-        // Wait for user to select a bus.
-        return;
     }
 
 }
