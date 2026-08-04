@@ -96,7 +96,7 @@ or
     );
     return {
 
-    intent,
+    intent: "bus_selected",
 
     entities,
 
@@ -243,7 +243,7 @@ No buses found.
 
     else if (memory.transport === "Train") {
 
-        reply = reply =
+        reply =
 `🚆 Great!
 
 Opening Train Booking...
@@ -260,7 +260,7 @@ Opening Train Booking...
 
     else if (memory.transport === "Flight") {
 
-        reply = reply =
+        reply =
 `✈️ Great!
 
 Opening Flight Booking...
