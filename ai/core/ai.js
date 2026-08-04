@@ -172,43 +172,46 @@ else {
 "Reply with the bus number to continue booking.";
 
 }
+if (memory.transport === "Bus") {
 
-    if (memory.transport === "Bus") {
+    const result = busSearch.search(memory);
+
+    if (result.length === 0) {
 
         reply =
-`🔍 Searching available ${result.transport} buses...
+`😔 Sorry!
 
-📍 From: ${result.from}
-📍 To: ${result.to}
-📅 Date: ${result.date}
+No buses found.
 
-⏳ Opening Bus Booking...`;
-
-        setTimeout(() => {
-
-    const currentPage =
-        window.location.pathname.split("/").pop();
-
-    if (currentPage === "busapplication.html") {
-
-        // Already on bus page.
-        // Let performAIAction() handle everything.
-        return;
+📍 ${memory.from} ➜ ${memory.to}`;
 
     }
 
-    const params = new URLSearchParams({
-        from: memory.from,
-        to: memory.to,
-        date: memory.date
-    });
+    else {
 
-    window.location.href =
-        "busapplication.html?" + params.toString();
+        reply =
+`🚌 I found ${result.length} buses.
 
-}, 1500);
+`;
+
+        result.forEach((bus, index) => {
+
+            reply +=
+`${index + 1}. ${bus.name}
+🛏 ${bus.type}
+🕒 ${bus.departure} → ${bus.arrival}
+💰 ₹${bus.price}
+
+`;
+
+        });
+
+        reply +=
+"Reply with the bus number to continue booking.";
 
     }
+
+}
 
 
     else if (memory.transport === "Train") {
