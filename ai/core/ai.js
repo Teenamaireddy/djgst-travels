@@ -134,8 +134,8 @@ if (
 ) {
 
     const memory = memoryStore.getAll();
-
-
+    alert(JSON.stringify(memory));
+    
 
     const result = busSearch.search(memory);
 
