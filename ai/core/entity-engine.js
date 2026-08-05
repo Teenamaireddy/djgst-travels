@@ -11,24 +11,20 @@ import cities from "../data/cities.js";
 class EntityEngine {
 
     extract(userMessage) {
+const text = userMessage.toLowerCase();
 
-    const text = userMessage.toLowerCase();
-        const selectedBus = detectBus(text);
-
-if (selectedBus) {
-    entities.selectedBus = selectedBus;
-}
-
-        const entities = {
-
+const entities = {
     transport: null,
     from: null,
     to: null,
     date: null,
     adults: null,
-    children: null
-
+    children: null,
+    selectedBus: null
 };
+
+// Detect selected bus
+entities.selectedBus = detectBus(text);
 // -------------------------
 // Detect Date
 // -------------------------
@@ -94,6 +90,8 @@ if (passengerData.children !== null) {
         entities.transport = "Flight";
 
     }
+
+
 
     // -------------------------
     // Detect From & To Cities
