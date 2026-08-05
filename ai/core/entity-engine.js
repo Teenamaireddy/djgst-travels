@@ -3,6 +3,7 @@
  * DJGST AI Entity Extraction Engine
  * =====================================
  */
+import detectBus from "../utils/bus-detector.js";
 import parsePassengers from "../utils/passenger-parser.js";
 import parseDate from "../utils/date-parser.js";
 import cities from "../data/cities.js";
@@ -12,6 +13,11 @@ class EntityEngine {
     extract(userMessage) {
 
     const text = userMessage.toLowerCase();
+        const selectedBus = detectBus(text);
+
+if (selectedBus) {
+    entities.selectedBus = selectedBus;
+}
 
         const entities = {
 
