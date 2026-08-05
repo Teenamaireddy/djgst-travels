@@ -12,6 +12,7 @@ import intentEngine from "./intent-engine.js";
 import entityEngine from "./entity-engine.js";
 import slotEngine from "../slots/slot-engine.js";
 import memoryStore from "../memory/memory-store.js";
+import parseBus from "../utils/bus-parser.js";
 class DJGSTAI {
 
     constructor() {
@@ -34,6 +35,32 @@ class DJGSTAI {
     // User -> 1
     // -------------------------
 
+        const selectedBus = parseBus(
+    userMessage,
+    memoryStore.getAll()
+);
+
+if (selectedBus) {
+
+    memoryStore.save("selectedBus", selectedBus);
+
+    return {
+
+        intent: { intent: "select_bus" },
+
+        entities: {},
+
+        memory: memoryStore.getAll(),
+
+        reply:
+`✅ ${selectedBus.name} selected.
+
+💺 Opening seat selection...`
+
+    };
+
+}
+        
     if (/^[1-9]\d*$/.test(userMessage.trim())) {
 
         const selectedBus = selectBus(
