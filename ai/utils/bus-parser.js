@@ -5,28 +5,31 @@ function parseBus(text, memory) {
     text = text.toLowerCase();
 
     const availableBuses = buses.filter(bus =>
-        bus.from === memory.from &&
-        bus.to === memory.to
-    );
+
+    bus.from.toLowerCase() === memory.from.toLowerCase() &&
+    bus.to.toLowerCase() === memory.to.toLowerCase()
+
+);
 
     for (const bus of availableBuses) {
 
-        const name = bus.name.toLowerCase();
+    const name = bus.name.toLowerCase();
 
-        if (text.includes(name)) {
+    // Full name
+    if (text.includes(name)) {
+        return bus;
+    }
 
+    // Every word in the name
+    const words = name.split(" ");
+
+    for (const word of words) {
+
+        if (word.length > 2 && text.includes(word)) {
             return bus;
-
         }
 
-        // Allow first word
-        const firstWord = name.split(" ")[0];
-
-        if (text.includes(firstWord)) {
-
-            return bus;
-
-        }
+    }
 
     }
 
