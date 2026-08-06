@@ -3,7 +3,7 @@
  * DJGST AI Entity Extraction Engine
  * =====================================
  */
-import detectBus from "../utils/bus-detector.js";
+
 import parsePassengers from "../utils/passenger-parser.js";
 import parseDate from "../utils/date-parser.js";
 import cities from "../data/cities.js";
@@ -11,113 +11,111 @@ import cities from "../data/cities.js";
 class EntityEngine {
 
     extract(userMessage) {
-const text = userMessage.toLowerCase();
 
-const entities = {
-    transport: null,
-    from: null,
-    to: null,
-    date: null,
-    adults: null,
-    children: null,
-    selectedBus: null
-};
+        const text = userMessage.toLowerCase();
 
-// Detect selected bus
-entities.selectedBus = detectBus(text);
-// -------------------------
-// Detect Date
-// -------------------------
-
-const dateRegex = /\d{4}-\d{2}-\d{2}/;
-const dateMatch = text.match(dateRegex);
-
-if (dateMatch) {
-
-    entities.date = dateMatch[0];
-
-} else {
-
-    const parsedDate = parseDate(text);
-
-    if (parsedDate) {
-
-        entities.date = parsedDate;
-
-    }
-
-}
+        const entities = {
+            transport: null,
+            from: null,
+            to: null,
+            date: null,
+            adults: null,
+            children: null,
+            selectedBus: null
+        };
 
         // -------------------------
-// Detect Passengers
-// -------------------------
+        // Detect Date
+        // -------------------------
 
-const passengerData = parsePassengers(text);
+        const dateRegex = /\d{4}-\d{2}-\d{2}/;
+        const dateMatch = text.match(dateRegex);
 
-if (passengerData.adults !== null) {
+        if (dateMatch) {
 
-    entities.adults = passengerData.adults;
+            entities.date = dateMatch[0];
 
-}
+        } else {
 
-if (passengerData.children !== null) {
+            const parsedDate = parseDate(text);
 
-    entities.children = passengerData.children;
+            if (parsedDate) {
 
-}
+                entities.date = parsedDate;
 
-    // -------------------------
-    // Detect Transport
-    // -------------------------
-
-    if (text.includes("bus")) {
-
-        entities.transport = "Bus";
-
-    }
-
-    else if (text.includes("train")) {
-
-        entities.transport = "Train";
-
-    }
-
-    else if (
-        text.includes("flight") ||
-        text.includes("plane")
-    ) {
-
-        entities.transport = "Flight";
-
-    }
-
-
-
-    // -------------------------
-    // Detect From & To Cities
-    // -------------------------
-
-    for (const city of cities) {
-
-        const cityName = city.toLowerCase();
-
-        if (text.includes("from " + cityName)) {
-
-            entities.from = city;
+            }
 
         }
 
-        if (text.includes("to " + cityName)) {
+        // -------------------------
+        // Detect Passengers
+        // -------------------------
 
-            entities.to = city;
+        const passengerData = parsePassengers(text);
+
+        if (passengerData.adults !== null) {
+
+            entities.adults = passengerData.adults;
 
         }
 
+        if (passengerData.children !== null) {
+
+            entities.children = passengerData.children;
+
+        }
+
+        // -------------------------
+        // Detect Transport
+        // -------------------------
+
+        if (text.includes("bus")) {
+
+            entities.transport = "Bus";
+
+        }
+
+        else if (text.includes("train")) {
+
+            entities.transport = "Train";
+
+        }
+
+        else if (
+            text.includes("flight") ||
+            text.includes("plane")
+        ) {
+
+            entities.transport = "Flight";
+
+        }
+
+        // -------------------------
+        // Detect From & To Cities
+        // -------------------------
+
+        for (const city of cities) {
+
+            const cityName = city.toLowerCase();
+
+            if (text.includes("from " + cityName)) {
+
+                entities.from = city;
+
+            }
+
+            if (text.includes("to " + cityName)) {
+
+                entities.to = city;
+
+            }
+
+        }
+
+        return entities;
+
     }
 
-    return entities;
-
-    }
 }
 
 export default new EntityEngine();
