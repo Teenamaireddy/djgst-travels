@@ -9,27 +9,20 @@ class MemoryStore {
     constructor() {
 
         this.memory = {
-            intent: null,
+    intent: null,
+    transport: null,
+    from: null,
+    to: null,
+    date: null,
+    adults: null,
+    children: null,
 
-            transport: null,
+    availableBuses: [],   // 👈 ADD THIS
 
-            from: null,
-
-            to: null,
-
-            date: null,
-
-            adults: null,
-
-            children: null,
-
-            selectedBus: null,
-
-            selectedSeat: null,
-
-            bookingStage: "start"
-        };
-
+    selectedBus: null,
+    selectedSeat: null,
+    bookingStage: "start"
+};
     }
 
     save(key, value) {
@@ -59,28 +52,20 @@ class MemoryStore {
     clear() {
 
         this.memory = {
+    intent: null,
+    transport: null,
+    from: null,
+    to: null,
+    date: null,
+    adults: null,
+    children: null,
 
-            intent: null,
+    availableBuses: [],   // 👈 ADD THIS
 
-            transport: null,
-
-            from: null,
-
-            to: null,
-
-            date: null,
-
-            adults: null,
-
-            children: null,
-
-            selectedBus: null,
-
-            selectedSeat: null,
-
-            bookingStage: "start"
-
-        };
+    selectedBus: null,
+    selectedSeat: null,
+    bookingStage: "start"
+};
 
     }
 
