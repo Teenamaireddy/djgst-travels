@@ -29,40 +29,6 @@ class DJGSTAI {
 
     const memory = memoryStore.getAll();
 
-        // -------------------------
-// User selected a bus by name
-// -------------------------
-
-if (memory.selectedBus) {
-
-    reply =
-`🚌 Great choice!
-
-You selected:
-${memory.selectedBus.name}
-
-💺 Opening seat selection...`;
-
-    setTimeout(() => {
-
-        const params = new URLSearchParams({
-            busId: memory.selectedBus.id
-        });
-
-        window.location.href =
-        "busapplication.html?" + params.toString();
-
-    }, 1500);
-
-    return {
-        intent,
-        entities,
-        memory,
-        reply
-    };
-
-}
-
     // -------------------------
     // STEP 1 : User selected bus
     // Example:
