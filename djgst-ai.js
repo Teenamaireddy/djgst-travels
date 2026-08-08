@@ -400,58 +400,122 @@ async function performAIAction(result) {
     const memory = result.memory;
 
     // -------------------------
-    // Autofill booking form
+    // 1. AUTOFILL BOOKING FORM
     // -------------------------
 
-    if (memory.from) {
+    const sourceInput =
+        document.getElementById("u-src");
 
-        document.getElementById("u-src").value = memory.from;
+    const destinationInput =
+        document.getElementById("u-dest");
+
+    const dateInput =
+        document.getElementById("u-date-input");
+
+
+    if (sourceInput && memory.from) {
+
+        sourceInput.value = memory.from;
+
+        sourceInput.dispatchEvent(
+            new Event("input", { bubbles: true })
+        );
+
+        sourceInput.dispatchEvent(
+            new Event("change", { bubbles: true })
+        );
 
     }
 
-    if (memory.to) {
 
-        document.getElementById("u-dest").value = memory.to;
+    if (destinationInput && memory.to) {
+
+        destinationInput.value = memory.to;
+
+        destinationInput.dispatchEvent(
+            new Event("input", { bubbles: true })
+        );
+
+        destinationInput.dispatchEvent(
+            new Event("change", { bubbles: true })
+        );
 
     }
 
-    if (memory.date) {
 
-        document.getElementById("u-date-input").value = memory.date;
+    if (dateInput && memory.date) {
+
+        dateInput.value = memory.date;
+
+        dateInput.dispatchEvent(
+            new Event("input", { bubbles: true })
+        );
+
+        dateInput.dispatchEvent(
+            new Event("change", { bubbles: true })
+        );
 
     }
+
 
     // -------------------------
-    // Search stage
+    // 2. BUS SELECTION STAGE
     // -------------------------
 
     if (
         memory.bookingStage === "bus_selection"
     ) {
 
-        // Booking details are filled.
-        // AI is waiting for the user to choose a bus.
+        console.log(
+            "🚌 AI waiting for bus selection"
+        );
 
         return;
 
     }
 
+
     // -------------------------
-    // Seat Selection Stage
+    // 3. BUS SELECTED
     // -------------------------
 
     if (
         memory.bookingStage === "seat_selection" &&
-        memory.selectedBus &&
-        typeof showSeatSelection === "function"
+        memory.selectedBus
     ) {
 
-        await showSeatSelection();
+        console.log(
+            "🚌 Selected bus:",
+            memory.selectedBus
+        );
 
-        // Highlight recommended seat
-        selectRecommendedSeat(1);
 
-        return;
+        // Give page a moment to finish rendering
+        await new Promise(resolve => {
+            setTimeout(resolve, 300);
+        });
+
+
+        if (
+            typeof showSeatSelection === "function"
+        ) {
+
+            await showSeatSelection();
+
+            console.log(
+                "💺 Seat selection opened"
+            );
+
+
+            if (
+                typeof selectRecommendedSeat === "function"
+            ) {
+
+                selectRecommendedSeat(1);
+
+            }
+
+        }
 
     }
 
