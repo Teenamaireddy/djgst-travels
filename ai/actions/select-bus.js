@@ -11,11 +11,15 @@ function selectBus(number) {
 
     }
 
-    // Save selected bus
-    memoryStore.save("selectedBus", bus);
+    memoryStore.save(
+        "selectedBus",
+        bus
+    );
 
-    // Move AI to seat selection stage
-    memoryStore.save("bookingStage", "seat_selection");
+    memoryStore.save(
+        "bookingStage",
+        "seat_selection"
+    );
 
     return bus;
 
