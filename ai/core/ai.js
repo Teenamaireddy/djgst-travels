@@ -4,7 +4,7 @@
  * Main Coordinator
  * =====================================
  */
-
+import findNearbyRoutes from "../services/nearby-route-search.js";
 import selectBus from "../actions/select-bus.js";
 import busSearch from "../services/bus-search.js";
 import intentEngine from "./intent-engine.js";
@@ -359,29 +359,77 @@ Please choose a valid bus.`
                     );
 
 
-                if (
-                    buses.length === 0
-                ) {
+                if (buses.length === 0) {
 
-                    return {
+    const nearbyRoutes =
+        findNearbyRoutes(
+            currentMemory.from,
+            currentMemory.to
+        );
 
-                        intent,
-                        entities,
 
-                        memory:
-                            currentMemory,
+    if (nearbyRoutes.length > 0) {
 
-                        reply:
+        let reply =
+`😔 I couldn't find a direct bus for:
+
+📍 ${currentMemory.from} ➜ ${currentMemory.to}
+
+💡 But I found some nearby route options:
+
+`;
+
+
+        nearbyRoutes.forEach(
+            (route, index) => {
+
+                reply +=
+`${index + 1}. ${route.from} ➜ ${route.to}
+📍 ${route.reason}
+
+`;
+
+            }
+        );
+
+
+        reply +=
+`Would you like me to search these nearby routes?`;
+
+
+        return {
+
+            intent,
+            entities,
+
+            memory:
+                currentMemory,
+
+            reply
+
+        };
+
+    }
+
+
+    return {
+
+        intent,
+        entities,
+
+        memory:
+            currentMemory,
+
+        reply:
 `😔 Sorry!
 
 No buses found.
 
 📍 ${currentMemory.from} ➜ ${currentMemory.to}`
 
-                    };
+    };
 
                 }
-
 
                 // Save buses
                 memoryStore.save(
