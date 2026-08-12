@@ -10,6 +10,7 @@
  * APSRTC Garuda
  * Book VRL
  * Book Orange Travels
+ * I want APSRTC Garuda
  * =====================================
  */
 
@@ -17,16 +18,21 @@ import buses from "../data/buses.js";
 
 function parseBus(text, memory) {
 
-    const userText = text.trim().toLowerCase();
+    const userText = String(text || "")
+        .trim()
+        .toLowerCase();
 
     // ---------------------------------
-    // STEP 1 : Get buses currently shown
+    // STEP 1 : Get currently available buses
     // ---------------------------------
 
     let availableBuses = memory.availableBuses;
 
     // Safety fallback
-    if (!Array.isArray(availableBuses) || availableBuses.length === 0) {
+    if (
+        !Array.isArray(availableBuses) ||
+        availableBuses.length === 0
+    ) {
 
         availableBuses = buses.filter(bus => {
 
@@ -42,14 +48,15 @@ function parseBus(text, memory) {
 
     }
 
-    // No buses available
     if (availableBuses.length === 0) {
+
         return null;
+
     }
 
 
     // ---------------------------------
-    // STEP 2 : Number selection
+    // STEP 2 : NUMBER SELECTION
     // ---------------------------------
 
     if (/^[1-9]\d*$/.test(userText)) {
@@ -66,30 +73,32 @@ function parseBus(text, memory) {
         }
 
         return null;
+
     }
 
 
     // ---------------------------------
-    // STEP 3 : Clean common words
+    // STEP 3 : Remove common sentences
     // ---------------------------------
 
     const cleanedText = userText
-        .replace(/\b(book|select|choose|want|the|please|me)\b/g, " ")
+        .replace(
+            /\b(book|select|choose|want|the|please|me|i|would|like|to|give|show)\b/g,
+            " "
+        )
         .replace(/\s+/g, " ")
         .trim();
 
 
     // ---------------------------------
-    // STEP 4 : Exact bus-name matching
+    // STEP 4 : EXACT BUS NAME
     // ---------------------------------
 
     for (const bus of availableBuses) {
 
         const busName =
-            bus.name.toLowerCase();
+            bus.name.toLowerCase().trim();
 
-        // Example:
-        // "orange travels"
         if (cleanedText === busName) {
 
             return bus;
@@ -100,7 +109,7 @@ function parseBus(text, memory) {
 
 
     // ---------------------------------
-    // STEP 5 : Bus-name contained in text
+    // STEP 5 : BUS NAME INSIDE SENTENCE
     // ---------------------------------
 
     for (const bus of availableBuses) {
@@ -108,12 +117,9 @@ function parseBus(text, memory) {
         const busName =
             bus.name.toLowerCase();
 
-        // Example:
-        // "i want orange travels"
-        // "book orange travels"
-        // "select apsrtc garuda"
-
-        if (cleanedText.includes(busName)) {
+        if (
+            userText.includes(busName)
+        ) {
 
             return bus;
 
@@ -123,40 +129,56 @@ function parseBus(text, memory) {
 
 
     // ---------------------------------
-    // STEP 6 : Special shorthand
+    // STEP 6 : COMPANY / SHORT NAME
     // ---------------------------------
-    // "Book VRL"
-    // "VRL"
     //
-    // We check the beginning/company word
-    // only when it uniquely identifies a bus.
+    // Example:
+    //
+    // "VRL"
+    // "Book VRL"
+    //
+    // But only accept it when exactly
+    // ONE bus matches.
+    // ---------------------------------
 
-    const matchingBuses = availableBuses.filter(bus => {
+    const possibleMatches = [];
+
+    for (const bus of availableBuses) {
 
         const words =
-            bus.name.toLowerCase().split(" ");
+            bus.name
+                .toLowerCase()
+                .split(/\s+/);
 
-        return words.some(word => {
+        for (const word of words) {
 
-            return (
+            if (
                 word.length >= 3 &&
                 cleanedText === word
-            );
+            ) {
 
-        });
+                possibleMatches.push(bus);
 
-    });
+                break;
 
+            }
 
-    if (matchingBuses.length === 1) {
-
-        return matchingBuses[0];
+        }
 
     }
 
 
+    if (
+        possibleMatches.length === 1
+    ) {
+
+        return possibleMatches[0];
+
+    
+
+
     // ---------------------------------
-    // Nothing matched
+    // STEP 7 : Nothing matched
     // ---------------------------------
 
     return null;
