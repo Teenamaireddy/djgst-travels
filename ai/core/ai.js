@@ -147,6 +147,92 @@ Please choose a valid bus.`
 
         }
 
+        // -------------------------
+// NEARBY ROUTE CONFIRMATION
+// -------------------------
+
+const lowerMessage =
+    trimmedMessage.toLowerCase();
+
+const yesWords = [
+    "yes",
+    "yeah",
+    "yep",
+    "sure",
+    "okay",
+    "ok",
+    "please",
+    "check it",
+    "check them",
+    "search it",
+    "search them",
+    "go ahead",
+    "do it",
+    "yes please",
+    "yes check it",
+    "yes, check it",
+    "yes please check it"
+];
+
+const wantsNearbyRoutes =
+    yesWords.some(word =>
+        lowerMessage.includes(word)
+    );
+
+const pendingRoutes =
+    memoryStore.get("pendingNearbyRoutes");
+
+if (
+    wantsNearbyRoutes &&
+    Array.isArray(pendingRoutes) &&
+    pendingRoutes.length > 0
+) {
+
+    const route =
+        pendingRoutes[0];
+
+    memoryStore.save(
+        "from",
+        route.from
+    );
+
+    memoryStore.save(
+        "to",
+        route.to
+    );
+
+    memoryStore.save(
+        "pendingNearbyRoutes",
+        []
+    );
+
+    return {
+
+        intent: {
+            intent: "book_ticket"
+        },
+
+        entities: {
+            from: route.from,
+            to: route.to
+        },
+
+        memory:
+            memoryStore.getAll(),
+
+        reply:
+`🔍 Sure!
+
+I'll check buses for:
+
+📍 ${route.from} ➜ ${route.to}
+
+⏳ Searching available buses...`
+
+    };
+
+}
+
 
         // -------------------------
         // STEP 2 : YES
@@ -369,6 +455,11 @@ Please choose a valid bus.`
 
 
     if (nearbyRoutes.length > 0) {
+      
+        memoryStore.save(
+            "pendingNearbyRoutes",
+            nearbyRoutes
+        );
 
         let reply =
 `😔 I couldn't find a direct bus for:
