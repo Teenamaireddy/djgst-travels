@@ -18,6 +18,7 @@ class MemoryStore {
     children: null,
 
     availableBuses: [],   // 👈 ADD THIS
+    pendingNearbyRoutes: [],
 
     selectedBus: null,
     selectedSeat: null,
@@ -61,6 +62,7 @@ class MemoryStore {
     children: null,
 
     availableBuses: [],   // 👈 ADD THIS
+    pendingNearbyRoutes: [],        
 
     selectedBus: null,
     selectedSeat: null,
