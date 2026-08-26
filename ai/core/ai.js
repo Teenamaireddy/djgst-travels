@@ -46,16 +46,6 @@ class DJGSTAI {
         // =====================================
         // STEP 1 : NEARBY ROUTE CONFIRMATION
         // =====================================
-        // Example:
-        //
-        // AI:
-        // "Would you like me to search nearby routes?"
-        //
-        // User:
-        // "yes"
-        //
-        // Then show the nearby route options.
-        // =====================================
 
         const pendingRoutes =
             memoryStore.get("pendingNearbyRoutes");
@@ -147,16 +137,6 @@ class DJGSTAI {
         // =====================================
         // STEP 2 : NEARBY ROUTE NUMBER SELECTION
         // =====================================
-        // This MUST happen before normal bus
-        // number selection.
-        //
-        // Example:
-        //
-        // 1. Rajahmundry ➜ Vizag
-        // 2. Rajahmundry ➜ Anakapalle
-        //
-        // User: 1
-        // =====================================
 
         if (
             memoryStore.get("bookingStage") ===
@@ -212,13 +192,15 @@ class DJGSTAI {
                         memoryStore.getAll();
 
 
+                    // Firestore search is asynchronous
                     const buses =
-                        busSearch.search(
+                        await busSearch.search(
                             routeMemory
                         );
 
 
                     if (
+                        !Array.isArray(buses) ||
                         buses.length === 0
                     ) {
 
@@ -353,11 +335,6 @@ Please choose a number from 1 to ${pendingRoutes.length}.`
         // STEP 3 : BUS SELECTION
         // NUMBER OR BUS NAME
         // =====================================
-
-        /*
-         * Only allow normal bus selection when
-         * the AI is actually waiting for a bus.
-         */
 
         const bookingStage =
             memoryStore.get("bookingStage");
@@ -705,8 +682,9 @@ Please choose a valid bus.`
                 "Bus"
             ) {
 
+                // Firestore search is asynchronous
                 const buses =
-                    busSearch.search(
+                    await busSearch.search(
                         currentMemory
                     );
 
@@ -716,6 +694,7 @@ Please choose a valid bus.`
                 // =================================
 
                 if (
+                    !Array.isArray(buses) ||
                     buses.length === 0
                 ) {
 
