@@ -699,10 +699,10 @@ Please choose a valid bus.`
                 ) {
 
                     const nearbyRoutes =
-                        findNearbyRoutes(
-                            currentMemory.from,
-                            currentMemory.to
-                        );
+    await findNearbyRoutes(
+        currentMemory.from,
+        currentMemory.to
+    );
 
 
                     if (
