@@ -4,7 +4,12 @@
  * =====================================
  *
  * Finds nearby alternative routes that
- * actually have active buses in Firestore.
+ * actually have ACTIVE buses in Firestore.
+ *
+ * Important:
+ * This does NOT blindly suggest routes.
+ * Every returned route comes from an active
+ * bus currently stored in Firestore.
  * =====================================
  */
 
@@ -13,14 +18,26 @@ import {
     getDocs,
     query,
     where
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 import { db } from "../../firebase-config.js";
 
 
+/**
+ * Find alternative bus routes based on
+ * routes that actually exist in Firestore.
+ *
+ * @param {string} from
+ * @param {string} to
+ * @returns {Promise<Array>}
+ */
 async function findNearbyRoutes(from, to) {
 
     try {
+
+        // =====================================
+        // STEP 1 : NORMALIZE REQUESTED ROUTE
+        // =====================================
 
         const requestedFrom =
             String(from || "")
@@ -33,7 +50,10 @@ async function findNearbyRoutes(from, to) {
                 .toLowerCase();
 
 
-        if (!requestedFrom || !requestedTo) {
+        if (
+            !requestedFrom ||
+            !requestedTo
+        ) {
 
             console.warn(
                 "⚠️ Nearby Route Search: Missing from/to"
@@ -45,12 +65,12 @@ async function findNearbyRoutes(from, to) {
 
 
         console.log(
-            `🔎 Finding nearby routes for: ${requestedFrom} → ${requestedTo}`
+            `🔎 Finding Firestore alternatives for: ${requestedFrom} → ${requestedTo}`
         );
 
 
         // =====================================
-        // GET ALL ACTIVE BUS ROUTES
+        // STEP 2 : GET ACTIVE BUSES
         // =====================================
 
         const busesRef =
@@ -60,7 +80,7 @@ async function findNearbyRoutes(from, to) {
             );
 
 
-        const q =
+        const activeBusQuery =
             query(
                 busesRef,
                 where(
@@ -72,8 +92,14 @@ async function findNearbyRoutes(from, to) {
 
 
         const snapshot =
-            await getDocs(q);
+            await getDocs(
+                activeBusQuery
+            );
 
+
+        // =====================================
+        // STEP 3 : CONVERT FIRESTORE DATA
+        // =====================================
 
         const buses =
             snapshot.docs.map(
@@ -82,6 +108,7 @@ async function findNearbyRoutes(from, to) {
                     const data =
                         doc.data();
 
+
                     return {
 
                         id:
@@ -89,6 +116,9 @@ async function findNearbyRoutes(from, to) {
 
                         name:
                             data.name || "",
+
+                        type:
+                            data.type || "",
 
                         from:
                             String(
@@ -104,9 +134,6 @@ async function findNearbyRoutes(from, to) {
                                 .trim()
                                 .toLowerCase(),
 
-                        type:
-                            data.type || "",
-
                         departure:
                             data.departure || "",
 
@@ -117,7 +144,7 @@ async function findNearbyRoutes(from, to) {
                             data.price ?? 0,
 
                         active:
-                            data.active !== false
+                            data.active === true
 
                     };
 
@@ -126,98 +153,128 @@ async function findNearbyRoutes(from, to) {
 
 
         console.log(
-            "🚌 Active Firestore buses:",
-            buses
+            `🚌 Active Firestore buses found: ${buses.length}`
         );
 
 
         // =====================================
-        // GET UNIQUE ROUTES
+        // STEP 4 : CREATE UNIQUE BUS ROUTES
         // =====================================
 
-        const routesMap =
+        const routeMap =
             new Map();
 
 
-        buses.forEach(bus => {
+        buses.forEach(
+            bus => {
 
-            // Don't suggest the exact same route
-            if (
-                bus.from === requestedFrom &&
-                bus.to === requestedTo
-            ) {
+                // Ignore incomplete Firestore records
+                if (
+                    !bus.from ||
+                    !bus.to
+                ) {
 
-                return;
+                    return;
+
+                }
+
+
+                // Never suggest the exact route
+                if (
+                    bus.from === requestedFrom &&
+                    bus.to === requestedTo
+                ) {
+
+                    return;
+
+                }
+
+
+                const routeKey =
+                    `${bus.from}→${bus.to}`;
+
+
+                if (
+                    !routeMap.has(
+                        routeKey
+                    )
+                ) {
+
+                    routeMap.set(
+                        routeKey,
+                        {
+
+                            from:
+                                bus.from,
+
+                            to:
+                                bus.to,
+
+                            buses: []
+
+                        }
+                    );
+
+                }
+
+
+                routeMap
+                    .get(routeKey)
+                    .buses
+                    .push(bus);
 
             }
-
-
-            const routeKey =
-                `${bus.from}→${bus.to}`;
-
-
-            if (
-                !routesMap.has(routeKey)
-            ) {
-
-                routesMap.set(
-                    routeKey,
-                    {
-                        from: bus.from,
-                        to: bus.to,
-                        buses: []
-                    }
-                );
-
-            }
-
-
-            routesMap
-                .get(routeKey)
-                .buses
-                .push(bus);
-
-        });
+        );
 
 
         // =====================================
-        // FIND RELEVANT ALTERNATIVES
+        // STEP 5 : FIND RELEVANT ALTERNATIVES
+        // =====================================
+        //
+        // Example:
+        //
+        // User:
+        // Rajahmundry → Vizag
+        //
+        // Firestore:
+        // Anakapalle → Vizag
+        // Samalkota → Vizag
+        //
+        // These can be suggested because:
+        //
+        //     alternative.to === requested.to
+        //
+        // OR
+        //
+        //     alternative.from === requested.from
+        //
         // =====================================
 
         const nearbyRoutes =
             Array.from(
-                routesMap.values()
+                routeMap.values()
             )
-            .filter(route => {
+            .filter(
+                route => {
 
-                /*
-                 * For now we consider a route
-                 * relevant when either:
-                 *
-                 * 1. It starts from the requested
-                 *    destination area
-                 *
-                 * OR
-                 *
-                 * 2. It ends at the requested
-                 *    destination area.
-                 *
-                 * This is the first Firestore-based
-                 * version. We can make the
-                 * geographical matching smarter
-                 * later.
-                 */
+                    return (
 
-                return (
-                    route.from === requestedFrom ||
-                    route.to === requestedTo
-                );
+                        route.from ===
+                            requestedFrom
 
-            });
+                        ||
+
+                        route.to ===
+                            requestedTo
+
+                    );
+
+                }
+            );
 
 
         // =====================================
-        // CREATE USER-FRIENDLY RESULT
+        // STEP 6 : CONVERT TO AI-FRIENDLY DATA
         // =====================================
 
         const results =
@@ -245,10 +302,14 @@ async function findNearbyRoutes(from, to) {
 
 
         console.log(
-            "📍 Nearby routes found:",
+            "📍 Firestore nearby routes:",
             results
         );
 
+
+        // =====================================
+        // STEP 7 : RETURN RESULTS
+        // =====================================
 
         return results;
 
@@ -267,5 +328,9 @@ async function findNearbyRoutes(from, to) {
 
 }
 
+
+// =====================================
+// EXPORT
+// =====================================
 
 export default findNearbyRoutes;
