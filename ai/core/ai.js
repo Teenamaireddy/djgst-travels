@@ -5,7 +5,8 @@
  * =====================================
  */
 
-import findNearbyRoutes from "../services/firestore-nearby-route-search.js";import selectBus from "../actions/select-bus.js";
+import findNearbyRoutes from "../services/firestore-nearby-route-search.js";
+import selectBus from "../actions/select-bus.js";
 import busSearch from "../services/firestore-bus-search.js";
 import intentEngine from "./intent-engine.js";
 import entityEngine from "./entity-engine.js";
