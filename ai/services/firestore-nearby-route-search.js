@@ -3,13 +3,17 @@
  * DJGST AI Firestore Nearby Route Search
  * =====================================
  *
- * Finds nearby alternative routes that
- * actually have ACTIVE buses in Firestore.
+ * Finds nearby alternative routes by:
  *
- * Important:
- * This does NOT blindly suggest routes.
- * Every returned route comes from an active
- * bus currently stored in Firestore.
+ * 1. Checking our known nearby-city
+ *    relationships.
+ *
+ * 2. Checking Firestore to make sure
+ *    an ACTIVE bus actually exists
+ *    on that alternative route.
+ *
+ * Therefore AI never suggests a route
+ * that has no available bus.
  * =====================================
  */
 
@@ -18,60 +22,77 @@ import {
     getDocs,
     query,
     where
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 import { db } from "../../firebase-config.js";
 
 
-/**
- * Find alternative bus routes based on
- * routes that actually exist in Firestore.
- *
- * @param {string} from
- * @param {string} to
- * @returns {Promise<Array>}
- */
-async function findNearbyRoutes(from, to) {
+// =====================================
+// KNOWN NEARBY CITY RELATIONSHIPS
+// =====================================
+//
+// These are geographical relationships.
+// Firestore decides whether buses actually
+// exist for the suggested route.
+//
+// Example:
+//
+// Rajahmundry
+//      ↓
+// Anakapalle
+// Samalkota
+//
+// Gadarada
+//      ↓
+// Narasapuram
+//
+
+const nearbyCities = {
+
+    "rajahmundry": [
+        "anakapalle",
+        "samalkota"
+    ],
+
+    "anakapalle": [
+        "rajahmundry"
+    ],
+
+    "samalkota": [
+        "rajahmundry"
+    ],
+
+    "gadarada": [
+        "narasapuram"
+    ],
+
+    "narasapuram": [
+        "gadarada"
+    ]
+
+};
+
+
+// =====================================
+// NORMALIZE CITY NAME
+// =====================================
+
+function normalizeCity(city) {
+
+    return String(city || "")
+        .trim()
+        .toLowerCase();
+
+}
+
+
+// =====================================
+// SEARCH FIRESTORE FOR ACTIVE BUSES
+// =====================================
+
+async function searchActiveBuses(from, to) {
 
     try {
-
-        // =====================================
-        // STEP 1 : NORMALIZE REQUESTED ROUTE
-        // =====================================
-
-        const requestedFrom =
-            String(from || "")
-                .trim()
-                .toLowerCase();
-
-        const requestedTo =
-            String(to || "")
-                .trim()
-                .toLowerCase();
-
-
-        if (
-            !requestedFrom ||
-            !requestedTo
-        ) {
-
-            console.warn(
-                "⚠️ Nearby Route Search: Missing from/to"
-            );
-
-            return [];
-
-        }
-
-
-        console.log(
-            `🔎 Finding Firestore alternatives for: ${requestedFrom} → ${requestedTo}`
-        );
-
-
-        // =====================================
-        // STEP 2 : GET ACTIVE BUSES
-        // =====================================
 
         const busesRef =
             collection(
@@ -80,245 +101,87 @@ async function findNearbyRoutes(from, to) {
             );
 
 
-        const activeBusQuery =
+        const q =
             query(
+
                 busesRef,
+
+                where(
+                    "from",
+                    "==",
+                    from
+                ),
+
+                where(
+                    "to",
+                    "==",
+                    to
+                ),
+
                 where(
                     "active",
                     "==",
                     true
                 )
+
             );
 
 
         const snapshot =
-            await getDocs(
-                activeBusQuery
-            );
+            await getDocs(q);
 
 
-        // =====================================
-        // STEP 3 : CONVERT FIRESTORE DATA
-        // =====================================
+        return snapshot.docs.map(
+            doc => {
 
-        const buses =
-            snapshot.docs.map(
-                doc => {
-
-                    const data =
-                        doc.data();
+                const data =
+                    doc.data();
 
 
-                    return {
+                return {
 
-                        id:
-                            data.id ?? doc.id,
+                    id:
+                        data.id ?? doc.id,
 
-                        name:
-                            data.name || "",
+                    name:
+                        data.name || "",
 
-                        type:
-                            data.type || "",
+                    type:
+                        data.type || "",
 
-                        from:
-                            String(
-                                data.from || ""
-                            )
-                                .trim()
-                                .toLowerCase(),
+                    from:
+                        normalizeCity(
+                            data.from
+                        ),
 
-                        to:
-                            String(
-                                data.to || ""
-                            )
-                                .trim()
-                                .toLowerCase(),
+                    to:
+                        normalizeCity(
+                            data.to
+                        ),
 
-                        departure:
-                            data.departure || "",
+                    departure:
+                        data.departure || "",
 
-                        arrival:
-                            data.arrival || "",
+                    arrival:
+                        data.arrival || "",
 
-                        price:
-                            data.price ?? 0,
+                    price:
+                        data.price ?? 0,
 
-                        active:
-                            data.active === true
+                    active:
+                        data.active !== false
 
-                    };
-
-                }
-            );
-
-
-        console.log(
-            `🚌 Active Firestore buses found: ${buses.length}`
-        );
-
-
-        // =====================================
-        // STEP 4 : CREATE UNIQUE BUS ROUTES
-        // =====================================
-
-        const routeMap =
-            new Map();
-
-
-        buses.forEach(
-            bus => {
-
-                // Ignore incomplete Firestore records
-                if (
-                    !bus.from ||
-                    !bus.to
-                ) {
-
-                    return;
-
-                }
-
-
-                // Never suggest the exact route
-                if (
-                    bus.from === requestedFrom &&
-                    bus.to === requestedTo
-                ) {
-
-                    return;
-
-                }
-
-
-                const routeKey =
-                    `${bus.from}→${bus.to}`;
-
-
-                if (
-                    !routeMap.has(
-                        routeKey
-                    )
-                ) {
-
-                    routeMap.set(
-                        routeKey,
-                        {
-
-                            from:
-                                bus.from,
-
-                            to:
-                                bus.to,
-
-                            buses: []
-
-                        }
-                    );
-
-                }
-
-
-                routeMap
-                    .get(routeKey)
-                    .buses
-                    .push(bus);
+                };
 
             }
         );
-
-
-        // =====================================
-        // STEP 5 : FIND RELEVANT ALTERNATIVES
-        // =====================================
-        //
-        // Example:
-        //
-        // User:
-        // Rajahmundry → Vizag
-        //
-        // Firestore:
-        // Anakapalle → Vizag
-        // Samalkota → Vizag
-        //
-        // These can be suggested because:
-        //
-        //     alternative.to === requested.to
-        //
-        // OR
-        //
-        //     alternative.from === requested.from
-        //
-        // =====================================
-
-        const nearbyRoutes =
-            Array.from(
-                routeMap.values()
-            )
-            .filter(
-                route => {
-
-                    return (
-
-                        route.from ===
-                            requestedFrom
-
-                        ||
-
-                        route.to ===
-                            requestedTo
-
-                    );
-
-                }
-            );
-
-
-        // =====================================
-        // STEP 6 : CONVERT TO AI-FRIENDLY DATA
-        // =====================================
-
-        const results =
-            nearbyRoutes.map(
-                route => {
-
-                    return {
-
-                        from:
-                            route.from,
-
-                        to:
-                            route.to,
-
-                        reason:
-                            `Active buses available on ${route.from} → ${route.to}`,
-
-                        buses:
-                            route.buses
-
-                    };
-
-                }
-            );
-
-
-        console.log(
-            "📍 Firestore nearby routes:",
-            results
-        );
-
-
-        // =====================================
-        // STEP 7 : RETURN RESULTS
-        // =====================================
-
-        return results;
 
     }
 
     catch (error) {
 
         console.error(
-            "❌ Firestore Nearby Route Search Error:",
+            `❌ Firestore route search failed: ${from} → ${to}`,
             error
         );
 
@@ -330,7 +193,232 @@ async function findNearbyRoutes(from, to) {
 
 
 // =====================================
-// EXPORT
+// MAIN FUNCTION
 // =====================================
+
+async function findNearbyRoutes(from, to) {
+
+    const requestedFrom =
+        normalizeCity(from);
+
+    const requestedTo =
+        normalizeCity(to);
+
+
+    // =================================
+    // VALIDATION
+    // =================================
+
+    if (
+        !requestedFrom ||
+        !requestedTo
+    ) {
+
+        console.warn(
+            "⚠️ Nearby route search: missing from/to"
+        );
+
+        return [];
+
+    }
+
+
+    console.log(
+        `📍 Nearby route search:
+        ${requestedFrom} → ${requestedTo}`
+    );
+
+
+    // =================================
+    // FIND NEARBY CITIES
+    // =================================
+
+    const nearby =
+        nearbyCities[
+            requestedFrom
+        ] || [];
+
+
+    if (
+        nearby.length === 0
+    ) {
+
+        console.log(
+            `ℹ️ No nearby-city data for ${requestedFrom}`
+        );
+
+        return [];
+
+    }
+
+
+    console.log(
+        "📍 Nearby cities:",
+        nearby
+    );
+
+
+    // =================================
+    // CHECK EACH POSSIBLE ROUTE
+    // =================================
+    //
+    // Important:
+    //
+    // We do NOT simply suggest:
+    //
+    // Rajahmundry → Anakapalle
+    //
+    // We check whether:
+    //
+    // Anakapalle → Vizag
+    //
+    // actually has an active bus.
+    //
+    // =================================
+
+    const results = [];
+
+
+    for (
+        const nearbyCity
+        of nearby
+    ) {
+
+
+        // ---------------------------------
+        // OPTION A
+        //
+        // Nearby city → requested destination
+        //
+        // Example:
+        //
+        // Anakapalle → Vizag
+        // Samalkota → Vizag
+        // ---------------------------------
+
+        const busesFromNearby =
+            await searchActiveBuses(
+                nearbyCity,
+                requestedTo
+            );
+
+
+        if (
+            busesFromNearby.length > 0
+        ) {
+
+            results.push({
+
+                from:
+                    nearbyCity,
+
+                to:
+                    requestedTo,
+
+                reason:
+                    `${nearbyCity} is near ${requestedFrom}, and active buses are available to ${requestedTo}.`,
+
+                buses:
+                    busesFromNearby
+
+            });
+
+        }
+
+
+        // ---------------------------------
+        // OPTION B
+        //
+        // Requested origin → nearby city
+        //
+        // Example:
+        //
+        // Rajahmundry → Anakapalle
+        //
+        // This is also useful when the
+        // actual bus goes toward the nearby
+        // city rather than from it.
+        // ---------------------------------
+
+        const busesToNearby =
+            await searchActiveBuses(
+                requestedFrom,
+                nearbyCity
+            );
+
+
+        if (
+            busesToNearby.length > 0
+        ) {
+
+            results.push({
+
+                from:
+                    requestedFrom,
+
+                to:
+                    nearbyCity,
+
+                reason:
+                    `Active buses are available from ${requestedFrom} to nearby ${nearbyCity}.`,
+
+                buses:
+                    busesToNearby
+
+            });
+
+        }
+
+    }
+
+
+    // =================================
+    // REMOVE DUPLICATE ROUTES
+    // =================================
+
+    const uniqueRoutes =
+        [];
+
+    const seen =
+        new Set();
+
+
+    results.forEach(
+        route => {
+
+            const key =
+                `${route.from}→${route.to}`;
+
+
+            if (
+                !seen.has(key)
+            ) {
+
+                seen.add(key);
+
+                uniqueRoutes.push(
+                    route
+                );
+
+            }
+
+        }
+    );
+
+
+    // =================================
+    // LOG FINAL RESULTS
+    // =================================
+
+    console.log(
+        "✅ Nearby routes with ACTIVE buses:",
+        uniqueRoutes
+    );
+
+
+    return uniqueRoutes;
+
+}
+
 
 export default findNearbyRoutes;
