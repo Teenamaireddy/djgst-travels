@@ -3,18 +3,15 @@
  * DJGST AI Firestore Bus Search
  * =====================================
  *
- * Searches buses directly from Firestore.
+ * Searches active buses from Firestore.
  *
  * IMPORTANT:
- * We intentionally query only ACTIVE buses
- * from Firestore and perform route matching
- * in JavaScript.
+ * We intentionally fetch active buses first
+ * and filter the route in JavaScript.
  *
- * This avoids Firestore composite-index
- * problems with:
- *
- * from + to + active
- *
+ * This avoids problems caused by compound
+ * Firestore queries/indexes and also allows
+ * flexible city-name matching.
  * =====================================
  */
 
@@ -23,79 +20,132 @@ import {
     getDocs,
     query,
     where
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 import { db } from "../../firebase-config.js";
 
 
-// =====================================
-// NORMALIZE CITY NAME
-// =====================================
+/**
+ * =====================================
+ * NORMALIZE CITY NAME
+ * =====================================
+ */
 
-function normalizeCity(city) {
+function normalizeCity(value) {
 
-    if (!city) {
-        return "";
-    }
-
-    let value =
-        String(city)
-            .trim()
-            .toLowerCase();
-
-    // Common city aliases
-    const aliases = {
-
-        "visakhapatnam": "vizag",
-        "vizag city": "vizag",
-
-        "rajahmundry city": "rajahmundry",
-        "rajamahendravaram": "rajahmundry",
-
-        "vijayawada city": "vijayawada",
-
-        "hyderabad city": "hyderabad",
-
-        "tirupati city": "tirupati",
-
-        "bangalore": "bangalore",
-        "bengaluru": "bangalore",
-
-        "chennai city": "chennai"
-
-    };
-
-    return aliases[value] || value;
+    return String(value || "")
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, " ");
 
 }
 
 
-// =====================================
-// SEARCH BUSES
-// =====================================
+/**
+ * =====================================
+ * CITY ALIASES
+ * =====================================
+ *
+ * Allows DJGST AI to understand common
+ * names such as Vizag / Visakhapatnam.
+ * =====================================
+ */
 
-async function searchBuses(memory = {}) {
+function normalizeCityForSearch(value) {
+
+    const city =
+        normalizeCity(value);
+
+
+    const aliases = {
+
+        "vizag":
+            "vizag",
+
+        "visakhapatnam":
+            "vizag",
+
+        "vizag city":
+            "vizag",
+
+        "rajahmundry":
+            "rajahmundry",
+
+        "rajamahendravaram":
+            "rajahmundry",
+
+        "vijayawada":
+            "vijayawada",
+
+        "hyderabad":
+            "hyderabad",
+
+        "tirupati":
+            "tirupati",
+
+        "chennai":
+            "chennai",
+
+        "bangalore":
+            "bangalore",
+
+        "bengaluru":
+            "bangalore",
+
+        "delhi":
+            "delhi",
+
+        "mumbai":
+            "mumbai"
+
+    };
+
+
+    return aliases[city] || city;
+
+}
+
+
+/**
+ * =====================================
+ * SEARCH BUSES
+ * =====================================
+ */
+
+async function searchBuses(memory) {
 
     try {
 
-        // ---------------------------------
-        // Requested route
-        // ---------------------------------
-
         const requestedFrom =
-            normalizeCity(
-                memory.from
+            normalizeCityForSearch(
+                memory?.from
             );
+
 
         const requestedTo =
-            normalizeCity(
-                memory.to
+            normalizeCityForSearch(
+                memory?.to
             );
 
 
-        // ---------------------------------
-        // Validate
-        // ---------------------------------
+        console.log(
+            "🔎 DJGST AI Firestore Search"
+        );
+
+        console.log(
+            "📍 Requested FROM:",
+            requestedFrom
+        );
+
+        console.log(
+            "📍 Requested TO:",
+            requestedTo
+        );
+
+
+        // =================================
+        // VALIDATION
+        // =================================
 
         if (
             !requestedFrom ||
@@ -103,11 +153,7 @@ async function searchBuses(memory = {}) {
         ) {
 
             console.warn(
-                "⚠️ Firestore Bus Search: Missing route",
-                {
-                    from: memory.from,
-                    to: memory.to
-                }
+                "⚠️ Missing FROM or TO"
             );
 
             return [];
@@ -115,31 +161,8 @@ async function searchBuses(memory = {}) {
         }
 
 
-        console.log(
-            "====================================="
-        );
-
-        console.log(
-            "🔎 DJGST AI FIRESTORE BUS SEARCH"
-        );
-
-        console.log(
-            "Requested FROM:",
-            requestedFrom
-        );
-
-        console.log(
-            "Requested TO:",
-            requestedTo
-        );
-
-        console.log(
-            "====================================="
-        );
-
-
         // =================================
-        // GET ACTIVE BUSES
+        // FIRESTORE COLLECTION
         // =================================
 
         const busesRef =
@@ -149,25 +172,19 @@ async function searchBuses(memory = {}) {
             );
 
 
-        /*
-         * IMPORTANT:
-         *
-         * We query ONLY active == true.
-         *
-         * We do NOT query:
-         *
-         * where("from", ...)
-         * where("to", ...)
-         * where("active", ...)
-         *
-         * together.
-         *
-         * This prevents composite-index problems.
-         */
+        // =================================
+        // GET ACTIVE BUSES
+        // =================================
+        //
+        // Only ONE Firestore where clause.
+        // This avoids compound-query/index
+        // problems.
+        // =================================
 
         const activeQuery =
             query(
                 busesRef,
+
                 where(
                     "active",
                     "==",
@@ -199,19 +216,17 @@ async function searchBuses(memory = {}) {
                     const data =
                         doc.data();
 
+
                     return {
 
                         id:
-                            data.id ??
-                            doc.id,
+                            data.id ?? doc.id,
 
                         name:
-                            data.name ||
-                            "Unknown Bus",
+                            data.name || "",
 
                         type:
-                            data.type ||
-                            "Bus",
+                            data.type || "",
 
                         from:
                             normalizeCity(
@@ -224,12 +239,10 @@ async function searchBuses(memory = {}) {
                             ),
 
                         departure:
-                            data.departure ||
-                            "",
+                            data.departure || "",
 
                         arrival:
-                            data.arrival ||
-                            "",
+                            data.arrival || "",
 
                         price:
                             Number(
@@ -237,7 +250,7 @@ async function searchBuses(memory = {}) {
                             ),
 
                         active:
-                            data.active !== false
+                            data.active === true
 
                     };
 
@@ -246,7 +259,7 @@ async function searchBuses(memory = {}) {
 
 
         console.log(
-            "🚌 ALL ACTIVE BUSES:",
+            "🚌 All active buses:",
             allBuses
         );
 
@@ -259,16 +272,39 @@ async function searchBuses(memory = {}) {
             allBuses.filter(
                 bus => {
 
+                    const busFrom =
+                        normalizeCityForSearch(
+                            bus.from
+                        );
+
+                    const busTo =
+                        normalizeCityForSearch(
+                            bus.to
+                        );
+
+
+                    const matchesFrom =
+                        busFrom ===
+                        requestedFrom;
+
+
+                    const matchesTo =
+                        busTo ===
+                        requestedTo;
+
+
+                    console.log(
+                        `🔍 ${busFrom} → ${busTo}`,
+                        "FROM:",
+                        matchesFrom,
+                        "TO:",
+                        matchesTo
+                    );
+
+
                     return (
-
-                        bus.active === true &&
-
-                        bus.from ===
-                            requestedFrom &&
-
-                        bus.to ===
-                            requestedTo
-
+                        matchesFrom &&
+                        matchesTo
                     );
 
                 }
@@ -276,55 +312,13 @@ async function searchBuses(memory = {}) {
 
 
         // =================================
-        // LOG RESULT
+        // RESULT
         // =================================
 
         console.log(
-            "🎯 MATCHING BUSES:",
+            `✅ Matching buses for ${requestedFrom} → ${requestedTo}:`,
             matchingBuses
         );
-
-
-        if (
-            matchingBuses.length > 0
-        ) {
-
-            console.log(
-                `✅ ${matchingBuses.length} bus(es) found for ${requestedFrom} → ${requestedTo}`
-            );
-
-        } else {
-
-            console.warn(
-                `⚠️ No active buses found for ${requestedFrom} → ${requestedTo}`
-            );
-
-            console.log(
-                "Available routes in Firestore:"
-            );
-
-
-            // Show available routes in console
-            const routeSet =
-                new Set();
-
-
-            allBuses.forEach(
-                bus => {
-
-                    routeSet.add(
-                        `${bus.from} → ${bus.to}`
-                    );
-
-                }
-            );
-
-
-            console.log(
-                Array.from(routeSet)
-            );
-
-        }
 
 
         return matchingBuses;
@@ -334,16 +328,24 @@ async function searchBuses(memory = {}) {
     catch (error) {
 
         console.error(
-            "❌ FIRESTORE BUS SEARCH FAILED"
+            "❌ DJGST AI Firestore Bus Search FAILED"
         );
 
         console.error(
+            "Error code:",
+            error?.code
+        );
+
+        console.error(
+            "Error message:",
+            error?.message
+        );
+
+        console.error(
+            "Full error:",
             error
         );
 
-
-        // Very important:
-        // Don't hide the actual Firebase error.
 
         return [];
 
@@ -352,9 +354,11 @@ async function searchBuses(memory = {}) {
 }
 
 
-// =====================================
-// EXPORT
-// =====================================
+/**
+ * =====================================
+ * EXPORT
+ * =====================================
+ */
 
 export default {
 
