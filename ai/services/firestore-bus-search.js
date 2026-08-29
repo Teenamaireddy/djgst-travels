@@ -3,8 +3,19 @@
  * DJGST AI Firestore Bus Search
  * =====================================
  *
- * Searches available buses directly
- * from Firestore.
+ * Searches buses directly from Firestore.
+ *
+ * IMPORTANT:
+ * We intentionally query only ACTIVE buses
+ * from Firestore and perform route matching
+ * in JavaScript.
+ *
+ * This avoids Firestore composite-index
+ * problems with:
+ *
+ * from + to + active
+ *
+ * =====================================
  */
 
 import {
@@ -17,29 +28,86 @@ import {
 import { db } from "../../firebase-config.js";
 
 
-async function searchBuses(memory) {
+// =====================================
+// NORMALIZE CITY NAME
+// =====================================
+
+function normalizeCity(city) {
+
+    if (!city) {
+        return "";
+    }
+
+    let value =
+        String(city)
+            .trim()
+            .toLowerCase();
+
+    // Common city aliases
+    const aliases = {
+
+        "visakhapatnam": "vizag",
+        "vizag city": "vizag",
+
+        "rajahmundry city": "rajahmundry",
+        "rajamahendravaram": "rajahmundry",
+
+        "vijayawada city": "vijayawada",
+
+        "hyderabad city": "hyderabad",
+
+        "tirupati city": "tirupati",
+
+        "bangalore": "bangalore",
+        "bengaluru": "bangalore",
+
+        "chennai city": "chennai"
+
+    };
+
+    return aliases[value] || value;
+
+}
+
+
+// =====================================
+// SEARCH BUSES
+// =====================================
+
+async function searchBuses(memory = {}) {
 
     try {
 
-        const from =
-            String(memory.from || "")
-                .trim()
-                .toLowerCase();
+        // ---------------------------------
+        // Requested route
+        // ---------------------------------
 
-        const to =
-            String(memory.to || "")
-                .trim()
-                .toLowerCase();
+        const requestedFrom =
+            normalizeCity(
+                memory.from
+            );
+
+        const requestedTo =
+            normalizeCity(
+                memory.to
+            );
 
 
         // ---------------------------------
-        // Validate route
+        // Validate
         // ---------------------------------
 
-        if (!from || !to) {
+        if (
+            !requestedFrom ||
+            !requestedTo
+        ) {
 
             console.warn(
-                "⚠️ Firestore Bus Search: Missing from/to"
+                "⚠️ Firestore Bus Search: Missing route",
+                {
+                    from: memory.from,
+                    to: memory.to
+                }
             );
 
             return [];
@@ -48,13 +116,31 @@ async function searchBuses(memory) {
 
 
         console.log(
-            `🔎 Firestore Bus Search: ${from} → ${to}`
+            "====================================="
+        );
+
+        console.log(
+            "🔎 DJGST AI FIRESTORE BUS SEARCH"
+        );
+
+        console.log(
+            "Requested FROM:",
+            requestedFrom
+        );
+
+        console.log(
+            "Requested TO:",
+            requestedTo
+        );
+
+        console.log(
+            "====================================="
         );
 
 
-        // ---------------------------------
-        // Firestore Query
-        // ---------------------------------
+        // =================================
+        // GET ACTIVE BUSES
+        // =================================
 
         const busesRef =
             collection(
@@ -63,22 +149,25 @@ async function searchBuses(memory) {
             );
 
 
-        const q =
+        /*
+         * IMPORTANT:
+         *
+         * We query ONLY active == true.
+         *
+         * We do NOT query:
+         *
+         * where("from", ...)
+         * where("to", ...)
+         * where("active", ...)
+         *
+         * together.
+         *
+         * This prevents composite-index problems.
+         */
+
+        const activeQuery =
             query(
                 busesRef,
-
-                where(
-                    "from",
-                    "==",
-                    from
-                ),
-
-                where(
-                    "to",
-                    "==",
-                    to
-                ),
-
                 where(
                     "active",
                     "==",
@@ -88,15 +177,22 @@ async function searchBuses(memory) {
 
 
         const snapshot =
-            await getDocs(q);
+            await getDocs(
+                activeQuery
+            );
 
 
-        // ---------------------------------
-        // Convert Firestore documents
-        // into normal JS bus objects
-        // ---------------------------------
+        console.log(
+            "📦 Firestore documents:",
+            snapshot.size
+        );
 
-        const buses =
+
+        // =================================
+        // CONVERT FIRESTORE DATA
+        // =================================
+
+        const allBuses =
             snapshot.docs.map(
                 doc => {
 
@@ -106,28 +202,39 @@ async function searchBuses(memory) {
                     return {
 
                         id:
-                            data.id ?? doc.id,
+                            data.id ??
+                            doc.id,
 
                         name:
-                            data.name || "",
+                            data.name ||
+                            "Unknown Bus",
 
                         type:
-                            data.type || "",
+                            data.type ||
+                            "Bus",
 
                         from:
-                            data.from || "",
+                            normalizeCity(
+                                data.from
+                            ),
 
                         to:
-                            data.to || "",
+                            normalizeCity(
+                                data.to
+                            ),
 
                         departure:
-                            data.departure || "",
+                            data.departure ||
+                            "",
 
                         arrival:
-                            data.arrival || "",
+                            data.arrival ||
+                            "",
 
                         price:
-                            data.price ?? 0,
+                            Number(
+                                data.price ?? 0
+                            ),
 
                         active:
                             data.active !== false
@@ -139,21 +246,104 @@ async function searchBuses(memory) {
 
 
         console.log(
-            "🚌 Firestore buses found:",
-            buses
+            "🚌 ALL ACTIVE BUSES:",
+            allBuses
         );
 
 
-        return buses;
+        // =================================
+        // FILTER REQUESTED ROUTE
+        // =================================
+
+        const matchingBuses =
+            allBuses.filter(
+                bus => {
+
+                    return (
+
+                        bus.active === true &&
+
+                        bus.from ===
+                            requestedFrom &&
+
+                        bus.to ===
+                            requestedTo
+
+                    );
+
+                }
+            );
+
+
+        // =================================
+        // LOG RESULT
+        // =================================
+
+        console.log(
+            "🎯 MATCHING BUSES:",
+            matchingBuses
+        );
+
+
+        if (
+            matchingBuses.length > 0
+        ) {
+
+            console.log(
+                `✅ ${matchingBuses.length} bus(es) found for ${requestedFrom} → ${requestedTo}`
+            );
+
+        } else {
+
+            console.warn(
+                `⚠️ No active buses found for ${requestedFrom} → ${requestedTo}`
+            );
+
+            console.log(
+                "Available routes in Firestore:"
+            );
+
+
+            // Show available routes in console
+            const routeSet =
+                new Set();
+
+
+            allBuses.forEach(
+                bus => {
+
+                    routeSet.add(
+                        `${bus.from} → ${bus.to}`
+                    );
+
+                }
+            );
+
+
+            console.log(
+                Array.from(routeSet)
+            );
+
+        }
+
+
+        return matchingBuses;
 
     }
 
     catch (error) {
 
         console.error(
-            "❌ Firestore Bus Search Error:",
+            "❌ FIRESTORE BUS SEARCH FAILED"
+        );
+
+        console.error(
             error
         );
+
+
+        // Very important:
+        // Don't hide the actual Firebase error.
 
         return [];
 
@@ -162,6 +352,13 @@ async function searchBuses(memory) {
 }
 
 
+// =====================================
+// EXPORT
+// =====================================
+
 export default {
-    search: searchBuses
+
+    search:
+        searchBuses
+
 };
