@@ -4,14 +4,35 @@
  * Firestore Nearby Route Search
  * =====================================
  *
- * Finds nearby alternative routes ONLY
- * when Firestore confirms that an ACTIVE
- * bus exists on that route.
+ * PURPOSE:
  *
- * The buses found here are returned along
- * with the route so AI does not need to
- * search Firestore again after the user
- * selects a route.
+ * Finds suitable nearby alternative routes
+ * ONLY when active buses actually exist
+ * in Firestore.
+ *
+ * Example:
+ *
+ * Rajahmundry → Vizag
+ *
+ * No direct bus
+ *        ↓
+ * Check nearby cities
+ *        ↓
+ * Anakapalle → Vizag
+ * Samalkota → Vizag
+ *        ↓
+ * Check Firestore
+ *        ↓
+ * Suggest ONLY routes with active buses.
+ *
+ * IMPORTANT:
+ *
+ * All bus documents remain inside:
+ *
+ *      busRoutes
+ *
+ * We do NOT need a separate alternativeRoutes
+ * collection.
  * =====================================
  */
 
@@ -27,6 +48,13 @@ import { db } from "../../firebase-config.js";
 
 // =====================================
 // KNOWN NEARBY CITY RELATIONSHIPS
+// =====================================
+//
+// These describe geographical alternatives.
+//
+// Firestore decides whether an actual bus
+// exists.
+//
 // =====================================
 
 const nearbyCities = {
@@ -56,7 +84,7 @@ const nearbyCities = {
 
 
 // =====================================
-// NORMALIZE
+// NORMALIZE CITY
 // =====================================
 
 function normalizeCity(city) {
@@ -71,10 +99,40 @@ function normalizeCity(city) {
 // =====================================
 // SEARCH ACTIVE BUSES
 // =====================================
+//
+// IMPORTANT CHANGE:
+//
+// We query ACTIVE buses first.
+//
+// Then we normalize "from" and "to"
+// ourselves.
+//
+// This means:
+//
+// "Anakapalle"
+// "anakapalle"
+// " ANAKAPALLE "
+//
+// can all be recognized correctly.
+//
+// =====================================
 
 async function searchActiveBuses(from, to) {
 
+    const requestedFrom =
+        normalizeCity(from);
+
+    const requestedTo =
+        normalizeCity(to);
+
+
     try {
+
+        console.log(
+            `🔎 Checking Firestore:
+${requestedFrom} → ${requestedTo}`
+        );
+
 
         const busesRef =
             collection(
@@ -83,29 +141,19 @@ async function searchActiveBuses(from, to) {
             );
 
 
+        // ---------------------------------
+        // Get active buses
+        // ---------------------------------
+
         const q =
             query(
-
                 busesRef,
-
-                where(
-                    "from",
-                    "==",
-                    from
-                ),
-
-                where(
-                    "to",
-                    "==",
-                    to
-                ),
 
                 where(
                     "active",
                     "==",
                     true
                 )
-
             );
 
 
@@ -113,57 +161,86 @@ async function searchActiveBuses(from, to) {
             await getDocs(q);
 
 
-        return snapshot.docs.map(
-            doc => {
-
-                const data =
-                    doc.data();
-
-
-                return {
-
-                    id:
-                        data.id ?? doc.id,
-
-                    name:
-                        data.name || "",
-
-                    type:
-                        data.type || "",
-
-                    from:
-                        normalizeCity(
-                            data.from
-                        ),
-
-                    to:
-                        normalizeCity(
-                            data.to
-                        ),
-
-                    departure:
-                        data.departure || "",
-
-                    arrival:
-                        data.arrival || "",
-
-                    price:
-                        data.price ?? 0,
-
-                    active:
-                        data.active !== false
-
-                };
-
-            }
+        console.log(
+            `📦 Active bus documents found: ${snapshot.size}`
         );
+
+
+        // ---------------------------------
+        // Normalize + filter locally
+        // ---------------------------------
+
+        const matchingBuses =
+            snapshot.docs
+                .map(doc => {
+
+                    const data =
+                        doc.data();
+
+
+                    return {
+
+                        id:
+                            data.id ?? doc.id,
+
+                        name:
+                            data.name || "",
+
+                        type:
+                            data.type || "",
+
+                        from:
+                            normalizeCity(
+                                data.from
+                            ),
+
+                        to:
+                            normalizeCity(
+                                data.to
+                            ),
+
+                        departure:
+                            data.departure || "",
+
+                        arrival:
+                            data.arrival || "",
+
+                        price:
+                            Number(
+                                data.price ?? 0
+                            ),
+
+                        active:
+                            data.active !== false
+
+                    };
+
+                })
+                .filter(bus => {
+
+                    return (
+                        bus.from === requestedFrom &&
+                        bus.to === requestedTo &&
+                        bus.active === true
+                    );
+
+                });
+
+
+        console.log(
+            `🚌 Matching buses for ${requestedFrom} → ${requestedTo}:`,
+            matchingBuses
+        );
+
+
+        return matchingBuses;
 
     }
 
     catch (error) {
 
         console.error(
-            `❌ Firestore nearby bus search failed: ${from} → ${to}`,
+            "❌ Firestore nearby bus search failed:",
             error
         );
 
@@ -187,10 +264,18 @@ async function findNearbyRoutes(from, to) {
         normalizeCity(to);
 
 
+    // =================================
+    // VALIDATION
+    // =================================
+
     if (
         !requestedFrom ||
         !requestedTo
     ) {
+
+        console.warn(
+            "⚠️ Nearby route search: missing from/to"
+        );
 
         return [];
 
@@ -199,9 +284,13 @@ async function findNearbyRoutes(from, to) {
 
     console.log(
         `📍 Searching nearby alternatives:
-        ${requestedFrom} → ${requestedTo}`
+${requestedFrom} → ${requestedTo}`
     );
 
+
+    // =================================
+    // FIND NEARBY CITIES
+    // =================================
 
     const nearby =
         nearbyCities[
@@ -214,7 +303,7 @@ async function findNearbyRoutes(from, to) {
     ) {
 
         console.log(
-            `ℹ️ No nearby cities known for ${requestedFrom}`
+            `ℹ️ No nearby-city relationships for ${requestedFrom}`
         );
 
         return [];
@@ -222,26 +311,36 @@ async function findNearbyRoutes(from, to) {
     }
 
 
+    console.log(
+        "📍 Nearby cities:",
+        nearby
+    );
+
+
+    // =================================
+    // SEARCH POSSIBLE ALTERNATIVES
+    // =================================
+
     const results = [];
 
-
-    // =====================================
-    // CHECK EVERY NEARBY CITY
-    // =====================================
 
     for (
         const nearbyCity
         of nearby
     ) {
 
-        // ---------------------------------
+
+        // =================================
         // OPTION A
         //
-        // Nearby city → destination
+        // nearby city → destination
         //
         // Example:
+        //
         // Anakapalle → Vizag
-        // ---------------------------------
+        //
+        // Samalkota → Vizag
+        // =================================
 
         const busesFromNearby =
             await searchActiveBuses(
@@ -263,7 +362,7 @@ async function findNearbyRoutes(from, to) {
                     requestedTo,
 
                 reason:
-                    `${nearbyCity} is near ${requestedFrom}.`,
+                    `${nearbyCity} is near ${requestedFrom}, and active buses are available to ${requestedTo}.`,
 
                 buses:
                     busesFromNearby
@@ -273,14 +372,15 @@ async function findNearbyRoutes(from, to) {
         }
 
 
-        // ---------------------------------
+        // =================================
         // OPTION B
         //
-        // Origin → nearby city
+        // origin → nearby city
         //
         // Example:
+        //
         // Rajahmundry → Anakapalle
-        // ---------------------------------
+        // =================================
 
         const busesToNearby =
             await searchActiveBuses(
@@ -302,7 +402,7 @@ async function findNearbyRoutes(from, to) {
                     nearbyCity,
 
                 reason:
-                    `Buses are available from ${requestedFrom} to nearby ${nearbyCity}.`,
+                    `Active buses are available from ${requestedFrom} to nearby ${nearbyCity}.`,
 
                 buses:
                     busesToNearby
@@ -314,40 +414,40 @@ async function findNearbyRoutes(from, to) {
     }
 
 
-    // =====================================
+    // =================================
     // REMOVE DUPLICATES
-    // =====================================
+    // =================================
 
     const uniqueRoutes = [];
 
     const seen = new Set();
 
 
-    results.forEach(
-        route => {
+    results.forEach(route => {
 
-            const key =
-                `${route.from}→${route.to}`;
+        const key =
+            `${normalizeCity(route.from)}→${normalizeCity(route.to)}`;
 
 
-            if (
-                !seen.has(key)
-            ) {
+        if (
+            !seen.has(key)
+        ) {
 
-                seen.add(key);
+            seen.add(key);
 
-                uniqueRoutes.push(
-                    route
-                );
-
-            }
+            uniqueRoutes.push(route);
 
         }
-    );
 
+    });
+
+
+    // =================================
+    // FINAL RESULT
+    // =================================
 
     console.log(
-        "✅ Nearby routes with verified buses:",
+        "✅ Nearby routes with ACTIVE buses:",
         uniqueRoutes
     );
 
@@ -356,5 +456,9 @@ async function findNearbyRoutes(from, to) {
 
 }
 
+
+// =====================================
+// EXPORT
+// =====================================
 
 export default findNearbyRoutes;
