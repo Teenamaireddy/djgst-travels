@@ -1,19 +1,17 @@
 /**
  * =====================================
- * DJGST AI Firestore Nearby Route Search
+ * DJGST AI
+ * Firestore Nearby Route Search
  * =====================================
  *
- * Finds nearby alternative routes by:
+ * Finds nearby alternative routes ONLY
+ * when Firestore confirms that an ACTIVE
+ * bus exists on that route.
  *
- * 1. Checking our known nearby-city
- *    relationships.
- *
- * 2. Checking Firestore to make sure
- *    an ACTIVE bus actually exists
- *    on that alternative route.
- *
- * Therefore AI never suggests a route
- * that has no available bus.
+ * The buses found here are returned along
+ * with the route so AI does not need to
+ * search Firestore again after the user
+ * selects a route.
  * =====================================
  */
 
@@ -30,22 +28,6 @@ import { db } from "../../firebase-config.js";
 // =====================================
 // KNOWN NEARBY CITY RELATIONSHIPS
 // =====================================
-//
-// These are geographical relationships.
-// Firestore decides whether buses actually
-// exist for the suggested route.
-//
-// Example:
-//
-// Rajahmundry
-//      ↓
-// Anakapalle
-// Samalkota
-//
-// Gadarada
-//      ↓
-// Narasapuram
-//
 
 const nearbyCities = {
 
@@ -74,7 +56,7 @@ const nearbyCities = {
 
 
 // =====================================
-// NORMALIZE CITY NAME
+// NORMALIZE
 // =====================================
 
 function normalizeCity(city) {
@@ -87,7 +69,7 @@ function normalizeCity(city) {
 
 
 // =====================================
-// SEARCH FIRESTORE FOR ACTIVE BUSES
+// SEARCH ACTIVE BUSES
 // =====================================
 
 async function searchActiveBuses(from, to) {
@@ -181,7 +163,7 @@ async function searchActiveBuses(from, to) {
     catch (error) {
 
         console.error(
-            `❌ Firestore route search failed: ${from} → ${to}`,
+            `❌ Firestore nearby bus search failed: ${from} → ${to}`,
             error
         );
 
@@ -205,18 +187,10 @@ async function findNearbyRoutes(from, to) {
         normalizeCity(to);
 
 
-    // =================================
-    // VALIDATION
-    // =================================
-
     if (
         !requestedFrom ||
         !requestedTo
     ) {
-
-        console.warn(
-            "⚠️ Nearby route search: missing from/to"
-        );
 
         return [];
 
@@ -224,14 +198,10 @@ async function findNearbyRoutes(from, to) {
 
 
     console.log(
-        `📍 Nearby route search:
+        `📍 Searching nearby alternatives:
         ${requestedFrom} → ${requestedTo}`
     );
 
-
-    // =================================
-    // FIND NEARBY CITIES
-    // =================================
 
     const nearby =
         nearbyCities[
@@ -244,7 +214,7 @@ async function findNearbyRoutes(from, to) {
     ) {
 
         console.log(
-            `ℹ️ No nearby-city data for ${requestedFrom}`
+            `ℹ️ No nearby cities known for ${requestedFrom}`
         );
 
         return [];
@@ -252,48 +222,25 @@ async function findNearbyRoutes(from, to) {
     }
 
 
-    console.log(
-        "📍 Nearby cities:",
-        nearby
-    );
-
-
-    // =================================
-    // CHECK EACH POSSIBLE ROUTE
-    // =================================
-    //
-    // Important:
-    //
-    // We do NOT simply suggest:
-    //
-    // Rajahmundry → Anakapalle
-    //
-    // We check whether:
-    //
-    // Anakapalle → Vizag
-    //
-    // actually has an active bus.
-    //
-    // =================================
-
     const results = [];
 
+
+    // =====================================
+    // CHECK EVERY NEARBY CITY
+    // =====================================
 
     for (
         const nearbyCity
         of nearby
     ) {
 
-
         // ---------------------------------
         // OPTION A
         //
-        // Nearby city → requested destination
+        // Nearby city → destination
         //
         // Example:
-        //
         // Anakapalle → Vizag
-        // Samalkota → Vizag
         // ---------------------------------
 
         const busesFromNearby =
@@ -316,7 +263,7 @@ async function findNearbyRoutes(from, to) {
                     requestedTo,
 
                 reason:
-                    `${nearbyCity} is near ${requestedFrom}, and active buses are available to ${requestedTo}.`,
+                    `${nearbyCity} is near ${requestedFrom}.`,
 
                 buses:
                     busesFromNearby
@@ -329,15 +276,10 @@ async function findNearbyRoutes(from, to) {
         // ---------------------------------
         // OPTION B
         //
-        // Requested origin → nearby city
+        // Origin → nearby city
         //
         // Example:
-        //
         // Rajahmundry → Anakapalle
-        //
-        // This is also useful when the
-        // actual bus goes toward the nearby
-        // city rather than from it.
         // ---------------------------------
 
         const busesToNearby =
@@ -360,7 +302,7 @@ async function findNearbyRoutes(from, to) {
                     nearbyCity,
 
                 reason:
-                    `Active buses are available from ${requestedFrom} to nearby ${nearbyCity}.`,
+                    `Buses are available from ${requestedFrom} to nearby ${nearbyCity}.`,
 
                 buses:
                     busesToNearby
@@ -372,15 +314,13 @@ async function findNearbyRoutes(from, to) {
     }
 
 
-    // =================================
-    // REMOVE DUPLICATE ROUTES
-    // =================================
+    // =====================================
+    // REMOVE DUPLICATES
+    // =====================================
 
-    const uniqueRoutes =
-        [];
+    const uniqueRoutes = [];
 
-    const seen =
-        new Set();
+    const seen = new Set();
 
 
     results.forEach(
@@ -406,12 +346,8 @@ async function findNearbyRoutes(from, to) {
     );
 
 
-    // =================================
-    // LOG FINAL RESULTS
-    // =================================
-
     console.log(
-        "✅ Nearby routes with ACTIVE buses:",
+        "✅ Nearby routes with verified buses:",
         uniqueRoutes
     );
 
