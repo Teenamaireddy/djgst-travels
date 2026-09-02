@@ -5,63 +5,75 @@
  * =====================================
  */
 
-import findNearbyRoutes from "../services/firestore-nearby-route-search.js";
-import selectBus from "../actions/select-bus.js";
-import busSearch from "../services/firestore-bus-search.js";
+import findNearbyRoutes
+    from "../services/firestore-nearby-route-search.js";
 
-import intentEngine from "./intent-engine.js";
-import entityEngine from "./entity-engine.js";
-import slotEngine from "../slots/slot-engine.js";
-import memoryStore from "../memory/memory-store.js";
-import parseBus from "../utils/bus-parser.js";
+import busSearch
+    from "../services/firestore-bus-search.js";
+
+import intentEngine
+    from "./intent-engine.js";
+
+import entityEngine
+    from "./entity-engine.js";
+
+import slotEngine
+    from "../slots/slot-engine.js";
+
+import memoryStore
+    from "../memory/memory-store.js";
+
+import parseBus
+    from "../utils/bus-parser.js";
 
 
 class DJGSTAI {
 
     constructor() {
 
-        console.log("🧠 DJGST AI Initialized");
+        console.log(
+            "🧠 DJGST AI Initialized"
+        );
 
     }
 
 
     async process(userMessage) {
 
-        console.log("👤 User:", userMessage);
+        console.log(
+            "👤 User:",
+            userMessage
+        );
+
 
         // =====================================
-        // STEP 0 : CURRENT MEMORY
+        // STEP 0
+        // CURRENT MEMORY
         // =====================================
 
         let memory =
             memoryStore.getAll();
 
+
         const trimmedMessage =
-            String(userMessage || "").trim();
+            String(
+                userMessage || ""
+            ).trim();
+
 
         const lowerMessage =
             trimmedMessage.toLowerCase();
 
 
         // =====================================
-        // STEP 1 : NEARBY ROUTE CONFIRMATION
-        // =====================================
-        //
-        // Example:
-        //
-        // AI:
-        // "I found nearby route options.
-        //  Would you like me to search them?"
-        //
-        // User:
-        // "yes please"
-        //
-        // Then we show the numbered routes.
-        //
+        // STEP 1
+        // NEARBY ROUTE CONFIRMATION
         // =====================================
 
         const pendingRoutes =
-            memoryStore.get("pendingNearbyRoutes");
+            memoryStore.get(
+                "pendingNearbyRoutes"
+            );
 
 
         const confirmationWords = [
@@ -95,7 +107,9 @@ class DJGSTAI {
 
         if (
             wantsNearbyRoutes &&
-            Array.isArray(pendingRoutes) &&
+            Array.isArray(
+                pendingRoutes
+            ) &&
             pendingRoutes.length > 0
         ) {
 
@@ -148,35 +162,28 @@ class DJGSTAI {
 
 
         // =====================================
-        // STEP 2 : NEARBY ROUTE NUMBER SELECTION
-        // =====================================
-        //
-        // IMPORTANT:
-        //
-        // If bookingStage is
-        // "nearby_route_selection",
-        //
-        // then "1" means ROUTE #1.
-        //
-        // It must NOT be interpreted
-        // as BUS #1.
-        //
+        // STEP 2
+        // NEARBY ROUTE NUMBER SELECTION
         // =====================================
 
         if (
-            memoryStore.get("bookingStage") ===
+            memoryStore.get(
+                "bookingStage"
+            ) ===
             "nearby_route_selection"
         ) {
 
             const routes =
-                Array.isArray(pendingRoutes)
+                Array.isArray(
+                    pendingRoutes
+                )
                     ? pendingRoutes
                     : [];
 
 
-            // ---------------------------------
-            // User selected a route number
-            // ---------------------------------
+            // =================================
+            // USER SELECTED ROUTE NUMBER
+            // =================================
 
             if (
                 /^[1-9]\d*$/.test(
@@ -185,94 +192,124 @@ class DJGSTAI {
             ) {
 
                 const routeNumber =
-                    Number(trimmedMessage);
+                    Number(
+                        trimmedMessage
+                    );
 
+
+                // =================================
+                // INVALID ROUTE NUMBER
+                // =================================
 
                 if (
-                    routeNumber >= 1 &&
-                    routeNumber <= routes.length
+                    routeNumber < 1 ||
+                    routeNumber > routes.length
                 ) {
 
-                    const selectedRoute =
-                        routes[
-                            routeNumber - 1
-                        ];
+                    return {
+
+                        intent: {
+                            intent:
+                                "select_nearby_route"
+                        },
+
+                        entities: {},
+
+                        memory:
+                            memoryStore.getAll(),
+
+                        reply:
+`❌ Invalid route number.
+
+Please choose a number from 1 to ${routes.length}.`
+
+                    };
+
+                }
 
 
-                    console.log(
-                        "📍 Selected nearby route:",
-                        selectedRoute
-                    );
+                // =================================
+                // GET SELECTED ROUTE
+                // =================================
+
+                const selectedRoute =
+                    routes[
+                        routeNumber - 1
+                    ];
 
 
-                    // ---------------------------------
-                    // Save selected route
-                    // ---------------------------------
+                console.log(
+                    "📍 Selected nearby route:",
+                    selectedRoute
+                );
+
+
+                // =================================
+                // SAVE SELECTED ROUTE
+                // =================================
+
+                memoryStore.save(
+                    "from",
+                    selectedRoute.from
+                );
+
+
+                memoryStore.save(
+                    "to",
+                    selectedRoute.to
+                );
+
+
+                // =================================
+                // CLEAR OLD ALTERNATIVES
+                // =================================
+
+                memoryStore.save(
+                    "pendingNearbyRoutes",
+                    []
+                );
+
+
+                // =================================
+                // USE THE BUSES ALREADY VERIFIED
+                // BY FIRESTORE-NEARBY-ROUTE-SEARCH
+                // =================================
+
+                const buses =
+                    Array.isArray(
+                        selectedRoute.buses
+                    )
+                        ? selectedRoute.buses
+                        : [];
+
+
+                // =================================
+                // SAFETY CHECK
+                // =================================
+
+                if (
+                    buses.length === 0
+                ) {
 
                     memoryStore.save(
-                        "from",
-                        selectedRoute.from
+                        "bookingStage",
+                        "start"
                     );
 
 
-                    memoryStore.save(
-                        "to",
-                        selectedRoute.to
-                    );
+                    return {
 
+                        intent: {
+                            intent:
+                                "select_nearby_route"
+                        },
 
-                    // ---------------------------------
-                    // Clear old suggestions
-                    // ---------------------------------
+                        entities: {},
 
-                    memoryStore.save(
-                        "pendingNearbyRoutes",
-                        []
-                    );
+                        memory:
+                            memoryStore.getAll(),
 
-
-                    // ---------------------------------
-                    // Search buses for selected route
-                    // ---------------------------------
-
-                    const routeMemory =
-                        memoryStore.getAll();
-
-
-                    const buses =
-                        await busSearch.search(
-                            routeMemory
-                        );
-
-
-                    // ---------------------------------
-                    // Safety check
-                    // ---------------------------------
-
-                    if (
-                        !Array.isArray(buses) ||
-                        buses.length === 0
-                    ) {
-
-                        memoryStore.save(
-                            "bookingStage",
-                            "start"
-                        );
-
-
-                        return {
-
-                            intent: {
-                                intent:
-                                    "select_nearby_route"
-                            },
-
-                            entities: {},
-
-                            memory:
-                                memoryStore.getAll(),
-
-                            reply:
+                        reply:
 `😔 Sorry!
 
 I couldn't find buses for:
@@ -282,50 +319,49 @@ I couldn't find buses for:
 
 Let's try another route.`
 
-                        };
+                    };
 
-                    }
-
-
-                    // ---------------------------------
-                    // Save buses
-                    // ---------------------------------
-
-                    memoryStore.save(
-                        "availableBuses",
-                        buses
-                    );
+                }
 
 
-                    // ---------------------------------
-                    // Move to BUS selection
-                    // ---------------------------------
+                // =================================
+                // SAVE VERIFIED BUSES
+                // =================================
 
-                    memoryStore.save(
-                        "bookingStage",
-                        "bus_selection"
-                    );
+                memoryStore.save(
+                    "availableBuses",
+                    buses
+                );
 
 
-                    // ---------------------------------
-                    // Display buses
-                    // ---------------------------------
+                // =================================
+                // MOVE TO BUS SELECTION
+                // =================================
 
-                    let reply =
+                memoryStore.save(
+                    "bookingStage",
+                    "bus_selection"
+                );
+
+
+                // =================================
+                // DISPLAY VERIFIED BUSES
+                // =================================
+
+                let reply =
 `✅ Route selected!
 
-📍 ${selectedRoute.from}
-➜ ${selectedRoute.to}
+📍 ${selectedRoute.from} ➜ ${selectedRoute.to}
 
 🚌 I found ${buses.length} buses:
 
 `;
 
 
-                    buses.forEach(
-                        (bus, index) => {
+                buses.forEach(
+                    (bus, index) => {
 
-                            reply +=
+                        reply +=
 `${index + 1}. ${bus.name}
 🛏 ${bus.type}
 🕒 ${bus.departure} → ${bus.arrival}
@@ -333,11 +369,11 @@ Let's try another route.`
 
 `;
 
-                        }
-                    );
+                    }
+                );
 
 
-                    reply +=
+                reply +=
 `Reply with:
 
 • Bus number
@@ -350,34 +386,11 @@ Orange Travels
 Book VRL`;
 
 
-                    return {
-
-                        intent: {
-                            intent:
-                                "book_ticket"
-                        },
-
-                        entities: {},
-
-                        memory:
-                            memoryStore.getAll(),
-
-                        reply
-
-                    };
-
-                }
-
-
-                // ---------------------------------
-                // Invalid route number
-                // ---------------------------------
-
                 return {
 
                     intent: {
                         intent:
-                            "select_nearby_route"
+                            "book_ticket"
                     },
 
                     entities: {},
@@ -385,19 +398,16 @@ Book VRL`;
                     memory:
                         memoryStore.getAll(),
 
-                    reply:
-`❌ Invalid route number.
-
-Please choose a number from 1 to ${routes.length}.`
+                    reply
 
                 };
 
             }
 
 
-            // ---------------------------------
-            // User did not give a number
-            // ---------------------------------
+            // =================================
+            // USER DID NOT SELECT NUMBER
+            // =================================
 
             return {
 
@@ -422,28 +432,20 @@ Reply with a number from 1 to ${routes.length}.`
 
 
         // =====================================
-        // STEP 3 : BUS SELECTION
-        // =====================================
-        //
-        // This section runs ONLY when:
-        //
-        // bookingStage === "bus_selection"
-        //
-        // Therefore:
-        //
-        // 1 = bus #1
-        // 2 = bus #2
-        //
+        // STEP 3
+        // BUS SELECTION
         // =====================================
 
         if (
-            memoryStore.get("bookingStage") ===
+            memoryStore.get(
+                "bookingStage"
+            ) ===
             "bus_selection"
         ) {
 
 
             // =================================
-            // 3A : BUS NUMBER SELECTION
+            // BUS NUMBER
             // =================================
 
             if (
@@ -459,7 +461,9 @@ Reply with a number from 1 to ${routes.length}.`
                     );
 
 
-                if (!selectedBus) {
+                if (
+                    !selectedBus
+                ) {
 
                     return {
 
@@ -489,19 +493,11 @@ Please choose a valid bus.`
                 );
 
 
-                // ---------------------------------
-                // Save selected bus
-                // ---------------------------------
-
                 memoryStore.save(
                     "selectedBus",
                     selectedBus
                 );
 
-
-                // ---------------------------------
-                // Move to seat selection
-                // ---------------------------------
 
                 memoryStore.save(
                     "bookingStage",
@@ -534,7 +530,7 @@ Please choose a valid bus.`
 
 
             // =================================
-            // 3B : BUS NAME SELECTION
+            // BUS NAME
             // =================================
 
             const selectedBusByName =
@@ -554,19 +550,11 @@ Please choose a valid bus.`
                 );
 
 
-                // ---------------------------------
-                // Save selected bus
-                // ---------------------------------
-
                 memoryStore.save(
                     "selectedBus",
                     selectedBusByName
                 );
 
-
-                // ---------------------------------
-                // Move to seat selection
-                // ---------------------------------
 
                 memoryStore.save(
                     "bookingStage",
@@ -599,9 +587,9 @@ Please choose a valid bus.`
             }
 
 
-            // ---------------------------------
-            // User is still selecting a bus
-            // ---------------------------------
+            // =================================
+            // STILL WAITING FOR BUS SELECTION
+            // =================================
 
             return {
 
@@ -633,7 +621,8 @@ Book VRL`
 
 
         // =====================================
-        // STEP 4 : YES = USE PREVIOUS DATE
+        // STEP 4
+        // YES = USE PREVIOUS DATE
         // =====================================
 
         if (
@@ -648,7 +637,8 @@ Book VRL`
 
 
         // =====================================
-        // STEP 5 : DETECT INTENT
+        // STEP 5
+        // DETECT INTENT
         // =====================================
 
         let intent =
@@ -689,7 +679,8 @@ Book VRL`
 
 
         // =====================================
-        // STEP 6 : EXTRACT ENTITIES
+        // STEP 6
+        // EXTRACT ENTITIES
         // =====================================
 
         const entities =
@@ -705,7 +696,8 @@ Book VRL`
 
 
         // =====================================
-        // STEP 7 : SAVE ENTITIES
+        // STEP 7
+        // SAVE ENTITIES
         // =====================================
 
         Object.entries(
@@ -737,7 +729,8 @@ Book VRL`
 
 
         // =====================================
-        // STEP 8 : SLOT CHECKING
+        // STEP 8
+        // SLOT CHECKING
         // =====================================
 
         const slotResult =
@@ -754,11 +747,6 @@ Book VRL`
             switch (
                 slotResult.missing
             ) {
-
-
-                // ---------------------------------
-                // TRANSPORT
-                // ---------------------------------
 
                 case "transport":
 
@@ -778,10 +766,6 @@ Bus, Train or Flight?`
                     };
 
 
-                // ---------------------------------
-                // FROM
-                // ---------------------------------
-
                 case "from":
 
                     return {
@@ -798,10 +782,6 @@ Bus, Train or Flight?`
                     };
 
 
-                // ---------------------------------
-                // TO
-                // ---------------------------------
-
                 case "to":
 
                     return {
@@ -817,10 +797,6 @@ Bus, Train or Flight?`
 
                     };
 
-
-                // ---------------------------------
-                // DATE
-                // ---------------------------------
 
                 case "date":
 
@@ -843,7 +819,8 @@ Bus, Train or Flight?`
 
 
         // =====================================
-        // STEP 9 : BOOKING
+        // STEP 9
+        // BOOKING
         // =====================================
 
         if (
@@ -865,9 +842,9 @@ Bus, Train or Flight?`
             ) {
 
 
-                // ---------------------------------
+                // =================================
                 // SEARCH FIRESTORE
-                // ---------------------------------
+                // =================================
 
                 const buses =
                     await busSearch.search(
@@ -884,16 +861,15 @@ Bus, Train or Flight?`
                     buses.length === 0
                 ) {
 
-
                     console.log(
                         `❌ No direct buses:
 ${currentMemory.from} → ${currentMemory.to}`
                     );
 
 
-                    // ---------------------------------
-                    // SEARCH NEARBY ROUTES
-                    // ---------------------------------
+                    // =================================
+                    // SEARCH VERIFIED ALTERNATIVES
+                    // =================================
 
                     const nearbyRoutes =
                         await findNearbyRoutes(
@@ -902,26 +878,23 @@ ${currentMemory.from} → ${currentMemory.to}`
                         );
 
 
-                    // ---------------------------------
+                    // =================================
                     // ALTERNATIVES FOUND
-                    // ---------------------------------
+                    // =================================
 
                     if (
-                        Array.isArray(nearbyRoutes) &&
+                        Array.isArray(
+                            nearbyRoutes
+                        ) &&
                         nearbyRoutes.length > 0
                     ) {
 
 
-                        // Save alternatives
                         memoryStore.save(
                             "pendingNearbyRoutes",
                             nearbyRoutes
                         );
 
-
-                        // ---------------------------------
-                        // Reset selection stage
-                        // ---------------------------------
 
                         memoryStore.save(
                             "bookingStage",
@@ -934,7 +907,7 @@ ${currentMemory.from} → ${currentMemory.to}`
 
 📍 ${currentMemory.from} ➜ ${currentMemory.to}
 
-💡 But I found some nearby route options:
+💡 But I found these nearby routes with buses available:
 
 `;
 
@@ -945,6 +918,7 @@ ${currentMemory.from} → ${currentMemory.to}`
                                 reply +=
 `${index + 1}. ${route.from} ➜ ${route.to}
 📍 ${route.reason}
+🚌 ${route.buses.length} bus${route.buses.length === 1 ? "" : "es"} available
 
 `;
 
@@ -1005,24 +979,17 @@ I couldn't find buses for:
                 // DIRECT BUSES FOUND
                 // =================================
 
-
-                // Save buses
                 memoryStore.save(
                     "availableBuses",
                     buses
                 );
 
 
-                // Move to bus selection
                 memoryStore.save(
                     "bookingStage",
                     "bus_selection"
                 );
 
-
-                // ---------------------------------
-                // Display buses
-                // ---------------------------------
 
                 let reply =
 `🚌 I found ${buses.length} buses.
@@ -1074,7 +1041,7 @@ Book VRL`;
 
 
             // =================================
-            // TRAIN BOOKING
+            // TRAIN
             // =================================
 
             if (
@@ -1110,7 +1077,7 @@ Book VRL`;
 
 
             // =================================
-            // FLIGHT BOOKING
+            // FLIGHT
             // =================================
 
             if (
@@ -1148,7 +1115,8 @@ Book VRL`;
 
 
         // =====================================
-        // STEP 10 : DEFAULT
+        // STEP 10
+        // DEFAULT
         // =====================================
 
         return {
