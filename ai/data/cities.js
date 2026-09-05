@@ -4,6 +4,8 @@ const cities = [
     "Visakhapatnam",
     "Rajahmundry",
     "Vijayawada",
+    "Samalkota",
+    "Anakapalle",
     "Hyderabad",
     "Chennai",
     "Bangalore",
@@ -14,3 +16,7 @@ const cities = [
 ];
 
 export default cities;
+
+
+
+
