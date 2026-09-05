@@ -7,12 +7,11 @@
 import parsePassengers from "../utils/passenger-parser.js";
 import parseDate from "../utils/date-parser.js";
 import cities from "../data/cities.js";
-import memoryStore from "../memory/memory-store.js";
 
 
 class EntityEngine {
 
-    extract(userMessage) {
+    extract(userMessage, context = {}) {
 
         const text =
             String(userMessage || "")
@@ -23,62 +22,18 @@ class EntityEngine {
         const entities = {
 
             transport: null,
-
             from: null,
-
             to: null,
-
             date: null,
-
             adults: null,
-
             children: null,
-
             selectedBus: null
 
         };
 
 
         // =====================================
-        // EXTRA / NEW CITIES
-        // =====================================
-        //
-        // These are needed immediately because
-        // they are used by nearby-route search.
-        //
-        // We keep cities.js untouched for now.
-        //
-
-        const additionalCities = [
-
-            "Anakapalle",
-
-            "Samalkota"
-
-        ];
-
-
-        // Combine cities.js + additional cities
-        // without creating duplicates.
-
-        const allCities = [
-
-            ...cities,
-
-            ...additionalCities
-
-        ].filter(
-            (city, index, array) =>
-                array.findIndex(
-                    item =>
-                        item.toLowerCase() ===
-                        city.toLowerCase()
-                ) === index
-        );
-
-
-        // =====================================
-        // DETECT DATE
+        // 1. DATE
         // =====================================
 
         const dateRegex =
@@ -100,7 +55,6 @@ class EntityEngine {
             const parsedDate =
                 parseDate(text);
 
-
             if (parsedDate) {
 
                 entities.date =
@@ -112,7 +66,7 @@ class EntityEngine {
 
 
         // =====================================
-        // DETECT PASSENGERS
+        // 2. PASSENGERS
         // =====================================
 
         const passengerData =
@@ -120,8 +74,8 @@ class EntityEngine {
 
 
         if (
-            passengerData &&
-            passengerData.adults !== null
+            passengerData.adults !== null &&
+            passengerData.adults !== undefined
         ) {
 
             entities.adults =
@@ -131,8 +85,8 @@ class EntityEngine {
 
 
         if (
-            passengerData &&
-            passengerData.children !== null
+            passengerData.children !== null &&
+            passengerData.children !== undefined
         ) {
 
             entities.children =
@@ -142,17 +96,23 @@ class EntityEngine {
 
 
         // =====================================
-        // DETECT TRANSPORT
+        // 3. TRANSPORT
         // =====================================
 
-        if (text.includes("bus")) {
+        if (
+            text.includes("bus") ||
+            text.includes("buses")
+        ) {
 
             entities.transport =
                 "Bus";
 
         }
 
-        else if (text.includes("train")) {
+        else if (
+            text.includes("train") ||
+            text.includes("trains")
+        ) {
 
             entities.transport =
                 "Train";
@@ -161,6 +121,7 @@ class EntityEngine {
 
         else if (
             text.includes("flight") ||
+            text.includes("flights") ||
             text.includes("plane")
         ) {
 
@@ -171,28 +132,37 @@ class EntityEngine {
 
 
         // =====================================
-        // DETECT FROM & TO CITIES
+        // 4. CITY DETECTION
+        // =====================================
+        //
+        // First try:
+        //
+        // "from rajahmundry"
+        // "to vizag"
+        //
         // =====================================
 
-        for (const city of allCities) {
+        for (const city of cities) {
 
             const cityName =
-                city.toLowerCase();
+                String(city)
+                    .trim()
+                    .toLowerCase();
 
 
-            // ---------------------------------
-            // "from city"
-            // ---------------------------------
+            if (!cityName) {
+                continue;
+            }
 
-            const fromRegex =
-                new RegExp(
-                    `\\bfrom\\s+${escapeRegex(cityName)}\\b`,
-                    "i"
-                );
 
+            // -------------------------------
+            // Explicit FROM
+            // -------------------------------
 
             if (
-                fromRegex.test(text)
+                text.includes(
+                    "from " + cityName
+                )
             ) {
 
                 entities.from =
@@ -201,19 +171,14 @@ class EntityEngine {
             }
 
 
-            // ---------------------------------
-            // "to city"
-            // ---------------------------------
-
-            const toRegex =
-                new RegExp(
-                    `\\bto\\s+${escapeRegex(cityName)}\\b`,
-                    "i"
-                );
-
+            // -------------------------------
+            // Explicit TO
+            // -------------------------------
 
             if (
-                toRegex.test(text)
+                text.includes(
+                    "to " + cityName
+                )
             ) {
 
                 entities.to =
@@ -225,7 +190,7 @@ class EntityEngine {
 
 
         // =====================================
-        // STANDALONE CITY REPLY
+        // 5. SINGLE-CITY ANSWERS
         // =====================================
         //
         // Example:
@@ -236,107 +201,61 @@ class EntityEngine {
         // User:
         // "Samalkota"
         //
-        // We use memory to understand whether
-        // the missing city should be FROM or TO.
-        //
+        // =====================================
 
-        if (
-            !entities.from &&
-            !entities.to
-        ) {
-
-            let matchedCity = null;
+        const cleanText =
+            text
+                .replace(/[.,!?]/g, "")
+                .trim();
 
 
-            for (const city of allCities) {
-
-                const cityName =
-                    city.toLowerCase();
-
-
-                const cityRegex =
-                    new RegExp(
-                        `^${escapeRegex(cityName)}$`,
-                        "i"
-                    );
+        const matchingCity =
+            cities.find(
+                city =>
+                    String(city)
+                        .trim()
+                        .toLowerCase() ===
+                    cleanText
+            );
 
 
-                if (
-                    cityRegex.test(text)
-                ) {
+        if (matchingCity) {
 
-                    matchedCity =
-                        city;
+            // -------------------------------
+            // If AI is asking for FROM
+            // -------------------------------
 
-                    break;
+            if (
+                context.missingSlot ===
+                "from"
+            ) {
 
-                }
+                entities.from =
+                    matchingCity;
 
             }
 
 
-            if (matchedCity) {
+            // -------------------------------
+            // If AI is asking for TO
+            // -------------------------------
 
-                const memory =
-                    memoryStore.getAll();
+            else if (
+                context.missingSlot ===
+                "to"
+            ) {
 
-
-                // If FROM is missing,
-                // this city becomes FROM.
-
-                if (!memory.from) {
-
-                    entities.from =
-                        matchedCity;
-
-                }
-
-                // Otherwise if TO is missing,
-                // this city becomes TO.
-
-                else if (!memory.to) {
-
-                    entities.to =
-                        matchedCity;
-
-                }
+                entities.to =
+                    matchingCity;
 
             }
 
         }
 
 
-        // =====================================
-        // DEBUG
-        // =====================================
-
-        console.log(
-            "📦 Extracted Entities:",
-            entities
-        );
-
-
         return entities;
 
     }
-
-}
-
-
-/**
- * =====================================
- * Escape text before putting it inside
- * a Regular Expression.
- * =====================================
- */
-
-function escapeRegex(value) {
-
-    return String(value)
-        .replace(
-            /[.*+?^${}()|[\]\\]/g,
-            "\\$&"
-        );
 
 }
 
