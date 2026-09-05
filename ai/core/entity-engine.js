@@ -11,7 +11,8 @@ import cities from "../data/cities.js";
 
 class EntityEngine {
 
-    extract(userMessage, context = {}) {
+
+    extract(userMessage, memory = {}) {
 
         const text =
             String(userMessage || "")
@@ -33,7 +34,7 @@ class EntityEngine {
 
 
         // =====================================
-        // 1. DATE
+        // DATE
         // =====================================
 
         const dateRegex =
@@ -55,6 +56,7 @@ class EntityEngine {
             const parsedDate =
                 parseDate(text);
 
+
             if (parsedDate) {
 
                 entities.date =
@@ -66,7 +68,7 @@ class EntityEngine {
 
 
         // =====================================
-        // 2. PASSENGERS
+        // PASSENGERS
         // =====================================
 
         const passengerData =
@@ -74,8 +76,7 @@ class EntityEngine {
 
 
         if (
-            passengerData.adults !== null &&
-            passengerData.adults !== undefined
+            passengerData.adults !== null
         ) {
 
             entities.adults =
@@ -85,8 +86,7 @@ class EntityEngine {
 
 
         if (
-            passengerData.children !== null &&
-            passengerData.children !== undefined
+            passengerData.children !== null
         ) {
 
             entities.children =
@@ -96,12 +96,11 @@ class EntityEngine {
 
 
         // =====================================
-        // 3. TRANSPORT
+        // TRANSPORT
         // =====================================
 
         if (
-            text.includes("bus") ||
-            text.includes("buses")
+            text.includes("bus")
         ) {
 
             entities.transport =
@@ -110,8 +109,7 @@ class EntityEngine {
         }
 
         else if (
-            text.includes("train") ||
-            text.includes("trains")
+            text.includes("train")
         ) {
 
             entities.transport =
@@ -121,7 +119,6 @@ class EntityEngine {
 
         else if (
             text.includes("flight") ||
-            text.includes("flights") ||
             text.includes("plane")
         ) {
 
@@ -132,32 +129,24 @@ class EntityEngine {
 
 
         // =====================================
-        // 4. CITY DETECTION
-        // =====================================
-        //
-        // First try:
-        //
-        // "from rajahmundry"
-        // "to vizag"
-        //
+        // CITY MATCHING
         // =====================================
 
-        for (const city of cities) {
+        const cityList =
+            Array.isArray(cities)
+                ? cities
+                : [];
+
+
+        for (
+            const city of cityList
+        ) {
 
             const cityName =
                 String(city)
                     .trim()
                     .toLowerCase();
 
-
-            if (!cityName) {
-                continue;
-            }
-
-
-            // -------------------------------
-            // Explicit FROM
-            // -------------------------------
 
             if (
                 text.includes(
@@ -170,10 +159,6 @@ class EntityEngine {
 
             }
 
-
-            // -------------------------------
-            // Explicit TO
-            // -------------------------------
 
             if (
                 text.includes(
@@ -190,10 +175,10 @@ class EntityEngine {
 
 
         // =====================================
-        // 5. SINGLE-CITY ANSWERS
+        // CONTEXT-AWARE CITY ANSWER
         // =====================================
         //
-        // Example:
+        // This fixes:
         //
         // AI:
         // "Where are you travelling from?"
@@ -201,7 +186,13 @@ class EntityEngine {
         // User:
         // "Samalkota"
         //
+        // Memory says:
+        // from is missing.
+        //
+        // Therefore:
+        // from = Samalkota
         // =====================================
+
 
         const cleanText =
             text
@@ -209,41 +200,53 @@ class EntityEngine {
                 .trim();
 
 
-        const matchingCity =
-            cities.find(
-                city =>
-                    String(city)
-                        .trim()
-                        .toLowerCase() ===
-                    cleanText
-            );
+        // -------------------------------------
+        // If AI is waiting for FROM
+        // -------------------------------------
+
+        if (
+            !entities.from &&
+            !memory.from &&
+            cleanText
+        ) {
+
+            const matchingCity =
+                findCity(
+                    cleanText,
+                    cityList
+                );
 
 
-        if (matchingCity) {
-
-            // -------------------------------
-            // If AI is asking for FROM
-            // -------------------------------
-
-            if (
-                context.missingSlot ===
-                "from"
-            ) {
+            if (matchingCity) {
 
                 entities.from =
                     matchingCity;
 
             }
 
+        }
 
-            // -------------------------------
-            // If AI is asking for TO
-            // -------------------------------
 
-            else if (
-                context.missingSlot ===
-                "to"
-            ) {
+        // -------------------------------------
+        // If AI already knows FROM but TO
+        // is missing, a standalone city means TO.
+        // -------------------------------------
+
+        if (
+            !entities.to &&
+            memory.from &&
+            !memory.to &&
+            cleanText
+        ) {
+
+            const matchingCity =
+                findCity(
+                    cleanText,
+                    cityList
+                );
+
+
+            if (matchingCity) {
 
                 entities.to =
                     matchingCity;
@@ -256,6 +259,41 @@ class EntityEngine {
         return entities;
 
     }
+
+}
+
+
+// =====================================
+// FIND CITY
+// =====================================
+
+function findCity(
+    text,
+    cityList
+) {
+
+    for (
+        const city of cityList
+    ) {
+
+        const cityName =
+            String(city)
+                .trim()
+                .toLowerCase();
+
+
+        if (
+            text === cityName
+        ) {
+
+            return city;
+
+        }
+
+    }
+
+
+    return null;
 
 }
 
