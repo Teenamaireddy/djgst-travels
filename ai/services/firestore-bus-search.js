@@ -3,17 +3,17 @@
  * DJGST AI Firestore Bus Search
  * =====================================
  *
- * Searches buses from Firestore.
+ * Robust route search.
  *
- * Firestore is the source of truth.
+ * We fetch ALL busRoutes documents and
+ * filter them in JavaScript.
  *
- * The search:
+ * This makes the search tolerant of:
  *
- * 1. Reads busRoutes.
- * 2. Normalizes city names.
- * 3. Supports city aliases.
- * 4. Checks active status safely.
- * 5. Filters the requested FROM → TO route.
+ * Samalkota / samalkota
+ * Vizag / vizag / Visakhapatnam
+ * extra spaces
+ * active boolean/string differences
  *
  * =====================================
  */
@@ -21,9 +21,25 @@
 import {
     collection,
     getDocs
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 import { db } from "../../firebase-config.js";
+
+
+/**
+ * =====================================
+ * NORMALIZE TEXT
+ * =====================================
+ */
+
+function normalize(value) {
+
+    return String(value ?? "")
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, " ");
+
+}
 
 
 /**
@@ -34,139 +50,32 @@ import { db } from "../../firebase-config.js";
 
 function normalizeCity(value) {
 
-    return String(value || "")
-        .trim()
-        .toLowerCase()
-        .replace(/\s+/g, " ");
-
-}
-
-
-/**
- * =====================================
- * NORMALIZE CITY FOR SEARCH
- * =====================================
- *
- * Converts different names for the same
- * city into one standard search value.
- * =====================================
- */
-
-function normalizeCityForSearch(value) {
-
-    const city =
-        normalizeCity(value);
-
+    const city = normalize(value);
 
     const aliases = {
 
-        // -------------------------------
-        // VIZAG
-        // -------------------------------
+        // Vizag
+        "vizag": "vizag",
+        "visakhapatnam": "vizag",
+        "vizag city": "vizag",
 
-        "vizag":
-            "vizag",
+        // Rajahmundry
+        "rajahmundry": "rajahmundry",
+        "rajamahendravaram": "rajahmundry",
 
-        "visakhapatnam":
-            "vizag",
-
-        "vizag city":
-            "vizag",
-
-
-        // -------------------------------
-        // RAJAHMUNDRY
-        // -------------------------------
-
-        "rajahmundry":
-            "rajahmundry",
-
-        "rajamahendravaram":
-            "rajahmundry",
-
-
-        // -------------------------------
-        // VIJAYAWADA
-        // -------------------------------
-
-        "vijayawada":
-            "vijayawada",
-
-
-        // -------------------------------
-        // HYDERABAD
-        // -------------------------------
-
-        "hyderabad":
-            "hyderabad",
-
-
-        // -------------------------------
-        // TIRUPATI
-        // -------------------------------
-
-        "tirupati":
-            "tirupati",
-
-
-        // -------------------------------
-        // CHENNAI
-        // -------------------------------
-
-        "chennai":
-            "chennai",
-
-
-        // -------------------------------
-        // BANGALORE
-        // -------------------------------
-
-        "bangalore":
-            "bangalore",
-
-        "bengaluru":
-            "bangalore",
-
-
-        // -------------------------------
-        // DELHI
-        // -------------------------------
-
-        "delhi":
-            "delhi",
-
-
-        // -------------------------------
-        // MUMBAI
-        // -------------------------------
-
-        "mumbai":
-            "mumbai",
-
-
-        // -------------------------------
-        // ANAKAPALLE
-        // -------------------------------
-
-        "anakapalle":
-            "anakapalle",
-
-        "anakapalli":
-            "anakapalle",
-
-
-        // -------------------------------
-        // SAMALKOTA
-        // -------------------------------
-
-        "samalkota":
-            "samalkota",
-
-        "samalkot":
-            "samalkota"
+        // Other cities
+        "samalkota": "samalkota",
+        "anakapalle": "anakapalle",
+        "vijayawada": "vijayawada",
+        "hyderabad": "hyderabad",
+        "tirupati": "tirupati",
+        "chennai": "chennai",
+        "bangalore": "bangalore",
+        "bengaluru": "bangalore",
+        "delhi": "delhi",
+        "mumbai": "mumbai"
 
     };
-
 
     return aliases[city] || city;
 
@@ -175,94 +84,22 @@ function normalizeCityForSearch(value) {
 
 /**
  * =====================================
- * NORMALIZE ACTIVE VALUE
+ * CHECK ACTIVE VALUE
  * =====================================
  *
- * Firestore should ideally contain:
+ * Normally active is boolean true.
  *
- * active: true
- *
- * But this also safely handles:
- *
- * active: "true"
- *
+ * We also accept "true" just in case
+ * an older document was stored as text.
  * =====================================
  */
 
-function isActiveBus(value) {
+function isActive(value) {
 
-    if (value === true) {
-
-        return true;
-
-    }
-
-
-    if (
-        typeof value === "string" &&
-        value.trim().toLowerCase() === "true"
-    ) {
-
-        return true;
-
-    }
-
-
-    return false;
-
-}
-
-
-/**
- * =====================================
- * CONVERT FIRESTORE BUS
- * =====================================
- */
-
-function convertBus(doc) {
-
-    const data =
-        doc.data();
-
-
-    return {
-
-        id:
-            data.id ?? doc.id,
-
-        name:
-            data.name || "",
-
-        type:
-            data.type || "",
-
-        from:
-            normalizeCity(
-                data.from
-            ),
-
-        to:
-            normalizeCity(
-                data.to
-            ),
-
-        departure:
-            data.departure || "",
-
-        arrival:
-            data.arrival || "",
-
-        price:
-            Number(
-                data.price ?? 0
-            ),
-
-        active:
-            isActiveBus(
-                data.active
-            )
-
-    };
+    return (
+        value === true ||
+        normalize(value) === "true"
+    );
 
 }
 
@@ -277,62 +114,61 @@ async function searchBuses(memory) {
 
     try {
 
-        // =================================
-        // REQUESTED ROUTE
-        // =================================
-
-        const requestedFrom =
-            normalizeCityForSearch(
-                memory?.from
-            );
-
-
-        const requestedTo =
-            normalizeCityForSearch(
-                memory?.to
-            );
-
-
         console.log(
             "====================================="
         );
 
         console.log(
-            "🔎 DJGST AI FIRESTORE BUS SEARCH"
+            "🔎 DJGST AI BUS SEARCH STARTED"
         );
+
+        console.log(
+            "====================================="
+        );
+
+
+        /**
+         * ---------------------------------
+         * REQUESTED ROUTE
+         * ---------------------------------
+         */
+
+        const requestedFrom =
+            normalizeCity(
+                memory?.from
+            );
+
+
+        const requestedTo =
+            normalizeCity(
+                memory?.to
+            );
+
 
         console.log(
             "📍 Requested FROM:",
-            memory?.from
-        );
-
-        console.log(
-            "📍 Requested TO:",
-            memory?.to
-        );
-
-        console.log(
-            "📍 Normalized FROM:",
             requestedFrom
         );
 
         console.log(
-            "📍 Normalized TO:",
+            "📍 Requested TO:",
             requestedTo
         );
 
 
-        // =================================
-        // VALIDATION
-        // =================================
+        /**
+         * ---------------------------------
+         * VALIDATION
+         * ---------------------------------
+         */
 
         if (
             !requestedFrom ||
             !requestedTo
         ) {
 
-            console.warn(
-                "⚠️ Missing FROM or TO"
+            console.error(
+                "❌ FROM or TO is missing"
             );
 
             return [];
@@ -340,9 +176,11 @@ async function searchBuses(memory) {
         }
 
 
-        // =================================
-        // FIRESTORE COLLECTION
-        // =================================
+        /**
+         * ---------------------------------
+         * FIRESTORE COLLECTION
+         * ---------------------------------
+         */
 
         const busesRef =
             collection(
@@ -351,17 +189,25 @@ async function searchBuses(memory) {
             );
 
 
-        // =================================
-        // GET ALL BUS DOCUMENTS
-        // =================================
-        //
-        // We intentionally don't put
-        // from/to/active in the Firestore
-        // query.
-        //
-        // This gives us maximum flexibility
-        // for city aliases and existing data.
-        // =================================
+        /**
+         * ---------------------------------
+         * GET ALL BUS ROUTES
+         * ---------------------------------
+         *
+         * IMPORTANT:
+         *
+         * We intentionally DON'T use:
+         *
+         * where("active", "==", true)
+         *
+         * We inspect active ourselves.
+         * ---------------------------------
+         */
+
+        console.log(
+            "🔥 Reading collection: busRoutes"
+        );
+
 
         const snapshot =
             await getDocs(
@@ -370,30 +216,110 @@ async function searchBuses(memory) {
 
 
         console.log(
-            "📦 Total Firestore bus documents:",
+            "📦 Firestore documents found:",
             snapshot.size
         );
 
 
-        // =================================
-        // CONVERT DOCUMENTS
-        // =================================
+        /**
+         * ---------------------------------
+         * NO DOCUMENTS
+         * ---------------------------------
+         */
+
+        if (snapshot.empty) {
+
+            console.error(
+                "❌ busRoutes collection returned ZERO documents"
+            );
+
+            return [];
+
+        }
+
+
+        /**
+         * ---------------------------------
+         * CONVERT DOCUMENTS
+         * ---------------------------------
+         */
 
         const allBuses =
             snapshot.docs.map(
-                convertBus
+                doc => {
+
+                    const data =
+                        doc.data();
+
+
+                    const bus = {
+
+                        firestoreId:
+                            doc.id,
+
+                        id:
+                            data.id ?? doc.id,
+
+                        name:
+                            String(
+                                data.name ?? ""
+                            ).trim(),
+
+                        type:
+                            String(
+                                data.type ?? ""
+                            ).trim(),
+
+                        from:
+                            String(
+                                data.from ?? ""
+                            ).trim(),
+
+                        to:
+                            String(
+                                data.to ?? ""
+                            ).trim(),
+
+                        departure:
+                            String(
+                                data.departure ?? ""
+                            ).trim(),
+
+                        arrival:
+                            String(
+                                data.arrival ?? ""
+                            ).trim(),
+
+                        price:
+                            Number(
+                                data.price ?? 0
+                            ),
+
+                        active:
+                            isActive(
+                                data.active
+                            )
+
+                    };
+
+
+                    console.log(
+                        "🚌 Firestore BUS:",
+                        bus
+                    );
+
+
+                    return bus;
+
+                }
             );
 
 
-        console.log(
-            "🚌 All Firestore buses:",
-            allBuses
-        );
-
-
-        // =================================
-        // ACTIVE BUSES
-        // =================================
+        /**
+         * ---------------------------------
+         * ACTIVE BUSES
+         * ---------------------------------
+         */
 
         const activeBuses =
             allBuses.filter(
@@ -404,26 +330,27 @@ async function searchBuses(memory) {
 
         console.log(
             "🟢 Active buses:",
-            activeBuses
+            activeBuses.length
         );
 
 
-        // =================================
-        // FILTER REQUESTED ROUTE
-        // =================================
+        /**
+         * ---------------------------------
+         * ROUTE MATCHING
+         * ---------------------------------
+         */
 
         const matchingBuses =
             activeBuses.filter(
                 bus => {
 
                     const busFrom =
-                        normalizeCityForSearch(
+                        normalizeCity(
                             bus.from
                         );
 
-
                     const busTo =
-                        normalizeCityForSearch(
+                        normalizeCity(
                             bus.to
                         );
 
@@ -440,11 +367,18 @@ async function searchBuses(memory) {
 
                     console.log(
                         `🔍 Checking:
-${bus.from} → ${bus.to}`,
-                        `| Normalized:
-${busFrom} → ${busTo}`,
-                        `| FROM: ${matchesFrom}`,
-                        `| TO: ${matchesTo}`
+${bus.from} → ${bus.to}
+
+Normalized:
+${busFrom} → ${busTo}
+
+Requested:
+${requestedFrom} → ${requestedTo}
+
+FROM MATCH: ${matchesFrom}
+TO MATCH: ${matchesTo}
+ACTIVE: ${bus.active}
+`
                     );
 
 
@@ -457,9 +391,11 @@ ${busFrom} → ${busTo}`,
             );
 
 
-        // =================================
-        // RESULT
-        // =================================
+        /**
+         * ---------------------------------
+         * RESULT
+         * ---------------------------------
+         */
 
         console.log(
             "====================================="
@@ -481,13 +417,17 @@ ${requestedFrom} → ${requestedTo}`
 
         return matchingBuses;
 
-    }
 
+    }
 
     catch (error) {
 
         console.error(
-            "❌ DJGST AI Firestore Bus Search FAILED"
+            "====================================="
+        );
+
+        console.error(
+            "❌ DJGST AI BUS SEARCH FAILED"
         );
 
         console.error(
@@ -503,6 +443,10 @@ ${requestedFrom} → ${requestedTo}`
         console.error(
             "Full error:",
             error
+        );
+
+        console.error(
+            "====================================="
         );
 
 
