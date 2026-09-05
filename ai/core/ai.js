@@ -6,7 +6,6 @@
  */
 
 import findNearbyRoutes from "../services/firestore-nearby-route-search.js";
-import selectBus from "../actions/select-bus.js";
 import busSearch from "../services/firestore-bus-search.js";
 
 import intentEngine from "./intent-engine.js";
@@ -45,12 +44,8 @@ class DJGSTAI {
 
 
         // =====================================
-        // STEP 0.5 : NEW BOOKING REQUEST
+        // STEP 0.5 : NEW EXPLICIT ROUTE
         // =====================================
-        //
-        // If the user explicitly gives a new
-        // FROM / TO route, don't allow an old
-        // booking route to remain in memory.
         //
         // Example:
         //
@@ -60,7 +55,8 @@ class DJGSTAI {
         // New:
         // Samalkota → Vizag
         //
-        // The new route must win.
+        // The new route must replace
+        // the old route.
         // =====================================
 
         const hasExplicitRoute =
@@ -76,7 +72,7 @@ class DJGSTAI {
             );
 
 
-            // Clear old route-related state.
+            // Clear old route state
 
             memoryStore.save(
                 "from",
@@ -113,8 +109,6 @@ class DJGSTAI {
                 "start"
             );
 
-
-            // Refresh memory.
 
             memory =
                 memoryStore.getAll();
@@ -216,7 +210,7 @@ class DJGSTAI {
 
 
         // =====================================
-        // STEP 2 : NEARBY ROUTE NUMBER SELECTION
+        // STEP 2 : NEARBY ROUTE NUMBER
         // =====================================
 
         if (
@@ -257,11 +251,14 @@ class DJGSTAI {
                     );
 
 
+                    // ---------------------------------
+                    // SAVE SELECTED ROUTE
+                    // ---------------------------------
+
                     memoryStore.save(
                         "from",
                         selectedRoute.from
                     );
-
 
                     memoryStore.save(
                         "to",
@@ -269,19 +266,20 @@ class DJGSTAI {
                     );
 
 
+                    // ---------------------------------
+                    // Clear old suggestions
+                    // ---------------------------------
+
                     memoryStore.save(
                         "pendingNearbyRoutes",
                         []
                     );
 
 
-                    // =================================
-                    // IMPORTANT:
-                    // Nearby-route search already found
-                    // real ACTIVE Firestore buses.
-                    //
-                    // Use those buses directly.
-                    // =================================
+                    // ---------------------------------
+                    // Use buses returned by nearby
+                    // route service if available.
+                    // ---------------------------------
 
                     const buses =
                         Array.isArray(
@@ -291,8 +289,34 @@ class DJGSTAI {
                             : [];
 
 
+                    // ---------------------------------
+                    // If nearby service did not attach
+                    // buses, search Firestore directly.
+                    // ---------------------------------
+
+                    let finalBuses =
+                        buses;
+
+
                     if (
-                        buses.length === 0
+                        finalBuses.length === 0
+                    ) {
+
+                        finalBuses =
+                            await busSearch.search(
+                                memoryStore.getAll()
+                            );
+
+                    }
+
+
+                    // ---------------------------------
+                    // No buses
+                    // ---------------------------------
+
+                    if (
+                        !Array.isArray(finalBuses) ||
+                        finalBuses.length === 0
                     ) {
 
                         memoryStore.save(
@@ -328,9 +352,13 @@ Let's try another route.`
                     }
 
 
+                    // ---------------------------------
+                    // Save buses
+                    // ---------------------------------
+
                     memoryStore.save(
                         "availableBuses",
-                        buses
+                        finalBuses
                     );
 
 
@@ -340,18 +368,22 @@ Let's try another route.`
                     );
 
 
+                    // ---------------------------------
+                    // Display buses
+                    // ---------------------------------
+
                     let reply =
 `✅ Route selected!
 
 📍 ${selectedRoute.from}
 ➜ ${selectedRoute.to}
 
-🚌 I found ${buses.length} buses:
+🚌 I found ${finalBuses.length} buses:
 
 `;
 
 
-                    buses.forEach(
+                    finalBuses.forEach(
                         (bus, index) => {
 
                             reply +=
@@ -374,8 +406,8 @@ OR
 • Bus name
 
 Example:
+1
 Orange Travels
-APSRTC Garuda
 Book VRL`;
 
 
@@ -450,6 +482,10 @@ Reply with a number from 1 to ${routes.length}.`
             memoryStore.get("bookingStage") ===
             "bus_selection"
         ) {
+
+            // =================================
+            // 3A : NUMBER
+            // =================================
 
             if (
                 /^[1-9]\d*$/.test(
@@ -530,6 +566,10 @@ Please choose a valid bus.`
             }
 
 
+            // =================================
+            // 3B : BUS NAME
+            // =================================
+
             const selectedBusByName =
                 parseBus(
                     trimmedMessage,
@@ -537,9 +577,7 @@ Please choose a valid bus.`
                 );
 
 
-            if (
-                selectedBusByName
-            ) {
+            if (selectedBusByName) {
 
                 console.log(
                     "🚌 Selected bus by name:",
@@ -614,16 +652,20 @@ Book VRL`
 
 
         // =====================================
-        // STEP 4 : YES = USE PREVIOUS DATE
+        // STEP 4 : PREVIOUS DATE
         // =====================================
+
+        let messageForProcessing =
+            trimmedMessage;
+
 
         if (
             lowerMessage === "yes" &&
             memory.date
         ) {
 
-            userMessage +=
-                " " + memory.date;
+            messageForProcessing =
+                `${trimmedMessage} ${memory.date}`;
 
         }
 
@@ -634,9 +676,13 @@ Book VRL`
 
         let intent =
             intentEngine.detect(
-                userMessage
+                messageForProcessing
             );
 
+
+        // -------------------------------------
+        // Continue previous intent
+        // -------------------------------------
 
         if (
             intent.intent === "unknown" &&
@@ -648,6 +694,10 @@ Book VRL`
 
         }
 
+
+        // -------------------------------------
+        // Save intent
+        // -------------------------------------
 
         if (
             intent.intent !== "unknown"
@@ -662,12 +712,28 @@ Book VRL`
 
 
         // =====================================
-        // STEP 6 : EXTRACT ENTITIES
+        // STEP 6 : ENTITY EXTRACTION
+        // =====================================
+        //
+        // IMPORTANT:
+        //
+        // Pass MEMORY to Entity Engine.
+        //
+        // This allows:
+        //
+        // "Samalkota"
+        //
+        // to mean:
+        //
+        // from = Samalkota
+        //
+        // when AI is asking for FROM.
         // =====================================
 
         const entities =
             entityEngine.extract(
-                userMessage
+                messageForProcessing,
+                memoryStore.getAll()
             );
 
 
@@ -703,9 +769,13 @@ Book VRL`
         );
 
 
+        memory =
+            memoryStore.getAll();
+
+
         console.log(
             "🧠 Memory:",
-            memoryStore.getAll()
+            memory
         );
 
 
@@ -716,8 +786,14 @@ Book VRL`
         const slotResult =
             slotEngine.check(
                 intent.intent,
-                memoryStore.getAll()
+                memory
             );
+
+
+        console.log(
+            "🎰 Slot Result:",
+            slotResult
+        );
 
 
         if (
@@ -735,8 +811,7 @@ Book VRL`
                         intent,
                         entities,
 
-                        memory:
-                            memoryStore.getAll(),
+                        memory,
 
                         reply:
 `🚌 Which transport would you like to book?
@@ -753,11 +828,10 @@ Bus, Train or Flight?`
                         intent,
                         entities,
 
-                        memory:
-                            memoryStore.getAll(),
+                        memory,
 
                         reply:
-"📍 Where are you travelling from?"
+`📍 Where are you travelling from?`
 
                     };
 
@@ -769,11 +843,10 @@ Bus, Train or Flight?`
                         intent,
                         entities,
 
-                        memory:
-                            memoryStore.getAll(),
+                        memory,
 
                         reply:
-"📍 Where are you travelling to?"
+`📍 Where are you travelling to?`
 
                     };
 
@@ -785,11 +858,10 @@ Bus, Train or Flight?`
                         intent,
                         entities,
 
-                        memory:
-                            memoryStore.getAll(),
+                        memory,
 
                         reply:
-"📅 What date would you like to travel?"
+`📅 What date would you like to travel?`
 
                     };
 
@@ -820,6 +892,18 @@ Bus, Train or Flight?`
                 "Bus"
             ) {
 
+                console.log(
+                    "🚌 Starting bus search..."
+                );
+
+                console.log(
+                    "📍 Route:",
+                    currentMemory.from,
+                    "→",
+                    currentMemory.to
+                );
+
+
                 const buses =
                     await busSearch.search(
                         currentMemory
@@ -827,7 +911,7 @@ Bus, Train or Flight?`
 
 
                 // =================================
-                // NO DIRECT BUS
+                // NO DIRECT BUSES
                 // =================================
 
                 if (
@@ -841,12 +925,20 @@ ${currentMemory.from} → ${currentMemory.to}`
                     );
 
 
+                    // ---------------------------------
+                    // SEARCH NEARBY ROUTES
+                    // ---------------------------------
+
                     const nearbyRoutes =
                         await findNearbyRoutes(
                             currentMemory.from,
                             currentMemory.to
                         );
 
+
+                    // ---------------------------------
+                    // ALTERNATIVES FOUND
+                    // ---------------------------------
 
                     if (
                         Array.isArray(nearbyRoutes) &&
@@ -913,6 +1005,10 @@ You can reply:
                     }
 
 
+                    // ---------------------------------
+                    // NOTHING FOUND
+                    // ---------------------------------
+
                     return {
 
                         intent,
@@ -936,6 +1032,11 @@ I couldn't find buses for:
                 // =================================
                 // DIRECT BUSES FOUND
                 // =================================
+
+                console.log(
+                    `✅ Found ${buses.length} direct buses.`
+                );
+
 
                 memoryStore.save(
                     "availableBuses",
@@ -1027,7 +1128,7 @@ Book VRL`;
                         currentMemory,
 
                     reply:
-"🚆 Opening Train Booking..."
+`🚆 Opening Train Booking...`
 
                 };
 
@@ -1063,7 +1164,7 @@ Book VRL`;
                         currentMemory,
 
                     reply:
-"✈️ Opening Flight Booking..."
+`✈️ Opening Flight Booking...`
 
                 };
 
@@ -1073,7 +1174,7 @@ Book VRL`;
 
 
         // =====================================
-        // DEFAULT
+        // STEP 10 : DEFAULT
         // =====================================
 
         return {
@@ -1085,7 +1186,7 @@ Book VRL`;
                 memoryStore.getAll(),
 
             reply:
-"😊 I'm still learning how to help with that."
+`😊 I'm still learning how to help with that.`
 
         };
 
@@ -1093,6 +1194,10 @@ Book VRL`;
 
 }
 
+
+// =====================================
+// CREATE AI
+// =====================================
 
 const djgstAI =
     new DJGSTAI();
